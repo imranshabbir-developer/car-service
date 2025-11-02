@@ -53,7 +53,7 @@ export default function TravelPage() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [lightboxOpen]);
+  }, [lightboxOpen, galleryImages.length]);
 
   return (
     <main className="min-h-screen bg-white" style={{ fontFamily: 'Roboto, sans-serif' }}>
@@ -75,7 +75,7 @@ export default function TravelPage() {
             <span className="sm:text-[40px] md:text-[50px]">Plan Your Own Trip</span>
           </h1>
           <h2 className="text-white font-semibold leading-tight" style={{ fontSize: '32px', fontWeight: 600 }}>
-            <span className="sm:text-[40px] md:text-[50px]">Make a Trip That's Just Right for You</span>
+            <span className="sm:text-[40px] md:text-[50px]">Make a Trip That&apos;s Just Right for You</span>
           </h2>
         </div>
       </div>
@@ -88,7 +88,7 @@ export default function TravelPage() {
               Description
             </h2>
             <p className="text-base sm:text-lg md:text-xl text-gray-700 leading-relaxed">
-              Embark on an unforgettable journey through Northern Pakistan, where majestic mountains, lush valleys, and warm hospitality await. Begin in Islamabad, the capital city, and wind your way through scenic routes to Gilgit, where the convergence of three mighty mountain ranges awaits. Discover the enchanting Hunza Valley, famed for its verdant landscapes and iconic peaks like Rakaposhi. Continue to Skardu, nestled amidst the Karakoram Range, where ancient forts and breathtaking vistas await. Prepare for a thrilling jeep safari to Khunjerab Pass, the world's highest paved international border. Fairy Meadows beckons with its ethereal beauty, offering a chance to trek amidst the towering Nanga Parbat. Conclude your adventure in the picturesque Swat Valley, exploring its pristine landscapes and rich history. Prepare for an immersive experience filled with natural wonders and cultural delights in Northern Pakistan.
+              Embark on an unforgettable journey through Northern Pakistan, where majestic mountains, lush valleys, and warm hospitality await. Begin in Islamabad, the capital city, and wind your way through scenic routes to Gilgit, where the convergence of three mighty mountain ranges awaits. Discover the enchanting Hunza Valley, famed for its verdant landscapes and iconic peaks like Rakaposhi. Continue to Skardu, nestled amidst the Karakoram Range, where ancient forts and breathtaking vistas await. Prepare for a thrilling jeep safari to Khunjerab Pass, the world&apos;s highest paved international border. Fairy Meadows beckons with its ethereal beauty, offering a chance to trek amidst the towering Nanga Parbat. Conclude your adventure in the picturesque Swat Valley, exploring its pristine landscapes and rich history. Prepare for an immersive experience filled with natural wonders and cultural delights in Northern Pakistan.
             </p>
           </div>
         </div>

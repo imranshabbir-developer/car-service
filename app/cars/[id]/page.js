@@ -12,26 +12,7 @@ export default function CarDetailPage() {
   const router = useRouter();
   const carId = params.id;
   
-  const car = getCarById(carId);
-  
-  if (!car) {
-    return (
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center" style={{ fontFamily: 'Roboto, sans-serif' }}>
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Car Not Found</h1>
-          <p className="text-gray-600 mb-6">The car you're looking for doesn't exist.</p>
-          <Link 
-            href="/vehicle-types"
-            className="inline-flex items-center gap-2 bg-[#1a2b5c] text-white px-6 py-3 rounded-lg hover:bg-[#0d1b2a] transition-colors"
-          >
-            <FaArrowLeft />
-            Back to Vehicles
-          </Link>
-        </div>
-      </main>
-    );
-  }
-
+  // All hooks must be called before any conditional returns
   const [activeTab, setActiveTab] = useState('booking');
   const [selectedImage, setSelectedImage] = useState(0);
   const [questionModalOpen, setQuestionModalOpen] = useState(false);
@@ -53,6 +34,8 @@ export default function CarDetailPage() {
     subject: '',
     message: '',
   });
+
+  const car = getCarById(carId);
 
   // Handle body scroll lock when modal is open
   useEffect(() => {
@@ -78,11 +61,30 @@ export default function CarDetailPage() {
   }, [questionModalOpen]);
 
   const calculateTotal = useMemo(() => {
+    if (!car) return 0;
     let total = car.priceNumber || 0;
     if (formData.selfDriver) total += car.selfDriverPrice || 0;
     if (formData.outOfStation) total += car.outOfStationPrice || 0;
     return total;
-  }, [formData.selfDriver, formData.outOfStation, car.priceNumber, car.selfDriverPrice, car.outOfStationPrice]);
+  }, [formData.selfDriver, formData.outOfStation, car]);
+  
+  if (!car) {
+    return (
+      <main className="min-h-screen bg-gray-50 flex items-center justify-center" style={{ fontFamily: 'Roboto, sans-serif' }}>
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">Car Not Found</h1>
+          <p className="text-gray-600 mb-6">The car you&apos;re looking for doesn&apos;t exist.</p>
+          <Link 
+            href="/vehicle-types"
+            className="inline-flex items-center gap-2 bg-[#1a2b5c] text-white px-6 py-3 rounded-lg hover:bg-[#0d1b2a] transition-colors"
+          >
+            <FaArrowLeft />
+            Back to Vehicles
+          </Link>
+        </div>
+      </main>
+    );
+  }
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -496,7 +498,7 @@ export default function CarDetailPage() {
                 Ask a Question
               </h2>
               <p className="text-gray-600 text-sm sm:text-base">
-                Have a question about <span className="font-semibold text-[#1a2b5c]">{car.name}</span>? We're here to help!
+                Have a question about <span className="font-semibold text-[#1a2b5c]">{car.name}</span>? We&apos;re here to help!
               </p>
             </div>
 

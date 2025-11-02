@@ -18,8 +18,8 @@ export default function OnlineCarBooking() {
           <p className="text-gray-600 text-base leading-relaxed mb-6">
             When it comes to freedom on the road, nothing beats driving a
             vehicle yourself. But finding a rent a car in Lahore without driver
-            service isn't always easy—many providers only offer chauffeur-driven
-            options. That's where Convoy Travels stands out. We proudly offer
+            service isn&apos;t always easy—many providers only offer chauffeur-driven
+            options. That&apos;s where Convoy Travels stands out. We proudly offer
             flexible rent a car in Lahore with or without driver, so you can
             travel on your terms.
           </p>

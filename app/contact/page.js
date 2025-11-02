@@ -8,61 +8,61 @@ export const metadata = {
 
 export default function ContactPage() {
   return (
-    <main className="min-h-screen bg-white">
-      <div className="max-w-7xl mx-auto py-20 px-6 md:px-20">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-6xl font-bold text-[#1a2b5c] mb-6">
+    <main className="min-h-screen bg-white" style={{ fontFamily: 'Roboto, sans-serif' }}>
+      <div className="max-w-7xl mx-auto py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-12 lg:px-20">
+        <div className="text-center mb-12 sm:mb-16">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#1a2b5c] mb-4 sm:mb-6">
             Contact Us
           </h1>
-          <p className="text-gray-600 text-lg md:text-xl max-w-3xl mx-auto">
-            We're here to help! Reach out to us for any questions or bookings
+          <p className="text-gray-600 text-base sm:text-lg md:text-xl max-w-3xl mx-auto px-4">
+            We&apos;re here to help! Reach out to us for any questions or bookings
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          <div className="bg-[#e7ecf5] rounded-lg p-6 text-center">
-            <div className="flex justify-center mb-4">
-              <FaMapMarkerAlt className="text-3xl text-[#1a2b5c]" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16">
+          <div className="bg-[#e7ecf5] rounded-lg p-5 sm:p-6 text-center hover:shadow-lg transition-shadow duration-300">
+            <div className="flex justify-center mb-3 sm:mb-4">
+              <FaMapMarkerAlt className="text-2xl sm:text-3xl text-[#1a2b5c]" />
             </div>
-            <h3 className="font-bold text-[#1a2b5c] mb-2">Address</h3>
-            <p className="text-gray-600 text-sm">
+            <h3 className="font-bold text-[#1a2b5c] mb-2 text-base sm:text-lg">Address</h3>
+            <p className="text-gray-600 text-sm sm:text-base">
               872 Block R1 Johar Town Lahore
             </p>
           </div>
 
-          <div className="bg-[#e7ecf5] rounded-lg p-6 text-center">
-            <div className="flex justify-center mb-4">
-              <FaClock className="text-3xl text-[#1a2b5c]" />
+          <div className="bg-[#e7ecf5] rounded-lg p-5 sm:p-6 text-center hover:shadow-lg transition-shadow duration-300">
+            <div className="flex justify-center mb-3 sm:mb-4">
+              <FaClock className="text-2xl sm:text-3xl text-[#1a2b5c]" />
             </div>
-            <h3 className="font-bold text-[#1a2b5c] mb-2">Business Hours</h3>
-            <p className="text-gray-600 text-sm">24/7 Open</p>
+            <h3 className="font-bold text-[#1a2b5c] mb-2 text-base sm:text-lg">Business Hours</h3>
+            <p className="text-gray-600 text-sm sm:text-base">24/7 Open</p>
           </div>
 
-          <div className="bg-[#e7ecf5] rounded-lg p-6 text-center">
-            <div className="flex justify-center mb-4">
-              <FaEnvelope className="text-3xl text-[#1a2b5c]" />
+          <div className="bg-[#e7ecf5] rounded-lg p-5 sm:p-6 text-center hover:shadow-lg transition-shadow duration-300">
+            <div className="flex justify-center mb-3 sm:mb-4">
+              <FaEnvelope className="text-2xl sm:text-3xl text-[#1a2b5c]" />
             </div>
-            <h3 className="font-bold text-[#1a2b5c] mb-2">Email</h3>
-            <p className="text-gray-600 text-sm break-words">
+            <h3 className="font-bold text-[#1a2b5c] mb-2 text-base sm:text-lg">Email</h3>
+            <p className="text-gray-600 text-sm sm:text-base break-words">
               convoytravels786@gmail.com
             </p>
           </div>
 
-          <div className="bg-[#e7ecf5] rounded-lg p-6 text-center">
-            <div className="flex justify-center mb-4">
-              <FaPhoneAlt className="text-3xl text-[#1a2b5c]" />
+          <div className="bg-[#e7ecf5] rounded-lg p-5 sm:p-6 text-center hover:shadow-lg transition-shadow duration-300">
+            <div className="flex justify-center mb-3 sm:mb-4">
+              <FaPhoneAlt className="text-2xl sm:text-3xl text-[#1a2b5c]" />
             </div>
-            <h3 className="font-bold text-[#1a2b5c] mb-2">Phone</h3>
-            <p className="text-gray-600 text-sm">+92 328 1456456</p>
+            <h3 className="font-bold text-[#1a2b5c] mb-2 text-base sm:text-lg">Phone</h3>
+            <p className="text-gray-600 text-sm sm:text-base">+92 328 1456456</p>
           </div>
         </div>
 
-        <div className="bg-white border-2 border-gray-200 rounded-lg p-8 md:p-12 mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#1a2b5c] mb-6 text-center">
+        <div className="bg-white border-2 border-gray-200 rounded-lg p-6 sm:p-8 md:p-10 lg:p-12 mb-12 sm:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1a2b5c] mb-6 sm:mb-8 text-center">
             Send Us a Message
           </h2>
-          <form className="max-w-2xl mx-auto space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <form className="max-w-2xl mx-auto space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               <div>
                 <label className="block text-gray-700 font-medium mb-2">
                   Name

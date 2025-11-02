@@ -57,7 +57,7 @@ export default function FAQSection() {
   return (
     <section className="py-12 px-6 md:px-16 bg-white">
       <h2 className="text-[#0b2850] text-2xl md:text-4xl font-semibold text-center mb-8">
-        Rent a Car in Lahore Frequently Asked Questions (FAQ's)
+        Rent a Car in Lahore Frequently Asked Questions (FAQ&apos;s)
       </h2>
 
       <div className="max-w-5xl mx-auto border border-gray-300 rounded-md divide-y divide-gray-300">

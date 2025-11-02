@@ -34,8 +34,8 @@ export default function AboutPage() {
             {/* Paragraph */}
             <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed mb-4 sm:mb-5 md:mb-6">
               Convoy Travels offers convenient and reliable car rental services to enhance your travel experience. 
-              With a wide range of vehicles to choose from, our seamless booking process ensures you're ready to 
-              hit the road and explore your destination with ease. Whether it's a solo adventure or a family road 
+              With a wide range of vehicles to choose from, our seamless booking process ensures you&apos;re ready to 
+              hit the road and explore your destination with ease. Whether it&apos;s a solo adventure or a family road 
               trip, trust Convoy Travels for your rent-a-car needs
             </p>
 

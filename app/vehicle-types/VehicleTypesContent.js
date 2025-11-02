@@ -16,11 +16,10 @@ export default function VehicleTypesContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
 
-  // Get filtered cars based on category
-  const categoryCars = category ? getCarsByCategory(category) : [];
-  
-  // Filter cars based on search query
+  // Filter cars based on search query and category
   const filteredCars = useMemo(() => {
+    const categoryCars = category ? getCarsByCategory(category) : [];
+    
     if (!searchQuery.trim()) return categoryCars;
     
     const query = searchQuery.toLowerCase().trim();
@@ -29,7 +28,7 @@ export default function VehicleTypesContent() {
       car.price.toLowerCase().includes(query) ||
       car.location.toLowerCase().includes(query)
     );
-  }, [categoryCars, searchQuery]);
+  }, [category, searchQuery]);
 
   // Pagination calculations
   const totalPages = Math.ceil(filteredCars.length / itemsPerPage);

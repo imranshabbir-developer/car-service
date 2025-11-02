@@ -101,7 +101,7 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (searchOverlayOpen) {
+    if (searchOverlayOpen || menuOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -109,17 +109,22 @@ export default function Navbar() {
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [searchOverlayOpen]);
+  }, [searchOverlayOpen, menuOpen]);
 
   useEffect(() => {
     const handleEsc = (e) => {
-      if (e.key === 'Escape' && searchOverlayOpen) {
-        setSearchOverlayOpen(false);
+      if (e.key === 'Escape') {
+        if (searchOverlayOpen) {
+          setSearchOverlayOpen(false);
+        }
+        if (menuOpen) {
+          setMenuOpen(false);
+        }
       }
     };
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
-  }, [searchOverlayOpen]);
+  }, [searchOverlayOpen, menuOpen]);
 
   return (
     <>
@@ -131,11 +136,11 @@ export default function Navbar() {
         }`}
         style={{ fontFamily: 'Roboto, sans-serif' }}
       >
-        <Link href="/" className="flex items-center space-x-3">
+        <Link href="/" className="flex items-center space-x-3 flex-shrink-0">
           <img
             src="https://convoytravels.pk/wp-content/uploads/2021/07/CONVAY-TRAVELS.png"
             alt="Logo"
-            className="w-36"
+            className="w-28 sm:w-32 md:w-36 h-auto"
           />
         </Link>
 
@@ -239,53 +244,72 @@ export default function Navbar() {
         </div>
 
         <button
-          className="md:hidden text-2xl text-[#0d1b2a] focus:outline-none"
+          className="md:hidden text-2xl text-[#0d1b2a] focus:outline-none z-50 relative"
           onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle menu"
         >
           {menuOpen ? <FaTimes /> : <FaBars />}
         </button>
       </header>
 
+      {/* Mobile Menu Backdrop */}
+      {menuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[29] md:hidden"
+          onClick={() => setMenuOpen(false)}
+        />
+      )}
+
+      {/* Mobile Menu Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full w-64 bg-[#0d1b2a] text-white z-30 transform ${
+        className={`fixed top-0 left-0 h-full w-72 sm:w-80 bg-gradient-to-b from-[#0d1b2a] to-[#1a2650] text-white z-30 transform ${
           menuOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 ease-in-out`}
+        } transition-transform duration-300 ease-out shadow-2xl md:hidden`}
       >
-        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-700">
-          <Link href="/" onClick={() => setMenuOpen(false)}>
+        <div className="flex justify-between items-center px-6 py-5 border-b border-gray-700/50">
+          <Link href="/" onClick={() => setMenuOpen(false)} className="flex items-center">
             <img
               src="https://convoytravels.pk/wp-content/uploads/2021/07/CONVAY-TRAVELS.png"
               alt="Logo"
-              className="w-32"
+              className="w-28 sm:w-32 h-auto"
             />
           </Link>
           <button
             onClick={() => setMenuOpen(false)}
-            className="text-white text-2xl"
+            className="text-white text-2xl hover:text-gray-300 transition-colors p-2"
+            aria-label="Close menu"
           >
             <FaTimes />
           </button>
         </div>
-        <nav className="flex flex-col mt-6 space-y-4 px-6">
-          <Link href="/" className="hover:text-blue-400" onClick={() => setMenuOpen(false)}>
+        <nav className="flex flex-col mt-8 space-y-1 px-6 overflow-y-auto flex-1 pb-24">
+          <Link 
+            href="/" 
+            className="px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-300 hover:translate-x-1" 
+            onClick={() => setMenuOpen(false)}
+          >
             Home
           </Link>
-          <Link href="/about" className="hover:text-blue-400" onClick={() => setMenuOpen(false)}>
+          <Link 
+            href="/about" 
+            className="px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-300 hover:translate-x-1" 
+            onClick={() => setMenuOpen(false)}
+          >
             About
           </Link>
           <div>
             <button 
-              className="flex items-center justify-between w-full hover:text-blue-400"
+              className="flex items-center justify-between w-full px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-300 hover:translate-x-1"
               onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)}
             >
               <span>Vehicle Types</span>
-              <FaChevronDown className={`text-xs transition-transform duration-200 ${mobileDropdownOpen ? 'rotate-180' : ''}`} />
+              <FaChevronDown className={`text-xs transition-transform duration-300 ${mobileDropdownOpen ? 'rotate-180' : ''}`} />
             </button>
-            {mobileDropdownOpen && (
-              <div className="ml-4 mt-2 space-y-2">
+            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${mobileDropdownOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+              <div className="ml-4 mt-2 space-y-1 pb-2">
                 <Link 
                   href="/vehicle-types?category=Economy" 
-                  className="block hover:text-blue-400" 
+                  className="block px-4 py-2 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-400 hover:translate-x-1" 
                   onClick={() => {
                     setMenuOpen(false);
                     setMobileDropdownOpen(false);
@@ -295,7 +319,7 @@ export default function Navbar() {
                 </Link>
                 <Link 
                   href="/vehicle-types?category=Standard" 
-                  className="block hover:text-blue-400" 
+                  className="block px-4 py-2 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-400 hover:translate-x-1" 
                   onClick={() => {
                     setMenuOpen(false);
                     setMobileDropdownOpen(false);
@@ -305,7 +329,7 @@ export default function Navbar() {
                 </Link>
                 <Link 
                   href="/vehicle-types?category=Comfort" 
-                  className="block hover:text-blue-400" 
+                  className="block px-4 py-2 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-400 hover:translate-x-1" 
                   onClick={() => {
                     setMenuOpen(false);
                     setMobileDropdownOpen(false);
@@ -315,7 +339,7 @@ export default function Navbar() {
                 </Link>
                 <Link 
                   href="/vehicle-types?category=Business" 
-                  className="block hover:text-blue-400" 
+                  className="block px-4 py-2 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-400 hover:translate-x-1" 
                   onClick={() => {
                     setMenuOpen(false);
                     setMobileDropdownOpen(false);
@@ -325,7 +349,7 @@ export default function Navbar() {
                 </Link>
                 <Link 
                   href="/vehicle-types?category=Luxury Vehicle" 
-                  className="block hover:text-blue-400" 
+                  className="block px-4 py-2 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-400 hover:translate-x-1" 
                   onClick={() => {
                     setMenuOpen(false);
                     setMobileDropdownOpen(false);
@@ -335,7 +359,7 @@ export default function Navbar() {
                 </Link>
                 <Link 
                   href="/vehicle-types?category=Vans & Buses" 
-                  className="block hover:text-blue-400" 
+                  className="block px-4 py-2 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-400 hover:translate-x-1" 
                   onClick={() => {
                     setMenuOpen(false);
                     setMobileDropdownOpen(false);
@@ -344,20 +368,28 @@ export default function Navbar() {
                   Vans & Buses
                 </Link>
               </div>
-            )}
+            </div>
           </div>
-          <Link href="/travel" className="hover:text-blue-400" onClick={() => setMenuOpen(false)}>
+          <Link 
+            href="/travel" 
+            className="px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-300 hover:translate-x-1" 
+            onClick={() => setMenuOpen(false)}
+          >
             Travel
           </Link>
-          <Link href="/contact" className="hover:text-blue-400" onClick={() => setMenuOpen(false)}>
+          <Link 
+            href="/contact" 
+            className="px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-300 hover:translate-x-1" 
+            onClick={() => setMenuOpen(false)}
+          >
             Contact Us
           </Link>
         </nav>
 
-        <div className="absolute bottom-8 w-full px-6">
-          <button className="phone-ring-button phone-ring-center w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg flex items-center justify-center space-x-2 relative">
+        <div className="absolute bottom-6 sm:bottom-8 left-0 right-0 px-6">
+          <button className="phone-ring-button phone-ring-center w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 py-3 rounded-lg flex items-center justify-center space-x-2 relative shadow-lg">
             <FaPhoneAlt className="phone-icon" />
-            <span>+92 328 1456456</span>
+            <span className="font-semibold">+92 328 1456456</span>
           </button>
         </div>
       </div>

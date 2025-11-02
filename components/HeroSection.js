@@ -107,7 +107,7 @@ export default function HeroSection() {
           )}
         </h2>
         <p className="text-md md:text-lg font-semibold mb-0">
-          "Without Driver Services available for bookings of 7 days or more"
+          &quot;Without Driver Services available for bookings of 7 days or more&quot;
         </p>
         <p className="text-md md:text-lg font-normal mb-0">
           Pay at pickup, enjoy free cancellation, and rent without a deposit!
