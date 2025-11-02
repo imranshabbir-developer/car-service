@@ -1,6 +1,4 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import FloatingSocialBar from "@/components/FloatingSocialBar";
+import ConditionalLayout from "@/components/ConditionalLayout";
 import "./globals.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -16,10 +14,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <Navbar />
-        {children}
-        <Footer />
-        <FloatingSocialBar />
+        <ConditionalLayout>{children}</ConditionalLayout>
       </body>
     </html>
   );
