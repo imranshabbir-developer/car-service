@@ -1,0 +1,92 @@
+/* Perfect Driver Card Ripple Effect */
+.vehicle-card-bottom {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.vehicle-card-bottom::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.1) 40%, transparent 70%);
+  transform: translate(-50%, -50%);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), height 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s ease-out;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.vehicle-card-bottom::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.08) 40%, transparent 70%);
+  transform: translate(-50%, -50%);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.15s, height 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.15s, opacity 0.8s ease-out 0.15s;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.vehicle-card-bottom:hover::before {
+  width: 400px;
+  height: 400px;
+  opacity: 0;
+}
+
+.vehicle-card-bottom:hover::after {
+  width: 400px;
+  height: 400px;
+  opacity: 0;
+}
+
+.vehicle-card-bottom-text {
+  position: relative;
+  z-index: 1;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s ease-out, letter-spacing 0.4s ease-out;
+}
+
+.vehicle-card-bottom:hover .vehicle-card-bottom-text {
+  transform: translateY(-3px) scale(1.05);
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+/* Elegant Card Enhancements */
+.vehicle-card {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.vehicle-card:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(13, 27, 42, 0.1);
+}
+
+.vehicle-card-image-container {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+}
+
+.vehicle-card-image-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(13, 27, 42, 0.03) 100%);
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+  pointer-events: none;
+}
+
+.vehicle-card:hover .vehicle-card-image-container::after {
+  opacity: 1;
+}
+

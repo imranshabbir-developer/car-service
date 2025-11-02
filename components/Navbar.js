@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { FaPhoneAlt, FaBars, FaTimes, FaChevronDown } from "react-icons/fa";
+import { FaPhoneAlt, FaBars, FaTimes, FaChevronDown, FaSearch } from "react-icons/fa";
 import "./navbar-hover.css";
 
 const NavLinkHover = ({ href, children, className = "" }) => {
@@ -88,6 +88,7 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [searchOverlayOpen, setSearchOverlayOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -98,6 +99,27 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (searchOverlayOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [searchOverlayOpen]);
+
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape' && searchOverlayOpen) {
+        setSearchOverlayOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [searchOverlayOpen]);
 
   return (
     <>
@@ -150,7 +172,9 @@ export default function Navbar() {
             </Link>
             {dropdownOpen && (
               <div 
-                className="absolute top-full left-0 w-48 z-50 pt-2 mt-1"
+                className="absolute top-full left-0 w-48 z-50 pt-3 -mt-1"
+                onMouseEnter={() => setDropdownOpen(true)}
+                onMouseLeave={() => setDropdownOpen(false)}
               >
                 <div className="bg-white rounded-lg shadow-lg py-2">
                   <RippleLink 
@@ -201,10 +225,16 @@ export default function Navbar() {
           </NavLinkHover>
         </nav>
 
-        <div className="hidden md:flex">
-          <button className="bg-[#0d1b2a] text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-[#112d4e]">
-            <FaPhoneAlt />
+        <div className="hidden md:flex items-center gap-3">
+          <button className="phone-ring-button bg-[#0d1b2a] text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-[#112d4e] relative">
+            <FaPhoneAlt className="phone-icon" />
             <span>+92 328 1456456</span>
+          </button>
+          <button 
+            onClick={() => setSearchOverlayOpen(true)}
+            className="text-gray-800 hover:text-[#1a2b5c] transition-colors p-2"
+          >
+            <FaSearch className="w-5 h-5" />
           </button>
         </div>
 
@@ -325,12 +355,116 @@ export default function Navbar() {
         </nav>
 
         <div className="absolute bottom-8 w-full px-6">
-          <button className="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg flex items-center justify-center space-x-2">
-            <FaPhoneAlt />
+          <button className="phone-ring-button phone-ring-center w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-lg flex items-center justify-center space-x-2 relative">
+            <FaPhoneAlt className="phone-icon" />
             <span>+92 328 1456456</span>
           </button>
         </div>
       </div>
+
+      {/* Search Overlay */}
+      {searchOverlayOpen && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setSearchOverlayOpen(false);
+            }
+          }}
+        >
+          {/* Dark Overlay Background */}
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+          
+          {/* Close Button */}
+          <button
+            onClick={() => setSearchOverlayOpen(false)}
+            className="absolute top-6 right-6 sm:top-8 sm:right-8 z-[60] text-white hover:text-gray-300 transition-colors"
+            aria-label="Close search"
+          >
+            <FaTimes className="w-8 h-8 sm:w-10 sm:h-10" />
+          </button>
+
+          {/* Search Form */}
+          <div 
+            className="relative bg-white rounded-lg shadow-2xl w-full max-w-md mx-4 p-6 sm:p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <form className="space-y-4 sm:space-y-5" onSubmit={(e) => {
+              e.preventDefault();
+              // Handle form submission here
+              setSearchOverlayOpen(false);
+            }}>
+              {/* Product Name */}
+              <div>
+                <label htmlFor="productName" className="block text-sm font-medium text-gray-700 mb-2">
+                  Product Name
+                </label>
+                <input
+                  type="text"
+                  id="productName"
+                  name="productName"
+                  placeholder="Enter product name"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent outline-none transition-all"
+                />
+              </div>
+
+              {/* Select Category */}
+              <div>
+                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+                  Select Category
+                </label>
+                <select
+                  id="category"
+                  name="category"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent outline-none transition-all appearance-none bg-white cursor-pointer"
+                >
+                  <option value="">Select a category</option>
+                  <option value="Economy">Economy</option>
+                  <option value="Standard">Standard</option>
+                  <option value="Comfort">Comfort</option>
+                  <option value="Business">Business</option>
+                  <option value="Luxury Vehicle">Luxury Vehicle</option>
+                  <option value="Vans & Buses">Vans & Buses</option>
+                </select>
+              </div>
+
+              {/* Pick-up Date */}
+              <div>
+                <label htmlFor="pickupDate" className="block text-sm font-medium text-gray-700 mb-2">
+                  Pick-up Date
+                </label>
+                <input
+                  type="date"
+                  id="pickupDate"
+                  name="pickupDate"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent outline-none transition-all"
+                />
+              </div>
+
+              {/* Drop-off Date */}
+              <div>
+                <label htmlFor="dropoffDate" className="block text-sm font-medium text-gray-700 mb-2">
+                  Drop-off Date
+                </label>
+                <input
+                  type="date"
+                  id="dropoffDate"
+                  name="dropoffDate"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent outline-none transition-all"
+                />
+              </div>
+
+              {/* Search Button */}
+              <button
+                type="submit"
+                className="w-full bg-[#1a2b5c] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#0d1b2a] transition-colors duration-300 mt-2"
+              >
+                Search
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   );
 }

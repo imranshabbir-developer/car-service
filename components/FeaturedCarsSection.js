@@ -1,4 +1,5 @@
 import { FaUser, FaSnowflake, FaCogs } from "react-icons/fa";
+import "./featured-cars.css";
 
 export default function FeaturedCarsSection() {
   const cars = [
@@ -159,38 +160,40 @@ export default function FeaturedCarsSection() {
         </button>
       </div>
 
-      <div className="bg-white py-12 px-6 md:px-20 max-w-7xl mx-auto">
-        <div className="grid  grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+      <div className="bg-white py-12 px-6 md:px-20 max-w-7xl mx-auto" style={{ fontFamily: 'Roboto, sans-serif' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
           {cars.map((car, index) => (
             <div
               key={index}
-              className="border-2 shadow-lg rounded-md overflow-hidden bg-white hover:shadow-2xl transition duration-300"
+              className="featured-car-card border border-gray-200 shadow-lg rounded-xl overflow-hidden bg-white group"
             >
-              <div className=" w-full h-[250px] flex items-center justify-center bg-white">
+              <div className="featured-car-image-container w-full h-[280px] sm:h-[260px] lg:h-[280px] flex items-center justify-center">
                 <img
                   src={car.image}
                   alt={car.name}
-                  className="max-h-[200px] object-contain"
+                  className="max-h-[220px] object-contain transition-transform duration-500 ease-out"
                 />
               </div>
-              <div className="p-6">
-                <h3 className="text-lg font-semibold text-[#0d1b2a]">
+              <div className="p-6 sm:p-7">
+                <h3 className="text-xl font-bold text-[#0d1b2a] mb-2 leading-tight">
                   {car.name}
                 </h3>
-                <p className="text-[#0d1b2a] font-medium mb-3">{car.price}</p>
-                <ul className="text-gray-600 text-sm space-y-1 mb-5">
+                <p className="text-[#1a2b5c] font-semibold text-lg mb-4">{car.price}</p>
+                <ul className="text-gray-600 text-sm space-y-2 mb-6">
                   <li className="flex items-center gap-2">
-                    <FaUser /> 4 Seats
+                    <FaUser className="text-[#1a2b5c]" /> 4 Seats
                   </li>
                   <li className="flex items-center gap-2">
-                    <FaSnowflake /> Air Conditioning
+                    <FaSnowflake className="text-[#1a2b5c]" /> Air Conditioning
                   </li>
                   <li className="flex items-center gap-2">
-                    <FaCogs /> Automatic gearbox
+                    <FaCogs className="text-[#1a2b5c]" /> Automatic gearbox
                   </li>
                 </ul>
-                <button className="w-full bg-[#1a2b5c] text-white py-2 rounded-sm hover:bg-[#0d1b2a] transition">
-                  Book Now
+                <button className="book-now-button w-full bg-[#1a2b5c] text-white py-3 rounded-lg hover:bg-[#0d1b2a] transition-colors duration-300 font-semibold relative">
+                  <span className="book-now-button-text inline-block">
+                    Book Now
+                  </span>
                 </button>
               </div>
             </div>

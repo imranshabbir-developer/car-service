@@ -125,3 +125,77 @@
   }
 }
 
+/* Phone Ringing Animation */
+.phone-ring-button {
+  position: relative;
+  overflow: visible;
+}
+
+.phone-icon {
+  animation: phoneRing 2s ease-in-out infinite;
+  transform-origin: center center;
+  position: relative;
+  z-index: 1;
+}
+
+.phone-ring-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0.75rem;
+  transform: translate(-50%, -50%);
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  animation: phoneRipple 2s ease-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.phone-ring-button.phone-ring-center::before {
+  left: calc(50% - 3.5rem);
+}
+
+.phone-ring-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0.75rem;
+  transform: translate(-50%, -50%);
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  animation: phoneRipple 2s ease-out 0.5s infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.phone-ring-button.phone-ring-center::after {
+  left: calc(50% - 3.5rem);
+}
+
+@keyframes phoneRing {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: rotate(-10deg);
+  }
+  20%, 40%, 60%, 80% {
+    transform: rotate(10deg);
+  }
+}
+
+@keyframes phoneRipple {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 0;
+  }
+}
+

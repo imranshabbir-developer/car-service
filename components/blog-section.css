@@ -1,0 +1,61 @@
+/* Blog Read More Button Ripple Effect */
+.read-more-button {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.read-more-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.15) 40%, transparent 70%);
+  transform: translate(-50%, -50%);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), height 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s ease-out;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.read-more-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.12) 40%, transparent 70%);
+  transform: translate(-50%, -50%);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.15s, height 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.15s, opacity 0.8s ease-out 0.15s;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.read-more-button:hover::before {
+  width: 300px;
+  height: 300px;
+  opacity: 0;
+}
+
+.read-more-button:hover::after {
+  width: 300px;
+  height: 300px;
+  opacity: 0;
+}
+
+.read-more-button-text {
+  position: relative;
+  z-index: 1;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), letter-spacing 0.4s ease-out;
+}
+
+.read-more-button:hover .read-more-button-text {
+  transform: translateY(-2px) scale(1.02);
+  letter-spacing: 0.5px;
+}
+
