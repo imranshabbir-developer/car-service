@@ -1,13 +1,26 @@
 // Car data organized by categories
 export const carsData = [
   {
+    id: 1,
     name: "Suzuki Cultus",
     price: "Rs 4,000",
     priceFull: "Rs 4,000 /perday",
+    priceNumber: 4000,
     image: "https://convoytravels.pk/wp-content/uploads/2025/05/Suzuki-Cultus.jpg",
+    images: [
+      "https://convoytravels.pk/wp-content/uploads/2025/05/Suzuki-Cultus.jpg",
+      "https://convoytravels.pk/wp-content/uploads/2025/05/Suzuki-Cultus.jpg",
+      "https://convoytravels.pk/wp-content/uploads/2025/05/Suzuki-Cultus.jpg",
+    ],
     category: "Economy",
     location: "Lahore, Punjab, Pakistan",
     featured: true,
+    selfDriverPrice: 500,
+    outOfStationPrice: 1000,
+    availability: "Weekdays",
+    seats: 4,
+    transmission: "Automatic",
+    airConditioning: true,
   },
   {
     name: "Suzuki Alto",
@@ -209,14 +222,43 @@ export const carsData = [
   },
 ];
 
+// Helper function to enrich car data with defaults
+const enrichCar = (car, index) => {
+  const priceNumber = car.priceNumber || parseInt(car.price.replace(/[^0-9]/g, '')) || 0;
+  return {
+    ...car,
+    id: car.id || index + 1,
+    priceNumber: priceNumber,
+    images: car.images || [car.image, car.image, car.image],
+    selfDriverPrice: car.selfDriverPrice || 500,
+    outOfStationPrice: car.outOfStationPrice || 1000,
+    availability: car.availability || 'Weekdays',
+    seats: car.seats || 4,
+    transmission: car.transmission || 'Automatic',
+    airConditioning: car.airConditioning !== undefined ? car.airConditioning : true,
+  };
+};
+
+// Enrich all cars with IDs and default values
+const enrichedCarsData = carsData.map((car, index) => enrichCar(car, index));
+
+// Export enriched data
+export { enrichedCarsData as cars };
+
 // Helper function to get cars by category
 export const getCarsByCategory = (category) => {
-  if (!category) return carsData;
-  return carsData.filter(car => car.category === category);
+  if (!category) return enrichedCarsData;
+  return enrichedCarsData.filter(car => car.category === category);
 };
 
 // Helper function to get all unique categories
 export const getCategories = () => {
-  return [...new Set(carsData.map(car => car.category))];
+  return [...new Set(enrichedCarsData.map(car => car.category))];
+};
+
+// Helper function to get car by ID
+export const getCarById = (id) => {
+  const car = enrichedCarsData.find(car => car.id === parseInt(id));
+  return car || null;
 };
 

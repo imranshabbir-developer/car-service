@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import FloatingSocialBar from "@/components/FloatingSocialBar";
 import "./globals.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -18,6 +19,7 @@ export default function RootLayout({ children }) {
         <Navbar />
         {children}
         <Footer />
+        <FloatingSocialBar />
       </body>
     </html>
   );
