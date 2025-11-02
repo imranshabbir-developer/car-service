@@ -1,0 +1,127 @@
+.nav-link-hover {
+  --baseColor: transparent;
+  --fillerColor: #1a2650;
+  --baseTextColor: #1f2937;
+  --hoverTextColor: #ffffff;
+
+  appearance: none;
+  border: 0;
+  background: var(--baseColor);
+  color: var(--baseTextColor);
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  transition: none;
+  text-decoration: none;
+  position: relative;
+  font-weight: 500;
+  display: inline-flex;
+  cursor: pointer;
+  min-width: fit-content;
+  text-align: center;
+}
+
+.nav-link-hover.nav-home {
+  min-width: 70px;
+}
+
+.nav-link-hover.nav-about {
+  min-width: 75px;
+}
+
+.nav-link-hover.nav-vehicle-types {
+  min-width: 130px;
+}
+
+.nav-link-hover.nav-travel {
+  min-width: 75px;
+}
+
+.nav-link-hover.nav-contact {
+  min-width: 110px;
+}
+
+.nav-link-hover .nav-link-text {
+  display: block;
+  transform: translate(0, 0);
+  z-index: 2;
+  position: relative;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.nav-link-hover .nav-link-filler {
+  background: var(--fillerColor);
+  position: absolute;
+  width: 150%;
+  height: 200%;
+  border-radius: 50%;
+  top: -50%;
+  left: -25%;
+  transform: translate3d(0, 75%, 0);
+  z-index: 1;
+}
+
+.nav-link-hover.hover-in .nav-link-text {
+  animation: navTextHoverIn 0.3s forwards;
+}
+
+.nav-link-hover.hover-in .nav-link-filler {
+  animation: navFillerHoverIn 0.3s forwards;
+}
+
+.nav-link-hover.hover-out .nav-link-text {
+  animation: navTextHoverOut 0.3s forwards;
+}
+
+.nav-link-hover.hover-out .nav-link-filler {
+  animation: navFillerHoverOut 0.3s forwards;
+}
+
+@keyframes navTextHoverIn {
+  0% {
+    opacity: 0;
+  }
+  1% {
+    transform: translate(0, -100%);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(0, 0);
+    color: var(--hoverTextColor);
+  }
+}
+
+@keyframes navTextHoverOut {
+  0% {
+    opacity: 0;
+  }
+  1% {
+    transform: translate(0, 100%);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes navFillerHoverIn {
+  0% {
+    transform: translate3d(0, 75%, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes navFillerHoverOut {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, -75%, 0);
+  }
+}
+

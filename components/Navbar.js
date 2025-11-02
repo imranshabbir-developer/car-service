@@ -3,6 +3,34 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { FaPhoneAlt, FaBars, FaTimes, FaChevronDown } from "react-icons/fa";
+import "./navbar-hover.css";
+
+const NavLinkHover = ({ href, children, className = "" }) => {
+  const [hoverState, setHoverState] = useState('');
+
+  const handleMouseEnter = () => {
+    setHoverState('hover-in');
+  };
+
+  const handleMouseLeave = () => {
+    setHoverState('hover-out');
+    setTimeout(() => {
+      setHoverState('');
+    }, 300);
+  };
+
+  return (
+    <Link
+      href={href}
+      className={`nav-link-hover ${className} ${hoverState}`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <span className="nav-link-filler"></span>
+      <span className="nav-link-text">{children}</span>
+    </Link>
+  );
+};
 
 const RippleLink = ({ href, children, className }) => {
   const [ripples, setRipples] = useState([]);
@@ -79,6 +107,7 @@ export default function Navbar() {
             ? 'bg-white shadow-sm' 
             : 'bg-white/70 backdrop-blur-sm'
         }`}
+        style={{ fontFamily: 'Roboto, sans-serif' }}
       >
         <Link href="/" className="flex items-center space-x-3">
           <img
@@ -88,62 +117,74 @@ export default function Navbar() {
           />
         </Link>
 
-        <nav className="hidden md:flex space-x-8 text-gray-800 font-medium">
-          <Link href="/" className="hover:text-blue-700">
+        <nav className="hidden md:flex space-x-4 lg:space-x-5 text-gray-800 font-medium">
+          <NavLinkHover href="/" className="nav-home">
             Home
-          </Link>
-          <Link href="/about" className="hover:text-blue-700">
+          </NavLinkHover>
+          <NavLinkHover href="/about" className="nav-about">
             About
-          </Link>
+          </NavLinkHover>
           <div 
-            className="relative pb-2"
+            className="relative"
             onMouseEnter={() => setDropdownOpen(true)}
             onMouseLeave={() => setDropdownOpen(false)}
           >
             <Link 
               href="/vehicle-types" 
-              className="hover:text-blue-700 flex items-center gap-1"
+              className="nav-link-hover nav-vehicle-types inline-flex items-center justify-center gap-1"
+              onMouseEnter={(e) => {
+                e.currentTarget.classList.remove('hover-out');
+                e.currentTarget.classList.add('hover-in');
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.classList.remove('hover-in');
+                e.currentTarget.classList.add('hover-out');
+                setTimeout(() => {
+                  e.currentTarget.classList.remove('hover-out');
+                }, 300);
+              }}
             >
-              Vehicle Types
-              <FaChevronDown className={`text-xs transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
+              <span className="nav-link-filler"></span>
+              <span className="nav-link-text">Vehicle Types</span>
+              <FaChevronDown className={`text-xs transition-transform duration-200 relative z-10 ${dropdownOpen ? 'rotate-180' : ''}`} />
             </Link>
             {dropdownOpen && (
               <div 
-                className="absolute top-full left-0 w-48 z-50 pt-2"
+                className="absolute top-full left-0 w-48 z-50 pt-2 mt-1"
               >
                 <div className="bg-white rounded-lg shadow-lg py-2">
                   <RippleLink 
-                    href="/vehicle-types" 
+                    href="/vehicle-types?category=Economy" 
                     className="block px-4 py-2 text-gray-800 hover:bg-gray-50 transition-colors"
                   >
                     Economy
                   </RippleLink>
                   <RippleLink 
-                    href="/vehicle-types" 
+                    href="/vehicle-types?category=Standard" 
                     className="block px-4 py-2 text-gray-800 hover:bg-gray-50 transition-colors"
                   >
                     Standard
                   </RippleLink>
                   <RippleLink 
-                    href="/vehicle-types" 
+                    href="/vehicle-types?category=Comfort" 
                     className="block px-4 py-2 text-gray-800 hover:bg-gray-50 transition-colors"
                   >
                     Comfort
                   </RippleLink>
                   <RippleLink 
-                    href="/vehicle-types" 
+                    href="/vehicle-types?category=Business" 
                     className="block px-4 py-2 text-gray-800 hover:bg-gray-50 transition-colors"
                   >
                     Business
                   </RippleLink>
                   <RippleLink 
-                    href="/vehicle-types" 
+                    href="/vehicle-types?category=Luxury Vehicle" 
                     className="block px-4 py-2 text-gray-800 hover:bg-gray-50 transition-colors"
                   >
                     Luxury Vehicle
                   </RippleLink>
                   <RippleLink 
-                    href="/vehicle-types" 
+                    href="/vehicle-types?category=Vans & Buses" 
                     className="block px-4 py-2 text-gray-800 hover:bg-gray-50 transition-colors"
                   >
                     Vans & Buses
@@ -152,12 +193,12 @@ export default function Navbar() {
               </div>
             )}
           </div>
-          <Link href="/travel" className="hover:text-blue-700">
+          <NavLinkHover href="/travel" className="nav-travel">
             Travel
-          </Link>
-          <Link href="/contact" className="hover:text-blue-700">
+          </NavLinkHover>
+          <NavLinkHover href="/contact" className="nav-contact">
             Contact Us
-          </Link>
+          </NavLinkHover>
         </nav>
 
         <div className="hidden md:flex">
@@ -213,7 +254,7 @@ export default function Navbar() {
             {mobileDropdownOpen && (
               <div className="ml-4 mt-2 space-y-2">
                 <Link 
-                  href="/vehicle-types" 
+                  href="/vehicle-types?category=Economy" 
                   className="block hover:text-blue-400" 
                   onClick={() => {
                     setMenuOpen(false);
@@ -223,7 +264,7 @@ export default function Navbar() {
                   Economy
                 </Link>
                 <Link 
-                  href="/vehicle-types" 
+                  href="/vehicle-types?category=Standard" 
                   className="block hover:text-blue-400" 
                   onClick={() => {
                     setMenuOpen(false);
@@ -233,7 +274,7 @@ export default function Navbar() {
                   Standard
                 </Link>
                 <Link 
-                  href="/vehicle-types" 
+                  href="/vehicle-types?category=Comfort" 
                   className="block hover:text-blue-400" 
                   onClick={() => {
                     setMenuOpen(false);
@@ -243,7 +284,7 @@ export default function Navbar() {
                   Comfort
                 </Link>
                 <Link 
-                  href="/vehicle-types" 
+                  href="/vehicle-types?category=Business" 
                   className="block hover:text-blue-400" 
                   onClick={() => {
                     setMenuOpen(false);
@@ -253,7 +294,7 @@ export default function Navbar() {
                   Business
                 </Link>
                 <Link 
-                  href="/vehicle-types" 
+                  href="/vehicle-types?category=Luxury Vehicle" 
                   className="block hover:text-blue-400" 
                   onClick={() => {
                     setMenuOpen(false);
@@ -263,7 +304,7 @@ export default function Navbar() {
                   Luxury Vehicle
                 </Link>
                 <Link 
-                  href="/vehicle-types" 
+                  href="/vehicle-types?category=Vans & Buses" 
                   className="block hover:text-blue-400" 
                   onClick={() => {
                     setMenuOpen(false);
