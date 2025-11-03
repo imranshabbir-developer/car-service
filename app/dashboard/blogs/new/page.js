@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import {
@@ -17,7 +17,7 @@ import { API_BASE_URL } from '@/config/api';
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 import 'react-quill-new/dist/quill.snow.css';
 
-export default function NewBlogPage() {
+function NewBlogPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const editId = searchParams.get('edit');
@@ -426,3 +426,20 @@ export default function NewBlogPage() {
   );
 }
 
+// Loading fallback component
+function LoadingFallback() {
+  return (
+    <div className="flex justify-center items-center min-h-[60vh]">
+      <FaSpinner className="animate-spin text-[#1a2b5c] text-4xl" />
+    </div>
+  );
+}
+
+// Main export with Suspense boundary
+export default function NewBlogPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <NewBlogPageContent />
+    </Suspense>
+  );
+}
