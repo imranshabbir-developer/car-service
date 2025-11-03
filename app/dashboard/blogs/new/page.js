@@ -1,6 +1,9 @@
 import { Suspense } from 'react';
 import NewBlogPageClient from './NewBlogPageClient';
 
+// Force dynamic rendering - prevents static generation
+export const dynamic = 'force-dynamic';
+
 // Loading fallback component
 function LoadingFallback() {
   return (
