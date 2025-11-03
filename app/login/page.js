@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaArrowLeft } from 'react-icons/fa';
+import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaArrowLeft, FaCheckCircle, FaExclamationCircle, FaTimes, FaSpinner } from 'react-icons/fa';
+
+const API_BASE_URL = 'http://localhost:5000/api/v1';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -13,6 +15,8 @@ export default function LoginPage() {
     rememberMe: false,
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [notification, setNotification] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -22,15 +26,75 @@ export default function LoginPage() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const showNotification = (message, type = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 3000);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login attempt:', formData);
-    // Redirect to dashboard on any login attempt (dummy authentication)
-    router.push('/dashboard');
+    
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_BASE_URL}/users/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        // Store token in localStorage
+        localStorage.setItem('token', data.data.token);
+        localStorage.setItem('user', JSON.stringify(data.data.user));
+        
+        showNotification('Login successful!', 'success');
+        
+        // Redirect to dashboard after short delay
+        setTimeout(() => {
+          router.push('/dashboard');
+        }, 500);
+      } else {
+        showNotification(data.message || 'Login failed', 'error');
+      }
+    } catch (error) {
+      showNotification('Error connecting to server', 'error');
+      console.error('Login error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center py-8 sm:py-12 px-4 sm:px-6" style={{ fontFamily: 'Roboto, sans-serif' }}>
+      {/* Notification Toast */}
+      {notification && (
+        <div
+          className={`fixed top-4 right-4 z-50 flex items-center space-x-3 px-6 py-4 rounded-lg shadow-lg ${
+            notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+          } text-white animate-slide-in`}
+        >
+          {notification.type === 'success' ? (
+            <FaCheckCircle className="text-xl" />
+          ) : (
+            <FaExclamationCircle className="text-xl" />
+          )}
+          <span className="font-medium">{notification.message}</span>
+          <button
+            onClick={() => setNotification(null)}
+            className="ml-2 hover:opacity-70"
+          >
+            <FaTimes className="text-lg" />
+          </button>
+        </div>
+      )}
+
       <div className="w-full max-w-md">
         {/* Back to Home Link */}
         <Link
@@ -134,9 +198,17 @@ export default function LoginPage() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-[#1a2b5c] text-white py-2.5 sm:py-3 rounded-lg hover:bg-[#0d1b2a] transition-colors duration-300 font-semibold text-sm sm:text-base shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all mt-1"
+                disabled={loading}
+                className="w-full bg-[#1a2b5c] text-white py-2.5 sm:py-3 rounded-lg hover:bg-[#0d1b2a] transition-colors duration-300 font-semibold text-sm sm:text-base shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all mt-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
-                Sign In
+                {loading ? (
+                  <span className="flex items-center justify-center">
+                    <FaSpinner className="animate-spin mr-2" />
+                    Signing In...
+                  </span>
+                ) : (
+                  'Sign In'
+                )}
               </button>
             </form>
           </div>

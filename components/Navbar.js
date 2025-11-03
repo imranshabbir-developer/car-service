@@ -89,6 +89,7 @@ export default function Navbar() {
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchOverlayOpen, setSearchOverlayOpen] = useState(false);
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -98,6 +99,23 @@ export default function Navbar() {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Fetch categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/v1/categories');
+        const data = await response.json();
+        if (data.success && data.data.categories) {
+          setCategories(data.data.categories);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchCategories();
   }, []);
 
   useEffect(() => {
@@ -182,42 +200,15 @@ export default function Navbar() {
                 onMouseLeave={() => setDropdownOpen(false)}
               >
                 <div className="bg-white rounded-lg shadow-lg py-2">
-                  <RippleLink 
-                    href="/vehicle-types?category=Economy" 
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-50 transition-colors"
-                  >
-                    Economy
-                  </RippleLink>
-                  <RippleLink 
-                    href="/vehicle-types?category=Standard" 
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-50 transition-colors"
-                  >
-                    Standard
-                  </RippleLink>
-                  <RippleLink 
-                    href="/vehicle-types?category=Comfort" 
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-50 transition-colors"
-                  >
-                    Comfort
-                  </RippleLink>
-                  <RippleLink 
-                    href="/vehicle-types?category=Business" 
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-50 transition-colors"
-                  >
-                    Business
-                  </RippleLink>
-                  <RippleLink 
-                    href="/vehicle-types?category=Luxury Vehicle" 
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-50 transition-colors"
-                  >
-                    Luxury Vehicle
-                  </RippleLink>
-                  <RippleLink 
-                    href="/vehicle-types?category=Vans & Buses" 
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-50 transition-colors"
-                  >
-                    Vans & Buses
-                  </RippleLink>
+                  {categories.map((category) => (
+                    <RippleLink 
+                      key={category._id}
+                      href={`/vehicle-types?category=${encodeURIComponent(category.name)}`}
+                      className="block px-4 py-2 text-gray-800 hover:bg-gray-50 transition-colors"
+                    >
+                      {category.name}
+                    </RippleLink>
+                  ))}
                 </div>
               </div>
             )}
@@ -307,66 +298,19 @@ export default function Navbar() {
             </button>
             <div className={`overflow-hidden transition-all duration-300 ease-in-out ${mobileDropdownOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
               <div className="ml-4 mt-2 space-y-1 pb-2">
-                <Link 
-                  href="/vehicle-types?category=Economy" 
-                  className="block px-4 py-2 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-400 hover:translate-x-1" 
-                  onClick={() => {
-                    setMenuOpen(false);
-                    setMobileDropdownOpen(false);
-                  }}
-                >
-                  Economy
-                </Link>
-                <Link 
-                  href="/vehicle-types?category=Standard" 
-                  className="block px-4 py-2 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-400 hover:translate-x-1" 
-                  onClick={() => {
-                    setMenuOpen(false);
-                    setMobileDropdownOpen(false);
-                  }}
-                >
-                  Standard
-                </Link>
-                <Link 
-                  href="/vehicle-types?category=Comfort" 
-                  className="block px-4 py-2 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-400 hover:translate-x-1" 
-                  onClick={() => {
-                    setMenuOpen(false);
-                    setMobileDropdownOpen(false);
-                  }}
-                >
-                  Comfort
-                </Link>
-                <Link 
-                  href="/vehicle-types?category=Business" 
-                  className="block px-4 py-2 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-400 hover:translate-x-1" 
-                  onClick={() => {
-                    setMenuOpen(false);
-                    setMobileDropdownOpen(false);
-                  }}
-                >
-                  Business
-                </Link>
-                <Link 
-                  href="/vehicle-types?category=Luxury Vehicle" 
-                  className="block px-4 py-2 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-400 hover:translate-x-1" 
-                  onClick={() => {
-                    setMenuOpen(false);
-                    setMobileDropdownOpen(false);
-                  }}
-                >
-                  Luxury Vehicle
-                </Link>
-                <Link 
-                  href="/vehicle-types?category=Vans & Buses" 
-                  className="block px-4 py-2 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-400 hover:translate-x-1" 
-                  onClick={() => {
-                    setMenuOpen(false);
-                    setMobileDropdownOpen(false);
-                  }}
-                >
-                  Vans & Buses
-                </Link>
+                {categories.map((category) => (
+                  <Link 
+                    key={category._id}
+                    href={`/vehicle-types?category=${encodeURIComponent(category.name)}`}
+                    className="block px-4 py-2 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-400 hover:translate-x-1" 
+                    onClick={() => {
+                      setMenuOpen(false);
+                      setMobileDropdownOpen(false);
+                    }}
+                  >
+                    {category.name}
+                  </Link>
+                ))}
               </div>
             </div>
           </div>
@@ -451,12 +395,11 @@ export default function Navbar() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent outline-none transition-all appearance-none bg-white cursor-pointer"
                 >
                   <option value="">Select a category</option>
-                  <option value="Economy">Economy</option>
-                  <option value="Standard">Standard</option>
-                  <option value="Comfort">Comfort</option>
-                  <option value="Business">Business</option>
-                  <option value="Luxury Vehicle">Luxury Vehicle</option>
-                  <option value="Vans & Buses">Vans & Buses</option>
+                  {categories.map((category) => (
+                    <option key={category._id} value={category.name}>
+                      {category.name}
+                    </option>
+                  ))}
                 </select>
               </div>
 

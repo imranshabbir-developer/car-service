@@ -5,38 +5,22 @@ import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   FaTh,
-  FaCheckSquare,
-  FaCar,
-  FaCalendarAlt,
-  FaUsers,
-  FaUser,
-  FaDollarSign,
-  FaLink,
-  FaComments,
   FaBars,
   FaTimes,
   FaSearch,
   FaCog,
   FaBell,
-  FaChevronDown,
+  FaFolder,
 } from 'react-icons/fa';
 
 export default function DashboardLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [financialsOpen, setFinancialsOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
   const menuItems = [
     { icon: FaTh, label: 'Dashboard', path: '/dashboard', badge: null },
-    { icon: FaCheckSquare, label: 'Bookings', path: '/dashboard/bookings', badge: null },
-    { icon: FaCar, label: 'Units', path: '/dashboard/units', badge: null },
-    { icon: FaCalendarAlt, label: 'Calendar', path: '/dashboard/calendar', badge: null },
-    { icon: FaUsers, label: 'Clients', path: '/dashboard/clients', badge: null },
-    { icon: FaUser, label: 'Drivers', path: '/dashboard/drivers', badge: null },
-    { icon: FaDollarSign, label: 'Financials', path: '/dashboard/financials', badge: null, hasDropdown: true },
-    { icon: FaLink, label: 'Tracking', path: '/dashboard/tracking', badge: null },
-    { icon: FaComments, label: 'Messages', path: '/dashboard/messages', badge: 5 },
+    { icon: FaFolder, label: 'Categories', path: '/dashboard/categories', badge: null },
   ];
 
   const isActive = (path) => {
@@ -77,63 +61,20 @@ export default function DashboardLayout({ children }) {
           {/* Navigation */}
           <nav className="flex-1 overflow-y-auto p-4 space-y-1">
             {menuItems.map((item) => (
-              <div key={item.path}>
-                {item.hasDropdown ? (
-                  <div>
-                    <button
-                      onClick={() => setFinancialsOpen(!financialsOpen)}
-                      className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200 ${
-                        isActive(item.path)
-                          ? 'bg-white/20 text-white shadow-md'
-                          : 'text-white/80 hover:bg-white/10 hover:text-white'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-3">
-                        <item.icon className="w-5 h-5" />
-                        <span className="font-medium text-sm">{item.label}</span>
-                      </div>
-                      <FaChevronDown
-                        className={`w-4 h-4 text-white/70 transition-transform ${financialsOpen ? 'rotate-180' : ''}`}
-                      />
-                    </button>
-                    {financialsOpen && (
-                      <div className="ml-4 mt-1 space-y-1">
-                        <Link
-                          href="/dashboard/financials/revenue"
-                          className="block px-4 py-2 text-sm text-white/70 hover:bg-white/10 hover:text-white rounded-lg transition-colors"
-                        >
-                          Revenue
-                        </Link>
-                        <Link
-                          href="/dashboard/financials/expenses"
-                          className="block px-4 py-2 text-sm text-white/70 hover:bg-white/10 hover:text-white rounded-lg transition-colors"
-                        >
-                          Expenses
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <Link
-                    href={item.path}
-                    className={`flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200 ${
-                      isActive(item.path)
-                        ? 'bg-white/20 text-white shadow-md'
-                        : 'text-white/80 hover:bg-white/10 hover:text-white'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <item.icon className="w-5 h-5" />
-                      <span className="font-medium text-sm">{item.label}</span>
-                    </div>
-                    {item.badge && (
-                      <span className="bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                        {item.badge}
-                      </span>
-                    )}
-                  </Link>
-                )}
-              </div>
+              <Link
+                key={item.path}
+                href={item.path}
+                className={`flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200 ${
+                  isActive(item.path)
+                    ? 'bg-white/20 text-white shadow-md'
+                    : 'text-white/80 hover:bg-white/10 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center space-x-3">
+                  <item.icon className="w-5 h-5" />
+                  <span className="font-medium text-sm">{item.label}</span>
+                </div>
+              </Link>
             ))}
           </nav>
 
@@ -175,14 +116,7 @@ export default function DashboardLayout({ children }) {
               </button>
               <h1 className="text-xl sm:text-2xl font-bold text-[#1a2b5c]" style={{ fontFamily: 'Roboto, sans-serif' }}>
                 {pathname === '/dashboard' && 'Dashboard'}
-                {pathname?.includes('/bookings') && 'Bookings'}
-                {pathname?.includes('/units') && 'Units'}
-                {pathname?.includes('/calendar') && 'Calendar'}
-                {pathname?.includes('/clients') && 'Clients'}
-                {pathname?.includes('/drivers') && 'Drivers'}
-                {pathname?.includes('/financials') && 'Financials'}
-                {pathname?.includes('/tracking') && 'Tracking'}
-                {pathname?.includes('/messages') && 'Messages'}
+                {pathname?.includes('/categories') && 'Categories'}
               </h1>
             </div>
 

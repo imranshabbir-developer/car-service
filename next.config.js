@@ -15,6 +15,11 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'cdn.trustindex.io',
       },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '5000',
+      },
     ],
   },
 }
