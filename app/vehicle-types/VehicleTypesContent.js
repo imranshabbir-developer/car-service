@@ -2,10 +2,10 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { getCarsByCategory } from '@/data/cars';
 import VehicleCard from '@/components/VehicleCard';
 import VehicleCardList from '@/components/VehicleCardList';
-import { FaSearch, FaTh, FaList, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaSearch, FaTh, FaList, FaChevronLeft, FaChevronRight, FaSpinner } from 'react-icons/fa';
+import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
 
 export default function VehicleTypesContent() {
   const searchParams = useSearchParams();
@@ -14,21 +14,73 @@ export default function VehicleTypesContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewType, setViewType] = useState('grid'); // 'grid' or 'list'
   const [currentPage, setCurrentPage] = useState(1);
+  const [cars, setCars] = useState([]);
+  const [loading, setLoading] = useState(false);
   const itemsPerPage = 12;
+
+  // Fetch cars from API
+  useEffect(() => {
+    const fetchCars = async () => {
+      if (!category) return; // Only fetch if category is selected
+      
+      try {
+        setLoading(true);
+        const response = await fetch(`${API_BASE_URL}/cars`);
+        const data = await response.json();
+        
+        if (data.success && data.data.cars) {
+          // Transform API data to match card format
+          const transformedCars = data.data.cars.map(car => ({
+            id: car._id,
+            name: car.name,
+            price: `Rs ${car.rentPerDay?.toLocaleString()}`,
+            priceFull: `Rs ${car.rentPerDay?.toLocaleString()} /perday`,
+            priceNumber: car.rentPerDay,
+            image: car.carPhoto ? `${API_IMAGE_BASE_URL}${car.carPhoto}` : '',
+            location: car.location?.city || 'Location not specified',
+            category: car.category?.name || '',
+            featured: car.status === 'available' && car.isAvailable, // Optional featured logic
+            brand: car.brand,
+            model: car.model,
+            year: car.year,
+            transmission: car.transmission,
+            fuelType: car.fuelType,
+            seats: car.seats,
+          }));
+          setCars(transformedCars);
+        }
+      } catch (error) {
+        console.error('Error fetching cars:', error);
+        setCars([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCars();
+  }, [category]);
 
   // Filter cars based on search query and category
   const filteredCars = useMemo(() => {
-    const categoryCars = category ? getCarsByCategory(category) : [];
+    // Filter by category name (case-insensitive)
+    let categoryCars = cars;
+    if (category) {
+      categoryCars = cars.filter(car => 
+        car.category?.toLowerCase() === category.toLowerCase()
+      );
+    }
     
     if (!searchQuery.trim()) return categoryCars;
     
     const query = searchQuery.toLowerCase().trim();
     return categoryCars.filter(car => 
-      car.name.toLowerCase().includes(query) ||
-      car.price.toLowerCase().includes(query) ||
-      car.location.toLowerCase().includes(query)
+      car.name?.toLowerCase().includes(query) ||
+      car.price?.toLowerCase().includes(query) ||
+      car.location?.toLowerCase().includes(query) ||
+      car.brand?.toLowerCase().includes(query) ||
+      car.model?.toLowerCase().includes(query)
     );
-  }, [category, searchQuery]);
+  }, [category, searchQuery, cars]);
 
   // Pagination calculations
   const totalPages = Math.ceil(filteredCars.length / itemsPerPage);
@@ -102,20 +154,24 @@ export default function VehicleTypesContent() {
           </div>
 
           {/* Cars Display */}
-          {filteredCars.length > 0 ? (
+          {loading ? (
+            <div className="flex justify-center items-center py-20">
+              <FaSpinner className="animate-spin text-[#1a2b5c] text-4xl" />
+            </div>
+          ) : filteredCars.length > 0 ? (
             <>
               {/* Grid View */}
               {viewType === 'grid' ? (
                 <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-7 md:gap-6 lg:gap-7 mb-12">
-                  {paginatedCars.map((car, index) => (
-                    <VehicleCard key={index} car={car} />
+                  {paginatedCars.map((car) => (
+                    <VehicleCard key={car.id} car={car} />
                   ))}
                 </div>
               ) : (
                 /* List View */
                 <div className="w-full space-y-6 mb-12">
-                  {paginatedCars.map((car, index) => (
-                    <VehicleCardList key={index} car={car} />
+                  {paginatedCars.map((car) => (
+                    <VehicleCardList key={car.id} car={car} />
                   ))}
                 </div>
               )}

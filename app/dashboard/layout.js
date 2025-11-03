@@ -11,6 +11,8 @@ import {
   FaCog,
   FaBell,
   FaFolder,
+  FaCar,
+  FaBlog,
 } from 'react-icons/fa';
 
 export default function DashboardLayout({ children }) {
@@ -21,6 +23,8 @@ export default function DashboardLayout({ children }) {
   const menuItems = [
     { icon: FaTh, label: 'Dashboard', path: '/dashboard', badge: null },
     { icon: FaFolder, label: 'Categories', path: '/dashboard/categories', badge: null },
+    { icon: FaCar, label: 'Cars', path: '/dashboard/cars', badge: null },
+    { icon: FaBlog, label: 'Blogs', path: '/dashboard/blogs', badge: null },
   ];
 
   const isActive = (path) => {
@@ -117,6 +121,8 @@ export default function DashboardLayout({ children }) {
               <h1 className="text-xl sm:text-2xl font-bold text-[#1a2b5c]" style={{ fontFamily: 'Roboto, sans-serif' }}>
                 {pathname === '/dashboard' && 'Dashboard'}
                 {pathname?.includes('/categories') && 'Categories'}
+                {pathname?.includes('/cars') && 'Cars'}
+                {pathname?.includes('/blogs') && 'Blogs'}
               </h1>
             </div>
 
