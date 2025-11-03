@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import dynamic from 'next/dynamic';
+import nextDynamic from 'next/dynamic';
 import {
   FaArrowLeft,
   FaSpinner,
@@ -13,8 +13,11 @@ import {
 } from 'react-icons/fa';
 import { API_BASE_URL } from '@/config/api';
 
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
+
 // Dynamically import ReactQuill to avoid SSR issues
-const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
+const ReactQuill = nextDynamic(() => import('react-quill-new'), { ssr: false });
 import 'react-quill-new/dist/quill.snow.css';
 
 function NewBlogPageContent() {
