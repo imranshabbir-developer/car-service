@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { FaPlus, FaSearch, FaEdit, FaTrash, FaSpinner, FaTimes, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
-
-const API_BASE_URL = 'http://localhost:5000/api/v1';
+import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState([]);
@@ -314,7 +313,7 @@ export default function CategoriesPage() {
                       <td className="px-4 py-4">
                         {category.photo ? (
                           <img
-                            src={`http://localhost:5000${category.photo}`}
+                            src={`${API_IMAGE_BASE_URL}${category.photo}`}
                             alt={category.name}
                             className="w-16 h-16 object-cover rounded-lg"
                           />
@@ -402,7 +401,7 @@ export default function CategoriesPage() {
                   <div className="flex justify-center mb-3">
                     <div className="w-20 h-20 border border-gray-300 rounded-lg overflow-hidden">
                       <img
-                        src={`http://localhost:5000${editingCategory.photo}`}
+                        src={`${API_IMAGE_BASE_URL}${editingCategory.photo}`}
                         alt={editingCategory.name}
                         className="w-full h-full object-cover"
                       />

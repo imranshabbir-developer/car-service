@@ -4,8 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaArrowLeft, FaCheckCircle, FaExclamationCircle, FaTimes, FaSpinner } from 'react-icons/fa';
-
-const API_BASE_URL = 'http://localhost:5000/api/v1';
+import { API_BASE_URL } from '@/config/api';
 
 export default function LoginPage() {
   const router = useRouter();

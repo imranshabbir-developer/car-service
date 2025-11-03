@@ -17,8 +17,7 @@ import {
   FaExclamationCircle,
   FaTimes,
 } from 'react-icons/fa';
-
-const API_BASE_URL = 'http://localhost:5000/api/v1';
+import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
 
 export default function DashboardPage() {
   const [cars, setCars] = useState([]);
@@ -538,7 +537,7 @@ export default function DashboardPage() {
                         <td className="py-3 px-2">
                           {car.carPhoto ? (
                             <img
-                              src={`http://localhost:5000${car.carPhoto}`}
+                              src={`${API_IMAGE_BASE_URL}${car.carPhoto}`}
                               alt={car.name}
                               className="w-12 h-12 object-cover rounded-lg"
                             />
@@ -627,7 +626,7 @@ export default function DashboardPage() {
                   <div className="flex justify-center mb-2">
                     <div className="w-20 h-20 border border-gray-300 rounded-lg overflow-hidden">
                       <img
-                        src={`http://localhost:5000${editingCar.carPhoto}`}
+                        src={`${API_IMAGE_BASE_URL}${editingCar.carPhoto}`}
                         alt={editingCar.name}
                         className="w-full h-full object-cover"
                       />

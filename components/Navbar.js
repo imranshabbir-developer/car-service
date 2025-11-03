@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { FaPhoneAlt, FaBars, FaTimes, FaChevronDown, FaSearch } from "react-icons/fa";
+import { API_BASE_URL } from '@/config/api';
 import "./navbar-hover.css";
 
 const NavLinkHover = ({ href, children, className = "" }) => {
@@ -105,7 +106,7 @@ export default function Navbar() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/v1/categories');
+        const response = await fetch(`${API_BASE_URL}/categories`);
         const data = await response.json();
         if (data.success && data.data.categories) {
           setCategories(data.data.categories);

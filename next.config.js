@@ -20,6 +20,10 @@ const nextConfig = {
         hostname: 'localhost',
         port: '5000',
       },
+      {
+        protocol: 'https',
+        hostname: 'backend-rent-car-convoy-travel.up.railway.app',
+      },
     ],
   },
 }
