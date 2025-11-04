@@ -33,37 +33,77 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Prevent multiple simultaneous submissions
+    if (loading) return;
+    
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/users/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
-
-      const data = await response.json();
       
-      if (data.success) {
-        // Store token in localStorage
-        localStorage.setItem('token', data.data.token);
-        localStorage.setItem('user', JSON.stringify(data.data.user));
+      // Create AbortController for timeout (30 seconds)
+      const controller = new AbortController();
+      let timeoutId = null;
+      
+      // Set timeout only if we're in browser environment
+      if (typeof window !== 'undefined') {
+        timeoutId = setTimeout(() => {
+          controller.abort();
+        }, 30000); // 30 second timeout
+      }
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/users/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+          signal: controller.signal,
+        });
+
+        // Clear timeout if request succeeds
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
         
-        showNotification('Login successful!', 'success');
-        
-        // Redirect to dashboard after short delay
-        setTimeout(() => {
-          router.push('/dashboard');
-        }, 500);
-      } else {
-        showNotification(data.message || 'Login failed', 'error');
+        if (data.success) {
+          // Store token in localStorage
+          localStorage.setItem('token', data.data.token);
+          localStorage.setItem('user', JSON.stringify(data.data.user));
+          
+          showNotification('Login successful!', 'success');
+          
+          // Redirect to dashboard after short delay
+          setTimeout(() => {
+            router.push('/dashboard');
+          }, 500);
+        } else {
+          showNotification(data.message || 'Login failed', 'error');
+        }
+      } catch (fetchError) {
+        // Clear timeout on error
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+        throw fetchError;
       }
     } catch (error) {
-      showNotification('Error connecting to server', 'error');
+      if (error.name === 'AbortError') {
+        showNotification('Connection timeout. Please check if the server is running.', 'error');
+      } else if (error.message.includes('Failed to fetch') || error.message.includes('ERR_CONNECTION')) {
+        showNotification('Cannot connect to server. Please check your internet connection and ensure the backend is running.', 'error');
+      } else {
+        showNotification(error.message || 'Error connecting to server', 'error');
+      }
       console.error('Login error:', error);
     } finally {
       setLoading(false);

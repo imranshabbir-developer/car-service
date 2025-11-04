@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -13,12 +13,61 @@ import {
   FaFolder,
   FaCar,
   FaBlog,
+  FaSignOutAlt,
+  FaSpinner,
 } from 'react-icons/fa';
 
 export default function DashboardLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
+  const [user, setUser] = useState(null);
   const pathname = usePathname();
   const router = useRouter();
+
+  // Check authentication on mount
+  useEffect(() => {
+    const checkAuth = () => {
+      if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('token');
+        const userStr = localStorage.getItem('user');
+        
+        if (token && userStr) {
+          try {
+            const userData = JSON.parse(userStr);
+            setUser(userData);
+            setIsAuthenticated(true);
+            setIsChecking(false);
+          } catch (error) {
+            // Invalid user data, clear and redirect
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            setIsAuthenticated(false);
+            setIsChecking(false);
+            router.push('/login');
+          }
+        } else {
+          // No token or user data, redirect to login
+          setIsAuthenticated(false);
+          setIsChecking(false);
+          router.push('/login');
+        }
+      }
+    };
+
+    checkAuth();
+  }, [router]);
+
+  // Handle logout
+  const handleLogout = () => {
+    if (typeof window !== 'undefined') {
+      // Clear localStorage
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    }
+    // Redirect to login
+    router.push('/login');
+  };
 
   const menuItems = [
     { icon: FaTh, label: 'Dashboard', path: '/dashboard', badge: null },
@@ -33,6 +82,23 @@ export default function DashboardLayout({ children }) {
     }
     return pathname?.startsWith(path);
   };
+
+  // Show loading spinner while checking authentication
+  if (isChecking) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center" style={{ fontFamily: 'Roboto, sans-serif' }}>
+        <div className="flex flex-col items-center space-y-4">
+          <FaSpinner className="w-8 h-8 text-[#1a2b5c] animate-spin" />
+          <p className="text-[#1a2b5c] font-medium">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render dashboard if not authenticated (will redirect)
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50" style={{ fontFamily: 'Roboto, sans-serif' }}>
@@ -85,12 +151,10 @@ export default function DashboardLayout({ children }) {
           {/* Logout Button */}
           <div className="p-4 border-t border-[#0d1b2a]/30">
             <button
-              onClick={() => {
-                router.push('/login');
-              }}
+              onClick={handleLogout}
               className="w-full flex items-center space-x-3 px-4 py-3 text-white/80 hover:bg-white/10 hover:text-white rounded-lg transition-all duration-200"
             >
-              <FaTimes className="w-5 h-5" />
+              <FaSignOutAlt className="w-5 h-5" />
               <span className="font-medium text-sm">Logout</span>
             </button>
           </div>
@@ -142,11 +206,15 @@ export default function DashboardLayout({ children }) {
               </button>
               <div className="flex items-center space-x-2 sm:space-x-3 pl-3 border-l border-gray-200">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[#1a2b5c] rounded-full flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm sm:text-base">A</span>
+                  <span className="text-white font-semibold text-sm sm:text-base">
+                    {user?.name ? user.name.charAt(0).toUpperCase() : user?.email ? user.email.charAt(0).toUpperCase() : 'A'}
+                  </span>
                 </div>
                 <div className="hidden sm:block">
-                  <p className="text-sm font-semibold text-[#1a2b5c]" style={{ fontFamily: 'Roboto, sans-serif' }}>Admin User</p>
-                  <p className="text-xs text-gray-500">Admin</p>
+                  <p className="text-sm font-semibold text-[#1a2b5c]" style={{ fontFamily: 'Roboto, sans-serif' }}>
+                    {user?.name || user?.email || 'Admin User'}
+                  </p>
+                  <p className="text-xs text-gray-500">{user?.role || 'Admin'}</p>
                 </div>
               </div>
             </div>
