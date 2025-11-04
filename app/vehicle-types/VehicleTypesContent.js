@@ -2,9 +2,10 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import VehicleCard from '@/components/VehicleCard';
 import VehicleCardList from '@/components/VehicleCardList';
-import { FaSearch, FaTh, FaList, FaChevronLeft, FaChevronRight, FaSpinner } from 'react-icons/fa';
+import { FaSearch, FaTh, FaList, FaChevronLeft, FaChevronRight, FaSpinner, FaCalendarAlt, FaUser, FaArrowRight } from 'react-icons/fa';
 import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
 
 export default function VehicleTypesContent() {
@@ -16,6 +17,8 @@ export default function VehicleTypesContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [blogs, setBlogs] = useState([]);
+  const [blogsLoading, setBlogsLoading] = useState(false);
   const itemsPerPage = 12;
 
   // Fetch cars from API
@@ -58,6 +61,43 @@ export default function VehicleTypesContent() {
     };
 
     fetchCars();
+  }, [category]);
+
+  // Fetch blogs for the category
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      if (!category) {
+        setBlogs([]);
+        return;
+      }
+      
+      try {
+        setBlogsLoading(true);
+        const response = await fetch(`${API_BASE_URL}/blogs`);
+        const data = await response.json();
+        
+        if (data.success && data.data && data.data.blogs) {
+          // Filter blogs by category name (case-insensitive) and only published blogs
+          const categoryBlogs = data.data.blogs.filter(blog => 
+            blog.published && 
+            blog.category && 
+            blog.category.name?.toLowerCase() === category.toLowerCase()
+          );
+          setBlogs(categoryBlogs);
+        } else {
+          setBlogs([]);
+        }
+      } catch (error) {
+        console.error('Error fetching blogs:', error);
+        setBlogs([]);
+      } finally {
+        setBlogsLoading(false);
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      fetchBlogs();
+    }
   }, [category]);
 
   // Filter cars based on search query and category
@@ -243,6 +283,104 @@ export default function VehicleTypesContent() {
               <p className="text-gray-600 text-lg">
                 {searchQuery ? `No vehicles found matching "${searchQuery}"` : 'No vehicles found in this category.'}
               </p>
+            </div>
+          )}
+
+          {/* Related Blogs Section */}
+          {blogs.length > 0 && (
+            <div className="mt-20 pt-16 border-t border-gray-200">
+              <div className="mb-12">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                  Related Blog Posts
+                </h2>
+                <p className="text-gray-600 text-lg">
+                  Explore our latest insights and tips about {category} vehicles
+                </p>
+              </div>
+
+              {blogsLoading ? (
+                <div className="flex justify-center items-center py-12">
+                  <FaSpinner className="animate-spin text-[#1a2b5c] text-3xl" />
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {blogs.map((blog) => (
+                    <Link
+                      key={blog._id}
+                      href={`/blog/${blog.slug || blog._id}`}
+                      className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-200"
+                    >
+                      {/* Blog Image */}
+                      <div className="relative w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+                        {blog.featuredImage ? (
+                          <img
+                            src={`${API_IMAGE_BASE_URL}${blog.featuredImage}`}
+                            alt={blog.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <div className="text-4xl font-bold text-gray-300">
+                              {blog.title?.charAt(0).toUpperCase() || 'B'}
+                            </div>
+                          </div>
+                        )}
+                        {blog.published && (
+                          <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 text-xs font-semibold rounded-full">
+                            Published
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Blog Content */}
+                      <div className="p-6">
+                        {/* Category Badge */}
+                        {blog.category && (
+                          <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full mb-3">
+                            {blog.category.name}
+                          </span>
+                        )}
+
+                        {/* Title */}
+                        <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#1a2b5c] transition-colors line-clamp-2">
+                          {blog.title}
+                        </h3>
+
+                        {/* Description */}
+                        <p className="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed">
+                          {blog.description || blog.content?.replace(/<[^>]*>/g, '').substring(0, 120) + '...' || 'No description available'}
+                        </p>
+
+                        {/* Meta Info */}
+                        <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
+                          <div className="flex items-center gap-2">
+                            <FaCalendarAlt className="w-3 h-3" />
+                            <span>
+                              {blog.createdAt ? new Date(blog.createdAt).toLocaleDateString('en-US', { 
+                                year: 'numeric', 
+                                month: 'short', 
+                                day: 'numeric' 
+                              }) : 'Recent'}
+                            </span>
+                          </div>
+                          {blog.createdBy && (
+                            <div className="flex items-center gap-2">
+                              <FaUser className="w-3 h-3" />
+                              <span>{blog.createdBy.name || 'Admin'}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Read More Link */}
+                        <div className="flex items-center gap-2 text-[#1a2b5c] font-semibold text-sm group-hover:gap-3 transition-all">
+                          <span>Read More</span>
+                          <FaArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </>

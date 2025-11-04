@@ -71,20 +71,60 @@ export default function CarsPage() {
   // Fetch categories
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/categories`);
-      const data = await response.json();
+      // Create AbortController for timeout (30 seconds)
+      const controller = new AbortController();
+      let timeoutId = null;
       
-      if (data.success) {
-        setCategories(data.data.categories);
+      if (typeof window !== 'undefined') {
+        timeoutId = setTimeout(() => {
+          controller.abort();
+        }, 30000); // 30 second timeout
+      }
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/categories`, {
+          signal: controller.signal,
+        });
+        
+        // Clear timeout if request succeeds
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+        
+        if (!response.ok) {
+          console.error('Categories API error:', response.status);
+          return;
+        }
+        
+        const data = await response.json();
+        
+        if (data.success && data.data && data.data.categories) {
+          setCategories(data.data.categories);
+        } else {
+          console.warn('Categories response structure unexpected:', data);
+        }
+      } catch (fetchError) {
+        // Clear timeout on error
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+        throw fetchError;
       }
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      if (error.name === 'AbortError') {
+        console.error('Categories fetch timeout. Server may be down.');
+      } else {
+        console.error('Error fetching categories:', error);
+      }
     }
   };
 
   useEffect(() => {
-    fetchCars();
-    fetchCategories();
+    // Only fetch on client side
+    if (typeof window !== 'undefined') {
+      fetchCars();
+      fetchCategories();
+    }
   }, []);
 
   // Live search filter

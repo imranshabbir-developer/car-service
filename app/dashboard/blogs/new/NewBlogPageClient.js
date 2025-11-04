@@ -40,15 +40,48 @@ export default function NewBlogPageClient() {
   // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
+      if (typeof window === 'undefined') return;
+      
       try {
-        const response = await fetch(`${API_BASE_URL}/categories`);
-        const data = await response.json();
+        // Create AbortController for timeout (30 seconds)
+        const controller = new AbortController();
+        let timeoutId = setTimeout(() => {
+          controller.abort();
+        }, 30000); // 30 second timeout
         
-        if (data.success) {
-          setCategories(data.data.categories || []);
+        try {
+          const response = await fetch(`${API_BASE_URL}/categories`, {
+            signal: controller.signal,
+          });
+          
+          // Clear timeout if request succeeds
+          clearTimeout(timeoutId);
+          
+          if (!response.ok) {
+            console.error('Categories API error:', response.status);
+            return;
+          }
+          
+          const data = await response.json();
+          
+          if (data.success && data.data && data.data.categories) {
+            setCategories(data.data.categories);
+          } else {
+            console.warn('Categories response structure unexpected:', data);
+            setCategories([]);
+          }
+        } catch (fetchError) {
+          // Clear timeout on error
+          clearTimeout(timeoutId);
+          throw fetchError;
         }
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        if (error.name === 'AbortError') {
+          console.error('Categories fetch timeout. Server may be down.');
+        } else {
+          console.error('Error fetching categories:', error);
+        }
+        setCategories([]);
       }
     };
 

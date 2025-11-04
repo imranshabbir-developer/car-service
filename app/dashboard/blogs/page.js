@@ -33,72 +33,32 @@ export default function BlogsPage() {
   const fetchBlogs = async () => {
     try {
       setLoading(true);
-      console.log('Fetching blogs from:', `${API_BASE_URL}/blogs`);
+      const response = await fetch(`${API_BASE_URL}/blogs`);
+      const data = await response.json();
       
-      // Create AbortController for timeout (30 seconds)
-      const controller = new AbortController();
-      let timeoutId = null;
-      
-      // Set timeout only if we're in browser environment
-      if (typeof window !== 'undefined') {
-        timeoutId = setTimeout(() => {
-          controller.abort();
-        }, 30000); // 30 second timeout
-      }
-      
-      try {
-        const response = await fetch(`${API_BASE_URL}/blogs`, {
-          signal: controller.signal,
-        });
-        
-        // Clear timeout if request succeeds
-        if (timeoutId) {
-          clearTimeout(timeoutId);
-        }
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        console.log('Blogs API response:', data);
-        
-        if (data.success && data.data && data.data.blogs) {
-          console.log('Setting blogs:', data.data.blogs);
-          setBlogs(data.data.blogs);
-          setFilteredBlogs(data.data.blogs);
-        } else {
-          console.warn('API response structure unexpected:', data);
-          setBlogs([]);
-          setFilteredBlogs([]);
-          showNotification('Failed to fetch blogs: Invalid response format', 'error');
-        }
-      } catch (fetchError) {
-        // Clear timeout on error
-        if (timeoutId) {
-          clearTimeout(timeoutId);
-        }
-        throw fetchError;
+      if (data.success && data.data && data.data.blogs) {
+        setBlogs(data.data.blogs);
+        setFilteredBlogs(data.data.blogs);
+      } else {
+        setBlogs([]);
+        setFilteredBlogs([]);
+        showNotification('Failed to fetch blogs', 'error');
       }
     } catch (error) {
-      console.error('Error fetching blogs:', error);
+      showNotification('Error fetching blogs', 'error');
+      console.error('Error:', error);
       setBlogs([]);
       setFilteredBlogs([]);
-      
-      if (error.name === 'AbortError') {
-        showNotification('Connection timeout. Please check if the server is running.', 'error');
-      } else if (error.message.includes('Failed to fetch') || error.message.includes('ERR_CONNECTION')) {
-        showNotification('Cannot connect to server. Please check your internet connection and ensure the backend is running.', 'error');
-      } else {
-        showNotification('Error fetching blogs. Please check your connection.', 'error');
-      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchBlogs();
+    // Only fetch on client side
+    if (typeof window !== 'undefined') {
+      fetchBlogs();
+    }
   }, []);
 
   // Live search filter

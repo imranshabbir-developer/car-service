@@ -105,14 +105,51 @@ export default function Navbar() {
   // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
+      if (typeof window === 'undefined') return;
+      
       try {
-        const response = await fetch(`${API_BASE_URL}/categories`);
-        const data = await response.json();
-        if (data.success && data.data.categories) {
-          setCategories(data.data.categories);
+        const url = `${API_BASE_URL}/categories`;
+        console.log('Fetching categories from:', url);
+        
+        // Create AbortController for timeout (30 seconds)
+        const controller = new AbortController();
+        let timeoutId = setTimeout(() => {
+          controller.abort();
+        }, 30000); // 30 second timeout
+        
+        try {
+          const response = await fetch(url, {
+            signal: controller.signal,
+          });
+          
+          // Clear timeout if request succeeds
+          clearTimeout(timeoutId);
+          
+          if (!response.ok) {
+            console.error('Categories API error:', response.status, response.statusText);
+            return;
+          }
+          
+          const data = await response.json();
+          console.log('Categories API response:', data);
+          
+          if (data.success && data.data && data.data.categories) {
+            console.log('Setting categories:', data.data.categories.length);
+            setCategories(data.data.categories);
+          } else {
+            console.warn('Categories response structure unexpected:', data);
+          }
+        } catch (fetchError) {
+          // Clear timeout on error
+          clearTimeout(timeoutId);
+          throw fetchError;
         }
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        if (error.name === 'AbortError') {
+          console.error('Categories fetch timeout. Server may be down.');
+        } else {
+          console.error('Error fetching categories:', error);
+        }
       }
     };
 
@@ -200,16 +237,22 @@ export default function Navbar() {
                 onMouseEnter={() => setDropdownOpen(true)}
                 onMouseLeave={() => setDropdownOpen(false)}
               >
-                <div className="bg-white rounded-lg shadow-lg py-2">
-                  {categories.map((category) => (
-                    <RippleLink 
-                      key={category._id}
-                      href={`/vehicle-types?category=${encodeURIComponent(category.name)}`}
-                      className="block px-4 py-2 text-gray-800 hover:bg-gray-50 transition-colors"
-                    >
-                      {category.name}
-                    </RippleLink>
-                  ))}
+                <div className="bg-white rounded-lg shadow-lg py-2 border border-gray-100">
+                  {categories.length > 0 ? (
+                    categories.map((category) => (
+                      <RippleLink 
+                        key={category._id}
+                        href={`/vehicle-types?category=${encodeURIComponent(category.name)}`}
+                        className="block px-4 py-2 text-gray-800 hover:bg-gray-50 transition-colors"
+                      >
+                        {category.name}
+                      </RippleLink>
+                    ))
+                  ) : (
+                    <div className="px-4 py-2 text-gray-500 text-sm">
+                      {categories.length === 0 ? 'No categories available' : 'Loading categories...'}
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -299,19 +342,23 @@ export default function Navbar() {
             </button>
             <div className={`overflow-hidden transition-all duration-300 ease-in-out ${mobileDropdownOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
               <div className="ml-4 mt-2 space-y-1 pb-2">
-                {categories.map((category) => (
-                  <Link 
-                    key={category._id}
-                    href={`/vehicle-types?category=${encodeURIComponent(category.name)}`}
-                    className="block px-4 py-2 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-400 hover:translate-x-1" 
-                    onClick={() => {
-                      setMenuOpen(false);
-                      setMobileDropdownOpen(false);
-                    }}
-                  >
-                    {category.name}
-                  </Link>
-                ))}
+                {categories.length > 0 ? (
+                  categories.map((category) => (
+                    <Link 
+                      key={category._id}
+                      href={`/vehicle-types?category=${encodeURIComponent(category.name)}`}
+                      className="block px-4 py-2 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-400 hover:translate-x-1" 
+                      onClick={() => {
+                        setMenuOpen(false);
+                        setMobileDropdownOpen(false);
+                      }}
+                    >
+                      {category.name}
+                    </Link>
+                  ))
+                ) : (
+                  <div className="px-4 py-2 text-gray-400 text-sm">No categories available</div>
+                )}
               </div>
             </div>
           </div>

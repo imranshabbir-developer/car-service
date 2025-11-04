@@ -31,25 +31,70 @@ export default function CategoriesPage() {
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/categories`);
-      const data = await response.json();
       
-      if (data.success) {
-        setCategories(data.data.categories);
-        setFilteredCategories(data.data.categories);
-      } else {
-        showNotification('Failed to fetch categories', 'error');
+      // Create AbortController for timeout (30 seconds)
+      const controller = new AbortController();
+      let timeoutId = null;
+      
+      if (typeof window !== 'undefined') {
+        timeoutId = setTimeout(() => {
+          controller.abort();
+        }, 30000); // 30 second timeout
+      }
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/categories`, {
+          signal: controller.signal,
+        });
+        
+        // Clear timeout if request succeeds
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success && data.data && data.data.categories) {
+          setCategories(data.data.categories);
+          setFilteredCategories(data.data.categories);
+        } else {
+          console.warn('Categories response structure unexpected:', data);
+          setCategories([]);
+          setFilteredCategories([]);
+          showNotification('Failed to fetch categories: Invalid response format', 'error');
+        }
+      } catch (fetchError) {
+        // Clear timeout on error
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+        throw fetchError;
       }
     } catch (error) {
-      showNotification('Error fetching categories', 'error');
+      if (error.name === 'AbortError') {
+        showNotification('Connection timeout. Please check if the server is running.', 'error');
+      } else if (error.message.includes('Failed to fetch') || error.message.includes('ERR_CONNECTION')) {
+        showNotification('Cannot connect to server. Please check your internet connection and ensure the backend is running.', 'error');
+      } else {
+        showNotification('Error fetching categories', 'error');
+      }
       console.error('Error:', error);
+      setCategories([]);
+      setFilteredCategories([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCategories();
+    // Only fetch on client side
+    if (typeof window !== 'undefined') {
+      fetchCategories();
+    }
   }, []);
 
   // Live search filter
