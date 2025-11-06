@@ -1,6 +1,6 @@
 // API Configuration
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'backend-rent-car-production-b6d7.up.railway.app/api/v1';
-const API_IMAGE_BASE_URL = process.env.NEXT_PUBLIC_API_IMAGE_URL || 'backend-rent-car-production-b6d7.up.railway.app';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://backend-rent-car-production-b6d7.up.railway.app/api/v1';
+const API_IMAGE_BASE_URL = process.env.NEXT_PUBLIC_API_IMAGE_URL || 'https://backend-rent-car-production-b6d7.up.railway.app';
 // const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 // const API_IMAGE_BASE_URL = process.env.NEXT_PUBLIC_API_IMAGE_URL || 'http://localhost:5000';
 
