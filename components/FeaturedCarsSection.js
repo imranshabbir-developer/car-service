@@ -1,137 +1,120 @@
-import { FaUser, FaSnowflake, FaCogs } from "react-icons/fa";
+/* eslint-disable @next/next/no-img-element */
+'use client';
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { FaUser, FaSnowflake, FaCogs, FaMapMarkerAlt } from "react-icons/fa";
+import { API_BASE_URL, API_IMAGE_BASE_URL } from "@/config/api";
 import "./featured-cars.css";
 
+const FALLBACK_CARS = [
+  {
+    id: null,
+    name: "Suzuki Cultus",
+    price: "Rs 4,000",
+    priceFull: "Rs 4,000 /perday",
+    image: "https://convoytravels.pk/wp-content/uploads/2025/05/Suzuki-Cultus.jpg",
+    location: "Lahore, Punjab, Pakistan",
+    seats: 4,
+    transmission: "Automatic",
+    featured: true,
+  },
+  {
+    id: null,
+    name: "Suzuki Wagon R",
+    price: "Rs 4,000",
+    priceFull: "Rs 4,000 /perday",
+    image: "https://convoytravels.pk/wp-content/uploads/2025/05/Suzuki-Wagonr.jpg",
+    location: "Lahore, Punjab, Pakistan",
+    seats: 4,
+    transmission: "Automatic",
+    featured: true,
+  },
+  {
+    id: null,
+    name: "Toyota Corolla (GLI 1.3)",
+    price: "Rs 6,000",
+    priceFull: "Rs 6,000 /perday",
+    image: "https://convoytravels.pk/wp-content/uploads/2025/05/Toyota-Corolla.jpg",
+    location: "Lahore, Punjab, Pakistan",
+    seats: 4,
+    transmission: "Automatic",
+    featured: true,
+  },
+  {
+    id: null,
+    name: "KIA Sportage",
+    price: "Rs 12,000",
+    priceFull: "Rs 12,000 /perday",
+    image: "https://convoytravels.pk/wp-content/uploads/2025/05/Kia-Sportage.jpg",
+    location: "Lahore, Punjab, Pakistan",
+    seats: 4,
+    transmission: "Automatic",
+    featured: true,
+  },
+];
+
+const transformCar = (car) => {
+  const priceNumber = Number(car.rentPerDay) || 0;
+  const formattedPrice = priceNumber
+    ? `Rs ${priceNumber.toLocaleString()}`
+    : "Price on request";
+
+  return {
+    id: car._id,
+    name: car.name || "Vehicle",
+    price: formattedPrice,
+    priceFull: `${formattedPrice} /perday`,
+    image: car.carPhoto ? `${API_IMAGE_BASE_URL}${car.carPhoto}` : FALLBACK_CARS[0].image,
+    location: car.location?.city
+      ? `${car.location.city}${car.location.province ? `, ${car.location.province}` : ""}${car.location.country ? `, ${car.location.country}` : ""}`
+      : "Location not specified",
+    seats: car.seats || 4,
+    transmission: car.transmission || "Automatic",
+    featured: car.status === "available" && car.isAvailable,
+  };
+};
+
 export default function FeaturedCarsSection() {
-  const cars = [
-    {
-      name: "Suzuki Cultus",
-      price: "Rs 4,000 /perday",
-      image:
-        "https://convoytravels.pk/wp-content/uploads/2025/05/Suzuki-Cultus.jpg",
-    },
-    {
-      name: "Suzuki Alto",
-      price: "Rs 3,500 /perday",
-      image:
-        "https://convoytravels.pk/wp-content/uploads/2025/05/Suzuki-Alto.jpg",
-    },
-    {
-      name: "Suzuki Wagon R",
-      price: "Rs 4,000 /perday",
-      image:
-        "https://convoytravels.pk/wp-content/uploads/2025/05/Suzuki-Wagonr.jpg",
-    },
-    {
-      name: "Toyota Corolla (GLI 1.3)",
-      price: "₨ 6,000 /perday",
-      image:
-        "https://convoytravels.pk/wp-content/uploads/2025/05/Toyota-Corolla.jpg",
-    },
-    {
-      name: "Toyota Yaris",
-      price: "₨ 6,000 /perday",
-      image:
-        "https://convoytravels.pk/wp-content/uploads/2025/05/Toyota-Yaris.jpg",
-    },
-    {
-      name: "Toyota Altis ( 1.6 Auto)",
-      price: "₨ 8,000 /perday",
-      image:
-        "https://convoytravels.pk/wp-content/uploads/2025/05/Toyota-Corolla-Gli-1.3.jpg",
-    },
-    {
-      name: "Toyota Grande",
-      price: "₨ 9,000 /perday",
-      image:
-        "https://convoytravels.pk/wp-content/uploads/2025/05/Toyota-Grande.jpg",
-    },
-    {
-      name: "Honda Civic (1.8)",
-      price: "₨ 8,000 /perday",
-      image: "https://convoytravels.pk/wp-content/uploads/2025/05/Civic.jpg",
-    },
-    {
-      name: "Honda City",
-      price: "₨ 6,000 /perday",
-      image: "https://convoytravels.pk/wp-content/uploads/2025/05/City.jpg",
-    },
-    {
-      name: "Honda Civic",
-      price: "₨ 15,000 /perday",
-      image:
-        "https://convoytravels.pk/wp-content/uploads/2025/05/Honda-Civic.jpg",
-    },
-    {
-      name: "KIA Sportage",
-      price: "₨ 12,000 /perday",
-      image:
-        "https://convoytravels.pk/wp-content/uploads/2025/05/Kia-Sportage.jpg",
-    },
-    {
-      name: "Honda HRV",
-      price: "₨ 10,000 /perday",
-      image: "https://convoytravels.pk/wp-content/uploads/2025/05/HR-V.jpg",
-    },
-    {
-      name: "MG HS",
-      price: "₨ 12,000 /perday",
-      image: "https://convoytravels.pk/wp-content/uploads/2025/05/MG-HS.jpg",
-    },
-    {
-      name: "Honda BRV",
-      price: "₨ 8,000 /perday",
-      image: "https://convoytravels.pk/wp-content/uploads/2025/05/MG-HS-1.jpg",
-    },
-    {
-      name: "Hyundai Tuscon",
-      price: "₨ 10,000 /perday",
-      image: "https://convoytravels.pk/wp-content/uploads/2025/05/Tuscon.jpg",
-    },
-    {
-      name: "Toyota Land Cruiser V8",
-      price: "₨ 35,000 /perday",
-      image:
-        "https://convoytravels.pk/wp-content/uploads/2025/05/Toyota-Land-Cruiser-V8.jpg",
-    },
-    {
-      name: "Toyota Fortuner",
-      price: "₨ 15,000 /perday",
-      image:
-        "https://convoytravels.pk/wp-content/uploads/2025/05/Toyota-Fortuner.jpg",
-    },
-    {
-      name: "Toyota Prado TX",
-      price: "₨ 17,000 /perday",
-      image: "https://convoytravels.pk/wp-content/uploads/2025/05/prado.jpg",
-    },
-    {
-      name: "Toyota Revo",
-      price: "₨ 14,000 /perday",
-      image: "https://convoytravels.pk/wp-content/uploads/2025/05/Revo.jpg",
-    },
-    {
-      name: "Suzuki APV",
-      price: "₨ 7,000 /perday",
-      image:
-        "https://convoytravels.pk/wp-content/uploads/2025/05/Suzuki-APV.jpg",
-    },
-    {
-      name: "Toyota High Roof",
-      price: "₨ 13,000 /perday",
-      image:
-        "https://convoytravels.pk/wp-content/uploads/2025/05/Toyota-High-Roof.jpg",
-    },
-    {
-      name: "BH 120",
-      price: "₨ 50,000/perday",
-      image: "https://convoytravels.pk/wp-content/uploads/2025/05/BH1201.jpg",
-    },
-    {
-      name: "Coaster",
-      price: "₨ 15,000 /perday",
-      image: "https://convoytravels.pk/wp-content/uploads/2025/05/Coaster.jpg",
-    },
-  ];
+  const [cars, setCars] = useState(FALLBACK_CARS);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchFeaturedCars = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/cars`);
+
+        if (!response.ok) {
+          throw new Error(`Failed to load cars: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const apiCars = data?.data?.cars || [];
+
+        if (apiCars.length && isMounted) {
+          const transformed = apiCars
+            .filter((car) => car?.status === "available")
+            .slice(0, 8)
+            .map(transformCar);
+          setCars(transformed);
+        }
+      } catch (error) {
+        console.error("Error fetching featured cars:", error);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchFeaturedCars();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <section className="w-full">
@@ -162,42 +145,64 @@ export default function FeaturedCarsSection() {
 
       <div className="bg-white py-12 px-6 md:px-20 max-w-7xl mx-auto" style={{ fontFamily: 'Roboto, sans-serif' }}>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
-          {cars.map((car, index) => (
-            <div
-              key={index}
-              className="featured-car-card border border-gray-200 shadow-lg rounded-xl overflow-hidden bg-white group"
-            >
-              <div className="featured-car-image-container w-full h-[280px] sm:h-[260px] lg:h-[280px] flex items-center justify-center">
-                <img
-                  src={car.image}
-                  alt={car.name}
-                  className="max-h-[220px] object-contain transition-transform duration-500 ease-out"
-                />
-              </div>
-              <div className="p-6 sm:p-7">
-                <h3 className="text-xl font-bold text-[#0d1b2a] mb-2 leading-tight">
-                  {car.name}
-                </h3>
-                <p className="text-[#1a2b5c] font-semibold text-lg mb-4">{car.price}</p>
-                <ul className="text-gray-600 text-sm space-y-2 mb-6">
-                  <li className="flex items-center gap-2">
-                    <FaUser className="text-[#1a2b5c]" /> 4 Seats
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <FaSnowflake className="text-[#1a2b5c]" /> Air Conditioning
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <FaCogs className="text-[#1a2b5c]" /> Automatic gearbox
-                  </li>
-                </ul>
-                <button className="book-now-button w-full bg-[#1a2b5c] text-white py-3 rounded-lg hover:bg-[#0d1b2a] transition-colors duration-300 font-semibold relative">
-                  <span className="book-now-button-text inline-block">
+          {cars.map((car, index) => {
+            const cardContent = (
+              <div className="featured-car-card border border-gray-200 shadow-lg rounded-xl overflow-hidden bg-white group h-full">
+                <div className="featured-car-image-container w-full h-[280px] sm:h-[260px] lg:h-[280px] flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+                  <img
+                    src={car.image}
+                    alt={car.name}
+                    className="max-h-[220px] object-contain transition-transform duration-500 ease-out group-hover:scale-105"
+                  />
+                </div>
+                <div className="p-6 sm:p-7">
+                  <div className="flex items-center justify-between mb-3">
+                    {car.featured && (
+                      <span className="inline-block bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-md">
+                        Featured
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="text-xl font-bold text-[#0d1b2a] mb-2 leading-tight">
+                    {car.name}
+                  </h3>
+                  <p className="text-[#1a2b5c] font-semibold text-lg mb-4">{car.priceFull || car.price}</p>
+                  <div className="text-gray-600 text-sm flex items-center gap-2 mb-4">
+                    <FaMapMarkerAlt className="text-[#1a2b5c]" />
+                    <span>{car.location || 'Location not specified'}</span>
+                  </div>
+                  <ul className="text-gray-600 text-sm space-y-2 mb-6">
+                    <li className="flex items-center gap-2">
+                      <FaUser className="text-[#1a2b5c]" /> {car.seats || 4} Seats
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <FaSnowflake className="text-[#1a2b5c]" /> Air Conditioning
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <FaCogs className="text-[#1a2b5c]" /> {car.transmission || 'Automatic'} gearbox
+                    </li>
+                  </ul>
+                  <div className="book-now-button w-full bg-[#1a2b5c] text-white py-3 rounded-lg hover:bg-[#0d1b2a] transition-colors duration-300 font-semibold text-center">
                     Book Now
-                  </span>
-                </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+
+            if (car.id) {
+              return (
+                <Link key={car.id} href={`/cars/${car.id}`} className="block h-full">
+                  {cardContent}
+                </Link>
+              );
+            }
+
+            return (
+              <div key={`fallback-${index}`} className="h-full">
+                {cardContent}
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

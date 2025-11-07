@@ -3,14 +3,96 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { getCarById } from '@/data/cars';
+import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
 import { FaMapMarkerAlt, FaCalendarAlt, FaEnvelope, FaPhone, FaHome, FaArrowLeft, FaTimes, FaUser } from 'react-icons/fa';
 import Link from 'next/link';
 import SimilarListings from '@/components/SimilarListings';
+
+const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/800x600?text=Vehicle+Image';
+
+const buildImageUrl = (path) => {
+  if (!path) {
+    return PLACEHOLDER_IMAGE;
+  }
+
+  if (/^https?:\/\//i.test(path)) {
+    return path;
+  }
+
+  return `${API_IMAGE_BASE_URL}${path}`;
+};
+
+const transformApiCar = (apiCar) => {
+  const primaryImage = buildImageUrl(apiCar?.carPhoto);
+  const gallerySource = Array.isArray(apiCar?.gallery) ? apiCar.gallery : [];
+  const gallery = gallerySource
+    .map((img) => buildImageUrl(img))
+    .filter(Boolean);
+
+  if (!gallery.length) {
+    gallery.push(primaryImage);
+  }
+
+  while (gallery.length < 3) {
+    gallery.push(gallery[0]);
+  }
+
+  const city = apiCar?.location?.city;
+  const address = apiCar?.location?.address;
+  const location = [city, address].filter(Boolean).join(', ') || 'Location not specified';
+
+  return {
+    id: apiCar?._id,
+    name: apiCar?.name ?? 'Vehicle',
+    priceNumber: Number(apiCar?.rentPerDay) || 0,
+    price: Number(apiCar?.rentPerDay)
+      ? `Rs ${Number(apiCar.rentPerDay).toLocaleString()}`
+      : 'Price on request',
+    image: primaryImage,
+    images: gallery,
+    location,
+    availability: apiCar?.isAvailable ? 'Available' : 'Currently Unavailable',
+    selfDriverPrice: apiCar?.depositAmount ?? 500,
+    outOfStationPrice: apiCar?.rentPerDay ?? 1000,
+    seats: apiCar?.seats,
+    transmission: apiCar?.transmission,
+    fuelType: apiCar?.fuelType,
+    brand: apiCar?.brand,
+    model: apiCar?.model,
+    year: apiCar?.year,
+    status: apiCar?.status,
+  };
+};
+
+const mapFallbackCar = (fallbackCar) => {
+  if (!fallbackCar) return null;
+
+  const images =
+    fallbackCar.images && fallbackCar.images.length
+      ? fallbackCar.images
+      : [fallbackCar.image, fallbackCar.image].filter(Boolean);
+
+  return {
+    ...fallbackCar,
+    price:
+      fallbackCar.price ||
+      fallbackCar.priceFull ||
+      (fallbackCar.priceNumber
+        ? `Rs ${fallbackCar.priceNumber.toLocaleString()}`
+        : 'Price on request'),
+    images: images.length ? images : [PLACEHOLDER_IMAGE],
+    image: images.length ? images[0] : PLACEHOLDER_IMAGE,
+    availability: fallbackCar.availability || 'Weekdays',
+    selfDriverPrice: fallbackCar.selfDriverPrice ?? 500,
+    outOfStationPrice: fallbackCar.outOfStationPrice ?? 1000,
+  };
+};
 
 export default function CarDetailPage() {
   const params = useParams();
   const router = useRouter();
   const carId = params.id;
+  const fallbackCar = mapFallbackCar(getCarById(carId));
   
   // All hooks must be called before any conditional returns
   const [activeTab, setActiveTab] = useState('booking');
@@ -34,8 +116,62 @@ export default function CarDetailPage() {
     subject: '',
     message: '',
   });
+  const [car, setCar] = useState(fallbackCar);
+  const [loading, setLoading] = useState(!fallbackCar);
+  const [fetchError, setFetchError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [bookingFeedback, setBookingFeedback] = useState(null);
 
-  const car = getCarById(carId);
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchCarDetails = async () => {
+      if (!fallbackCar) {
+        setLoading(true);
+      }
+      setFetchError(null);
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/cars/${carId}`);
+
+        if (!response.ok) {
+          throw new Error(
+            response.status === 404
+              ? 'Car not found'
+              : `Request failed with status ${response.status}`
+          );
+        }
+
+        const data = await response.json();
+        const apiCar = data?.data?.car;
+
+        if (!apiCar) {
+          throw new Error('Car not found');
+        }
+
+        if (isMounted) {
+          setCar(transformApiCar(apiCar));
+        }
+      } catch (error) {
+        console.error('Error fetching car details:', error);
+        if (isMounted) {
+          setFetchError(error.message);
+          const fallbackCar = mapFallbackCar(getCarById(carId));
+          setCar(fallbackCar);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchCarDetails();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [carId, fallbackCar]);
 
   // Handle body scroll lock when modal is open
   useEffect(() => {
@@ -48,6 +184,10 @@ export default function CarDetailPage() {
       document.body.style.overflow = 'unset';
     };
   }, [questionModalOpen]);
+
+  useEffect(() => {
+    setSelectedImage(0);
+  }, [car?.id]);
 
   // Handle ESC key to close modal
   useEffect(() => {
@@ -68,11 +208,25 @@ export default function CarDetailPage() {
     return total;
   }, [formData.selfDriver, formData.outOfStation, car]);
   
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-gray-50 flex items-center justify-center" style={{ fontFamily: 'Roboto, sans-serif' }}>
+        <div className="text-center">
+          <h1 className="text-2xl font-semibold text-gray-900 mb-2">Loading vehicle details...</h1>
+          <p className="text-gray-600">Please wait a moment.</p>
+        </div>
+      </main>
+    );
+  }
+
   if (!car) {
     return (
       <main className="min-h-screen bg-gray-50 flex items-center justify-center" style={{ fontFamily: 'Roboto, sans-serif' }}>
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">Car Not Found</h1>
+          {fetchError && (
+            <p className="text-red-500 mb-2">{fetchError}</p>
+          )}
           <p className="text-gray-600 mb-6">The car you&apos;re looking for doesn&apos;t exist.</p>
           <Link 
             href="/vehicle-types"
@@ -102,11 +256,98 @@ export default function CarDetailPage() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Form submitted:', formData);
-    alert('Booking request submitted! We will contact you soon.');
+    
+    if (!car) {
+      setBookingFeedback({
+        type: 'error',
+        message: 'Vehicle details are not available. Please try again later.',
+      });
+      return;
+    }
+
+    if (!formData.pickupDate || !formData.dropoffDate) {
+      setBookingFeedback({
+        type: 'error',
+        message: 'Please select both pick-up and drop-off dates.',
+      });
+      setActiveTab('booking');
+      return;
+    }
+
+    if (!formData.selfDriver && !formData.outOfStation) {
+      setBookingFeedback({
+        type: 'error',
+        message: 'Please choose either Self Without Driver or Out of Station option.',
+      });
+      setActiveTab('booking');
+      return;
+    }
+
+    if (!formData.name || !formData.email || !formData.phone || !formData.address) {
+      setBookingFeedback({
+        type: 'error',
+        message: 'Kindly provide your contact details before submitting the booking.',
+      });
+      setActiveTab('request');
+      return;
+    }
+
+    const bookingOption = formData.outOfStation ? 'out_of_station' : 'self_without_driver';
+
+    const payload = {
+      carId: car.id,
+      customerName: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      address: formData.address,
+      pickupDate: formData.pickupDate,
+      dropoffDate: formData.dropoffDate,
+      bookingOption,
+      notes: formData.extraInfo || undefined,
+    };
+
+    setIsSubmitting(true);
+    setBookingFeedback(null);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/bookings`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Unable to submit booking. Please try again.');
+      }
+
+      setBookingFeedback({
+        type: 'success',
+        message: 'Thank you! Your booking request has been received. Our team will contact you shortly.',
+      });
+
+      setFormData((prev) => ({
+        ...prev,
+        pickupDate: '',
+        dropoffDate: '',
+        extraInfo: '',
+        selfDriver: false,
+        outOfStation: false,
+      }));
+      setActiveTab('booking');
+    } catch (error) {
+      setBookingFeedback({
+        type: 'error',
+        message: error.message || 'Something went wrong while submitting your booking.',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleQuestionSubmit = (e) => {
@@ -324,9 +565,12 @@ export default function CarDetailPage() {
 
                 <button
                   type="submit"
-                  className="w-full bg-[#1a2b5c] text-white py-4 rounded-lg hover:bg-[#0d1b2a] transition-colors duration-300 font-semibold text-lg mt-6"
+                  disabled={isSubmitting}
+                  className={`w-full bg-[#1a2b5c] text-white py-4 rounded-lg transition-colors duration-300 font-semibold text-lg mt-6 ${
+                    isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#0d1b2a]'
+                  }`}
                 >
-                  Book Now
+                  {isSubmitting ? 'Submitting...' : 'Book Now'}
                 </button>
               </form>
             )}
@@ -453,11 +697,25 @@ export default function CarDetailPage() {
 
                 <button
                   type="submit"
-                  className="w-full bg-[#1a2b5c] text-white py-4 rounded-lg hover:bg-[#0d1b2a] transition-colors duration-300 font-semibold text-lg mt-6"
+                  disabled={isSubmitting}
+                  className={`w-full bg-[#1a2b5c] text-white py-4 rounded-lg transition-colors duration-300 font-semibold text-lg mt-6 ${
+                    isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#0d1b2a]'
+                  }`}
                 >
-                  Send
+                  {isSubmitting ? 'Submitting...' : 'Send'}
                 </button>
               </form>
+            )}
+            {bookingFeedback && (
+              <div
+                className={`mt-6 rounded-lg border px-4 py-3 text-sm ${
+                  bookingFeedback.type === 'success'
+                    ? 'bg-green-50 border-green-200 text-green-700'
+                    : 'bg-red-50 border-red-200 text-red-700'
+                }`}
+              >
+                {bookingFeedback.message}
+              </div>
             )}
           </div>
         </div>

@@ -1,16 +1,8 @@
 import Link from 'next/link';
-import { getCarsByCategory } from '@/data/cars';
 import { FaHeart, FaMapMarkerAlt } from 'react-icons/fa';
 
-export default function SimilarListings({ currentCar, limit = 3 }) {
-  if (!currentCar) return null;
-
-  // Get similar cars from the same category, excluding the current car
-  const similarCars = getCarsByCategory(currentCar.category)
-    .filter(car => car.id !== currentCar.id)
-    .slice(0, limit);
-
-  if (similarCars.length === 0) return null;
+export default function SimilarListings({ cars = [] }) {
+  if (!cars || cars.length === 0) return null;
 
   return (
     <section className="py-12 md:py-16 px-4 sm:px-6 md:px-12 bg-white">
@@ -29,7 +21,7 @@ export default function SimilarListings({ currentCar, limit = 3 }) {
 
         {/* Car Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {similarCars.map((car) => (
+          {cars.map((car) => (
             <Link key={car.id} href={`/cars/${car.id}`} className="block group">
               <div className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 cursor-pointer h-full flex flex-col">
                 {/* Image Section */}

@@ -13,10 +13,11 @@ import ReviewsSection from "@/components/ReviewsSection";
 import CompactHero from "@/components/CompactHero";
 import FAQSection from "@/components/FAQSection";
 import LocationMap from "@/components/LocationMap";
+import MobileContactBar from "@/components/MobileContactBar";
 
 export default function Home() {
   return (
-    <main>
+    <main className="relative pb-16 md:pb-0">
       <HeroSection />
       <TrustedClients />
       <PerfectDriver />
@@ -32,6 +33,7 @@ export default function Home() {
       <CompactHero />
       <FAQSection />
       <LocationMap />
+      <MobileContactBar />
     </main>
   );
 }

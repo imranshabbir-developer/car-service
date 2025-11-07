@@ -13,6 +13,7 @@ import {
   FaFolder,
   FaCar,
   FaBlog,
+  FaClipboardList,
   FaSignOutAlt,
   FaSpinner,
 } from 'react-icons/fa';
@@ -74,6 +75,7 @@ export default function DashboardLayout({ children }) {
     { icon: FaFolder, label: 'Categories', path: '/dashboard/categories', badge: null },
     { icon: FaCar, label: 'Cars', path: '/dashboard/cars', badge: null },
     { icon: FaBlog, label: 'Blogs', path: '/dashboard/blogs', badge: null },
+    { icon: FaClipboardList, label: 'Bookings', path: '/dashboard/bookings', badge: null },
   ];
 
   const isActive = (path) => {
@@ -187,6 +189,7 @@ export default function DashboardLayout({ children }) {
                 {pathname?.includes('/categories') && 'Categories'}
                 {pathname?.includes('/cars') && 'Cars'}
                 {pathname?.includes('/blogs') && 'Blogs'}
+                {pathname?.includes('/bookings') && 'Bookings'}
               </h1>
             </div>
 
