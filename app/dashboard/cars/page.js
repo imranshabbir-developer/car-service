@@ -11,6 +11,7 @@ import {
   FaExclamationCircle,
   FaTimes,
   FaCar,
+  FaImage,
 } from 'react-icons/fa';
 import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
 
@@ -19,6 +20,7 @@ export default function CarsPage() {
   const [filteredCars, setFilteredCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [featuredFilter, setFeaturedFilter] = useState('all'); // 'all', 'featured', 'not-featured'
   const [notification, setNotification] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [editingCar, setEditingCar] = useState(null);
@@ -39,8 +41,10 @@ export default function CarsPage() {
     seats: '',
     registrationNumber: '',
     isFeatured: false,
-    carPhoto: null,
+    carPhotos: [],
+    existingGallery: [], // For editing - existing images from server
   });
+  const [imagePreviews, setImagePreviews] = useState([]);
 
   // Simple toast notification
   const showNotification = (message, type = 'success') => {
@@ -128,20 +132,29 @@ export default function CarsPage() {
     }
   }, []);
 
-  // Live search filter
+  // Live search and featured filter
   useEffect(() => {
-    if (searchTerm === '') {
-      setFilteredCars(cars);
-    } else {
-      const filtered = cars.filter((car) =>
+    let filtered = [...cars];
+
+    // Apply featured filter
+    if (featuredFilter === 'featured') {
+      filtered = filtered.filter((car) => car.isFeatured === true);
+    } else if (featuredFilter === 'not-featured') {
+      filtered = filtered.filter((car) => car.isFeatured !== true);
+    }
+
+    // Apply search filter
+    if (searchTerm !== '') {
+      filtered = filtered.filter((car) =>
         car.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         car.model?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         car.brand?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         car.category?.name?.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      setFilteredCars(filtered);
     }
-  }, [searchTerm, cars]);
+
+    setFilteredCars(filtered);
+  }, [searchTerm, featuredFilter, cars]);
 
   // Handle form input change
   const handleInputChange = (e) => {
@@ -152,13 +165,66 @@ export default function CarsPage() {
     }));
   };
 
-  // Handle file input change
+  // Handle file input change for multiple images
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setFormData((prev) => ({
-      ...prev,
-      carPhoto: file,
-    }));
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        carPhotos: [...prev.carPhotos, ...files],
+      }));
+      
+      // Create previews for new files
+      files.forEach((file) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreviews((prev) => [
+            ...prev,
+            { url: reader.result, file: file, isNew: true },
+          ]);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+    // Reset input to allow selecting same file again
+    e.target.value = '';
+  };
+
+  // Remove image from preview and form data
+  const handleRemoveImage = (index) => {
+    const previewToRemove = imagePreviews[index];
+    
+    // Remove from previews first
+    setImagePreviews((prev) => {
+      const updatedPreviews = prev.filter((_, i) => i !== index);
+      
+      // Update form data based on what was removed
+      if (previewToRemove.isNew) {
+        // Find the index in carPhotos array
+        let fileIndex = 0;
+        for (let i = 0; i < index; i++) {
+          if (imagePreviews[i]?.isNew) fileIndex++;
+        }
+        // Remove from new files array
+        setFormData((prevForm) => ({
+          ...prevForm,
+          carPhotos: prevForm.carPhotos.filter((_, i) => i !== fileIndex),
+        }));
+      } else {
+        // Find the index in existingGallery array
+        let existingIndex = 0;
+        for (let i = 0; i < index; i++) {
+          if (!imagePreviews[i]?.isNew) existingIndex++;
+        }
+        // Remove from existing gallery
+        setFormData((prevForm) => ({
+          ...prevForm,
+          existingGallery: prevForm.existingGallery.filter((_, i) => i !== existingIndex),
+        }));
+      }
+      
+      return updatedPreviews;
+    });
   };
 
   // Open modal for creating
@@ -176,8 +242,10 @@ export default function CarsPage() {
       fuelType: '',
       seats: '',
       registrationNumber: '',
-      carPhoto: null,
+      carPhotos: [],
+      existingGallery: [],
     });
+    setImagePreviews([]);
     setShowModal(true);
   };
 
@@ -190,6 +258,20 @@ export default function CarsPage() {
       if (data.success) {
         const car = data.data.car;
         setEditingCar(car);
+        
+        // Prepare gallery images for preview
+        const gallery = car.gallery && car.gallery.length > 0 
+          ? car.gallery 
+          : (car.carPhoto ? [car.carPhoto] : []);
+        
+        const existingGalleryUrls = gallery.map((imgPath) => ({
+          url: imgPath.startsWith('http') ? imgPath : `${API_IMAGE_BASE_URL}${imgPath}`,
+          isNew: false,
+          path: imgPath,
+        }));
+        
+        setImagePreviews(existingGalleryUrls);
+        
         setFormData({
           name: car.name || '',
           brand: car.brand || '',
@@ -203,7 +285,8 @@ export default function CarsPage() {
           seats: car.seats || '',
           registrationNumber: car.registrationNumber || '',
           isFeatured: car.isFeatured || false,
-          carPhoto: null,
+          carPhotos: [],
+          existingGallery: gallery,
         });
         setShowModal(true);
       } else {
@@ -231,8 +314,10 @@ export default function CarsPage() {
       fuelType: '',
       seats: '',
       registrationNumber: '',
-      carPhoto: null,
+      carPhotos: [],
+      existingGallery: [],
     });
+    setImagePreviews([]);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -255,8 +340,15 @@ export default function CarsPage() {
     formDataToSend.append('seats', formData.seats);
     formDataToSend.append('registrationNumber', formData.registrationNumber);
     formDataToSend.append('isFeatured', formData.isFeatured);
-    if (formData.carPhoto) {
-      formDataToSend.append('carPhoto', formData.carPhoto);
+    
+    // Append multiple image files
+    formData.carPhotos.forEach((file) => {
+      formDataToSend.append('carPhotos', file);
+    });
+    
+    // For editing, send existing gallery if any images remain
+    if (editingCar && formData.existingGallery.length > 0) {
+      formDataToSend.append('existingGallery', JSON.stringify(formData.existingGallery));
     }
 
     let response;
@@ -358,17 +450,26 @@ export default function CarsPage() {
           <div>
             <h2 className="text-lg font-bold text-gray-900">All Cars</h2>
           </div>
-          <div className="flex items-center space-x-3 w-full sm:w-auto">
-            <div className="relative flex-1 sm:flex-initial">
+          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+            <div className="relative flex-1 sm:flex-initial min-w-[200px]">
               <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
                 placeholder="Search cars..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c] w-full sm:w-64"
+                className="pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c] w-full"
               />
             </div>
+            <select
+              value={featuredFilter}
+              onChange={(e) => setFeaturedFilter(e.target.value)}
+              className="px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c] bg-white"
+            >
+              <option value="all">All Cars</option>
+              <option value="featured">Featured Only</option>
+              <option value="not-featured">Not Featured</option>
+            </select>
             <button
               onClick={handleCreate}
               className="flex items-center space-x-2 bg-[#1a2b5c] text-white px-4 py-2 rounded-lg hover:bg-[#0d1b2a] transition-colors"
@@ -726,27 +827,55 @@ export default function CarsPage() {
                   </div>
                 </div>
 
-                {/* Photo Upload */}
+                {/* Photo Upload - Multiple Images */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    Car Photo {editingCar && '(Optional)'}
+                    Car Photos {editingCar && '(Optional)'}
                   </label>
                   <input
                     ref={fileInputRef}
                     type="file"
                     accept="image/*"
+                    multiple
                     onChange={handleFileChange}
                     className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c] cursor-pointer"
                   />
-                  {editingCar && !formData.carPhoto && (
-                    <p className="mt-1 text-xs text-gray-500">
-                      Leave empty to keep current photo
-                    </p>
-                  )}
-                  {formData.carPhoto && (
-                    <p className="mt-1 text-xs text-green-600 font-medium">
-                      ✓ New photo selected: {formData.carPhoto.name.length > 30 ? formData.carPhoto.name.substring(0, 30) + '...' : formData.carPhoto.name}
-                    </p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    You can select multiple images (up to 10)
+                  </p>
+                  
+                  {/* Image Thumbnails Preview */}
+                  {imagePreviews.length > 0 && (
+                    <div className="mt-4">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                        {imagePreviews.map((preview, index) => (
+                          <div
+                            key={index}
+                            className="relative group border border-gray-200 rounded-lg overflow-hidden bg-gray-50"
+                          >
+                            <img
+                              src={preview.url}
+                              alt={`Preview ${index + 1}`}
+                              className="w-full h-24 object-cover"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveImage(index)}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                              title="Remove image"
+                            >
+                              <FaTimes className="w-3 h-3" />
+                            </button>
+                            <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs px-1 py-0.5 text-center">
+                              {preview.isNew ? 'New' : 'Existing'}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="mt-2 text-xs text-gray-600">
+                        {imagePreviews.length} image(s) selected
+                      </p>
+                    </div>
                   )}
                 </div>
 

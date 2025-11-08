@@ -26,18 +26,15 @@ const buildImageUrl = (path) => {
 
 const transformApiCar = (apiCar) => {
   const primaryImage = buildImageUrl(apiCar?.carPhoto);
-  const gallerySource = Array.isArray(apiCar?.gallery) ? apiCar.gallery : [];
+  const gallerySource = Array.isArray(apiCar?.gallery) && apiCar.gallery.length > 0 
+    ? apiCar.gallery 
+    : (apiCar?.carPhoto ? [apiCar.carPhoto] : []);
   const gallery = gallerySource
     .map((img) => buildImageUrl(img))
     .filter(Boolean);
 
-  if (!gallery.length) {
-    gallery.push(primaryImage);
-  }
-
-  while (gallery.length < 3) {
-    gallery.push(gallery[0]);
-  }
+  // Use first gallery image as primary if no carPhoto, otherwise use carPhoto
+  const mainImage = primaryImage || (gallery.length > 0 ? gallery[0] : PLACEHOLDER_IMAGE);
 
   const city = apiCar?.location?.city;
   const address = apiCar?.location?.address;
@@ -50,8 +47,8 @@ const transformApiCar = (apiCar) => {
     price: Number(apiCar?.rentPerDay)
       ? `Rs ${Number(apiCar.rentPerDay).toLocaleString()}`
       : 'Price on request',
-    image: primaryImage,
-    images: gallery,
+    image: mainImage,
+    images: gallery.length > 0 ? gallery : [mainImage],
     location,
     availability: apiCar?.isAvailable ? 'Available' : 'Currently Unavailable',
     selfDriverPrice: apiCar?.depositAmount ?? 500,
@@ -494,23 +491,25 @@ export default function CarDetailPage() {
             </div>
 
             {/* Thumbnail Images */}
-            <div className="grid grid-cols-2 gap-4">
-              {car.images?.slice(0, 2).map((img, index) => (
-                <button
-                  key={index}
-                  onClick={() => setSelectedImage(index)}
-                  className={`relative w-full h-48 bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow ${
-                    selectedImage === index ? 'ring-2 ring-[#1a2b5c]' : ''
-                  }`}
-                >
-                  <img
-                    src={img}
-                    alt={`${car.name} ${index + 1}`}
-                    className="w-full h-full object-contain"
-                  />
-                </button>
-              ))}
-            </div>
+            {car.images && car.images.length > 1 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {car.images.map((img, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedImage(index)}
+                    className={`relative w-full h-32 sm:h-40 bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow ${
+                      selectedImage === index ? 'ring-2 ring-[#1a2b5c]' : ''
+                    }`}
+                  >
+                    <img
+                      src={img}
+                      alt={`${car.name} ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Right Column: Booking Form */}
