@@ -17,6 +17,7 @@ const FALLBACK_CARS = [
     location: "Lahore, Punjab, Pakistan",
     seats: 4,
     transmission: "Automatic",
+    fuelType: "Petrol",
     featured: true,
   },
   {
@@ -28,6 +29,7 @@ const FALLBACK_CARS = [
     location: "Lahore, Punjab, Pakistan",
     seats: 4,
     transmission: "Automatic",
+    fuelType: "Petrol",
     featured: true,
   },
   {
@@ -39,6 +41,7 @@ const FALLBACK_CARS = [
     location: "Lahore, Punjab, Pakistan",
     seats: 4,
     transmission: "Automatic",
+    fuelType: "Petrol",
     featured: true,
   },
   {
@@ -50,6 +53,7 @@ const FALLBACK_CARS = [
     location: "Lahore, Punjab, Pakistan",
     seats: 4,
     transmission: "Automatic",
+    fuelType: "Petrol",
     featured: true,
   },
 ];
@@ -71,7 +75,8 @@ const transformCar = (car) => {
       : "Location not specified",
     seats: car.seats || 4,
     transmission: car.transmission || "Automatic",
-    featured: car.status === "available" && car.isAvailable,
+    fuelType: car.fuelType || "Petrol",
+    featured: car.isFeatured === true,
   };
 };
 
@@ -93,12 +98,19 @@ export default function FeaturedCarsSection() {
         const data = await response.json();
         const apiCars = data?.data?.cars || [];
 
-        if (apiCars.length && isMounted) {
-          const transformed = apiCars
-            .filter((car) => car?.status === "available")
+        if (isMounted) {
+          const featuredCars = apiCars
+            .filter((car) => car?.isFeatured === true && car?.status === "available")
             .slice(0, 8)
             .map(transformCar);
-          setCars(transformed);
+          
+          // Only update if we have featured cars, otherwise keep fallback or show empty
+          if (featuredCars.length > 0) {
+            setCars(featuredCars);
+          } else {
+            // If no featured cars found from API, show fallback cars
+            setCars(FALLBACK_CARS);
+          }
         }
       } catch (error) {
         console.error("Error fetching featured cars:", error);
@@ -176,10 +188,10 @@ export default function FeaturedCarsSection() {
                       <FaUser className="text-[#1a2b5c]" /> {car.seats || 4} Seats
                     </li>
                     <li className="flex items-center gap-2">
-                      <FaSnowflake className="text-[#1a2b5c]" /> Air Conditioning
+                      <FaCogs className="text-[#1a2b5c]" /> {car.transmission || 'Automatic'}
                     </li>
                     <li className="flex items-center gap-2">
-                      <FaCogs className="text-[#1a2b5c]" /> {car.transmission || 'Automatic'} gearbox
+                      <FaSnowflake className="text-[#1a2b5c]" /> {car.fuelType || 'Petrol'}
                     </li>
                   </ul>
                   <div className="book-now-button w-full bg-[#1a2b5c] text-white py-3 rounded-lg hover:bg-[#0d1b2a] transition-colors duration-300 font-semibold text-center">

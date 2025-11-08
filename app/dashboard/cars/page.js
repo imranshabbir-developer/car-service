@@ -38,6 +38,7 @@ export default function CarsPage() {
     fuelType: '',
     seats: '',
     registrationNumber: '',
+    isFeatured: false,
     carPhoto: null,
   });
 
@@ -201,6 +202,7 @@ export default function CarsPage() {
           fuelType: car.fuelType || '',
           seats: car.seats || '',
           registrationNumber: car.registrationNumber || '',
+          isFeatured: car.isFeatured || false,
           carPhoto: null,
         });
         setShowModal(true);
@@ -252,6 +254,7 @@ export default function CarsPage() {
     formDataToSend.append('fuelType', formData.fuelType);
     formDataToSend.append('seats', formData.seats);
     formDataToSend.append('registrationNumber', formData.registrationNumber);
+    formDataToSend.append('isFeatured', formData.isFeatured);
     if (formData.carPhoto) {
       formDataToSend.append('carPhoto', formData.carPhoto);
     }
@@ -396,13 +399,14 @@ export default function CarsPage() {
                     <th className="text-left py-3 px-2 font-semibold text-gray-700">Rent/Day</th>
                     <th className="text-left py-3 px-2 font-semibold text-gray-700">Transmission</th>
                     <th className="text-left py-3 px-2 font-semibold text-gray-700">Fuel Type</th>
+                    <th className="text-center py-3 px-2 font-semibold text-gray-700">Featured</th>
                     <th className="text-center py-3 px-2 font-semibold text-gray-700">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredCars.length === 0 ? (
                     <tr>
-                      <td colSpan="9" className="py-8 text-center text-gray-500">
+                      <td colSpan="10" className="py-8 text-center text-gray-500">
                         {searchTerm ? 'No cars found matching your search.' : 'No cars available.'}
                       </td>
                     </tr>
@@ -439,6 +443,19 @@ export default function CarsPage() {
                         </td>
                         <td className="py-3 px-2 text-gray-600">{car.transmission}</td>
                         <td className="py-3 px-2 text-gray-600">{car.fuelType}</td>
+                        <td className="py-3 px-2">
+                          <div className="flex justify-center">
+                            {car.isFeatured ? (
+                              <span className="px-2 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded-full">
+                                Featured
+                              </span>
+                            ) : (
+                              <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-semibold rounded-full">
+                                No
+                              </span>
+                            )}
+                          </div>
+                        </td>
                         <td className="py-3 px-2">
                           <div className="flex justify-center items-center space-x-3">
                             <button
@@ -690,6 +707,21 @@ export default function CarsPage() {
                         className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
                         placeholder="ABC-123"
                       />
+                    </div>
+
+                    <div>
+                      <label className="flex items-center space-x-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          name="isFeatured"
+                          checked={formData.isFeatured}
+                          onChange={handleInputChange}
+                          className="w-4 h-4 text-[#1a2b5c] border-gray-300 rounded focus:ring-2 focus:ring-[#1a2b5c]"
+                        />
+                        <span className="text-xs font-semibold text-gray-700">
+                          Mark as Featured
+                        </span>
+                      </label>
                     </div>
                   </div>
                 </div>
