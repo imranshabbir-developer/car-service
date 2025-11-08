@@ -7,6 +7,8 @@ import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
 import { FaMapMarkerAlt, FaCalendarAlt, FaEnvelope, FaPhone, FaHome, FaArrowLeft, FaTimes, FaUser } from 'react-icons/fa';
 import Link from 'next/link';
 import SimilarListings from '@/components/SimilarListings';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/800x600?text=Vehicle+Image';
 
@@ -103,8 +105,8 @@ export default function CarDetailPage() {
     email: '',
     phone: '',
     address: '',
-    pickupDate: '',
-    dropoffDate: '',
+    pickupDate: null,
+    dropoffDate: null,
     extraInfo: '',
     selfDriver: false,
     outOfStation: false,
@@ -202,11 +204,32 @@ export default function CarDetailPage() {
 
   const calculateTotal = useMemo(() => {
     if (!car) return 0;
-    let total = car.priceNumber || 0;
-    if (formData.selfDriver) total += car.selfDriverPrice || 0;
-    if (formData.outOfStation) total += car.outOfStationPrice || 0;
+    
+    // Calculate number of days
+    let totalDays = 1;
+    if (formData.pickupDate && formData.dropoffDate) {
+      const pickup = new Date(formData.pickupDate);
+      const dropoff = new Date(formData.dropoffDate);
+      const diffTime = Math.abs(dropoff - pickup);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      totalDays = diffDays > 0 ? diffDays : 1;
+    }
+    
+    // Base rate per day
+    const baseRatePerDay = car.priceNumber || 0;
+    
+    // Extra charge per day based on selection
+    let extraChargePerDay = 0;
+    if (formData.selfDriver) {
+      extraChargePerDay = car.selfDriverPrice || 500;
+    } else if (formData.outOfStation) {
+      extraChargePerDay = car.outOfStationPrice || 1000;
+    }
+    
+    // Calculate total: (base rate + extra charge) * number of days
+    const total = (baseRatePerDay + extraChargePerDay) * totalDays;
     return total;
-  }, [formData.selfDriver, formData.outOfStation, car]);
+  }, [formData.selfDriver, formData.outOfStation, formData.pickupDate, formData.dropoffDate, car]);
   
   if (loading) {
     return (
@@ -270,7 +293,17 @@ export default function CarDetailPage() {
     if (!formData.pickupDate || !formData.dropoffDate) {
       setBookingFeedback({
         type: 'error',
-        message: 'Please select both pick-up and drop-off dates.',
+        message: 'Please select both pick-up and drop-off dates and times.',
+      });
+      setActiveTab('booking');
+      return;
+    }
+    
+    // Validate that drop-off is after pick-up
+    if (new Date(formData.dropoffDate) < new Date(formData.pickupDate)) {
+      setBookingFeedback({
+        type: 'error',
+        message: 'Drop-off date and time must be after pick-up date and time.',
       });
       setActiveTab('booking');
       return;
@@ -296,14 +329,22 @@ export default function CarDetailPage() {
 
     const bookingOption = formData.outOfStation ? 'out_of_station' : 'self_without_driver';
 
+    // Format dates with time for backend (ISO string format)
+    const pickupDateISO = formData.pickupDate instanceof Date 
+      ? formData.pickupDate.toISOString() 
+      : formData.pickupDate;
+    const dropoffDateISO = formData.dropoffDate instanceof Date 
+      ? formData.dropoffDate.toISOString() 
+      : formData.dropoffDate;
+
     const payload = {
       carId: car.id,
       customerName: formData.name,
       email: formData.email,
       phone: formData.phone,
       address: formData.address,
-      pickupDate: formData.pickupDate,
-      dropoffDate: formData.dropoffDate,
+      pickupDate: pickupDateISO,
+      dropoffDate: dropoffDateISO,
       bookingOption,
       notes: formData.extraInfo || undefined,
     };
@@ -333,8 +374,8 @@ export default function CarDetailPage() {
 
       setFormData((prev) => ({
         ...prev,
-        pickupDate: '',
-        dropoffDate: '',
+        pickupDate: null,
+        dropoffDate: null,
         extraInfo: '',
         selfDriver: false,
         outOfStation: false,
@@ -350,19 +391,51 @@ export default function CarDetailPage() {
     }
   };
 
-  const handleQuestionSubmit = (e) => {
+  const handleQuestionSubmit = async (e) => {
     e.preventDefault();
-    // Handle question submission here
-    console.log('Question submitted:', questionFormData);
-    alert('Your question has been submitted! We will get back to you soon.');
-    setQuestionFormData({
-      name: '',
-      email: '',
-      phone: '',
-      subject: '',
-      message: '',
-    });
-    setQuestionModalOpen(false);
+    
+    if (!questionFormData.name || !questionFormData.email || !questionFormData.phone || !questionFormData.subject || !questionFormData.message) {
+      alert('Please fill in all required fields.');
+      return;
+    }
+
+    try {
+      const payload = {
+        carId: car?.id || undefined,
+        customerName: questionFormData.name,
+        email: questionFormData.email,
+        phone: questionFormData.phone,
+        subject: questionFormData.subject,
+        message: questionFormData.message,
+      };
+
+      const response = await fetch(`${API_BASE_URL}/questions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Unable to submit question. Please try again.');
+      }
+
+      alert('Your question has been submitted! We will get back to you soon.');
+      setQuestionFormData({
+        name: '',
+        email: '',
+        phone: '',
+        subject: '',
+        message: '',
+      });
+      setQuestionModalOpen(false);
+    } catch (error) {
+      console.error('Error submitting question:', error);
+      alert(error.message || 'Something went wrong while submitting your question.');
+    }
   };
 
   return (
@@ -475,35 +548,59 @@ export default function CarDetailPage() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Pick-up Date
+                    Pick-up Date & Time
                   </label>
                   <div className="relative">
-                    <input
-                      type="date"
-                      name="pickupDate"
-                      value={formData.pickupDate}
-                      onChange={handleInputChange}
+                    <DatePicker
+                      selected={formData.pickupDate}
+                      onChange={(date) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          pickupDate: date
+                        }));
+                      }}
+                      selectsStart
+                      startDate={formData.pickupDate}
+                      endDate={formData.dropoffDate}
+                      showTimeSelect
+                      timeIntervals={15}
+                      dateFormat="MMM dd, yyyy hh:mm aa"
+                      minDate={new Date()}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent outline-none"
+                      placeholderText="Select pick-up date and time"
                       required
+                      wrapperClassName="w-full"
                     />
-                    <FaCalendarAlt className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    <FaCalendarAlt className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none z-10" />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Drop-off Date
+                    Drop-off Date & Time
                   </label>
                   <div className="relative">
-                    <input
-                      type="date"
-                      name="dropoffDate"
-                      value={formData.dropoffDate}
-                      onChange={handleInputChange}
+                    <DatePicker
+                      selected={formData.dropoffDate}
+                      onChange={(date) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          dropoffDate: date
+                        }));
+                      }}
+                      selectsEnd
+                      startDate={formData.pickupDate}
+                      endDate={formData.dropoffDate}
+                      minDate={formData.pickupDate || new Date()}
+                      showTimeSelect
+                      timeIntervals={15}
+                      dateFormat="MMM dd, yyyy hh:mm aa"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent outline-none"
+                      placeholderText="Select drop-off date and time"
                       required
+                      wrapperClassName="w-full"
                     />
-                    <FaCalendarAlt className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    <FaCalendarAlt className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none z-10" />
                   </div>
                 </div>
 
@@ -649,35 +746,59 @@ export default function CarDetailPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Pick-up Date
+                    Pick-up Date & Time
                   </label>
                   <div className="relative">
-                    <input
-                      type="date"
-                      name="pickupDate"
-                      value={formData.pickupDate}
-                      onChange={handleInputChange}
+                    <DatePicker
+                      selected={formData.pickupDate}
+                      onChange={(date) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          pickupDate: date
+                        }));
+                      }}
+                      selectsStart
+                      startDate={formData.pickupDate}
+                      endDate={formData.dropoffDate}
+                      showTimeSelect
+                      timeIntervals={15}
+                      dateFormat="MMM dd, yyyy hh:mm aa"
+                      minDate={new Date()}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent outline-none"
+                      placeholderText="Select pick-up date and time"
                       required
+                      wrapperClassName="w-full"
                     />
-                    <FaCalendarAlt className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    <FaCalendarAlt className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none z-10" />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Drop-off Date
+                    Drop-off Date & Time
                   </label>
                   <div className="relative">
-                    <input
-                      type="date"
-                      name="dropoffDate"
-                      value={formData.dropoffDate}
-                      onChange={handleInputChange}
+                    <DatePicker
+                      selected={formData.dropoffDate}
+                      onChange={(date) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          dropoffDate: date
+                        }));
+                      }}
+                      selectsEnd
+                      startDate={formData.pickupDate}
+                      endDate={formData.dropoffDate}
+                      minDate={formData.pickupDate || new Date()}
+                      showTimeSelect
+                      timeIntervals={15}
+                      dateFormat="MMM dd, yyyy hh:mm aa"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent outline-none"
+                      placeholderText="Select drop-off date and time"
                       required
+                      wrapperClassName="w-full"
                     />
-                    <FaCalendarAlt className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    <FaCalendarAlt className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none z-10" />
                   </div>
                 </div>
 

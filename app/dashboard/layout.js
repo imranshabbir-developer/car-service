@@ -16,6 +16,7 @@ import {
   FaClipboardList,
   FaSignOutAlt,
   FaSpinner,
+  FaQuestionCircle,
 } from 'react-icons/fa';
 
 export default function DashboardLayout({ children }) {
@@ -76,6 +77,7 @@ export default function DashboardLayout({ children }) {
     { icon: FaCar, label: 'Cars', path: '/dashboard/cars', badge: null },
     { icon: FaBlog, label: 'Blogs', path: '/dashboard/blogs', badge: null },
     { icon: FaClipboardList, label: 'Bookings', path: '/dashboard/bookings', badge: null },
+    { icon: FaQuestionCircle, label: 'Questions', path: '/dashboard/questions', badge: null },
   ];
 
   const isActive = (path) => {
