@@ -2,10 +2,21 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 import VehicleCard from '@/components/VehicleCard';
 import VehicleCardList from '@/components/VehicleCardList';
-import { FaSearch, FaTh, FaList, FaChevronLeft, FaChevronRight, FaSpinner, FaCalendarAlt, FaUser, FaArrowRight } from 'react-icons/fa';
+import {
+  FaSearch,
+  FaTh,
+  FaList,
+  FaChevronLeft,
+  FaChevronRight,
+  FaSpinner,
+  FaCalendarAlt,
+  FaUser,
+  FaRegNewspaper,
+  FaClock,
+  FaTag,
+} from 'react-icons/fa';
 import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
 
 export default function VehicleTypesContent() {
@@ -303,82 +314,129 @@ export default function VehicleTypesContent() {
                   <FaSpinner className="animate-spin text-[#1a2b5c] text-3xl" />
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {blogs.map((blog) => (
-                    <Link
-                      key={blog._id}
-                      href={`/blog/${blog.slug || blog._id}`}
-                      className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-200"
-                    >
-                      {/* Blog Image */}
-                      <div className="relative w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
-                        {blog.featuredImage ? (
-                          <img
-                            src={`${API_IMAGE_BASE_URL}${blog.featuredImage}`}
-                            alt={blog.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                <div className="space-y-16">
+                  {blogs.map((blog, index) => {
+                    const formattedDate = blog.createdAt
+                      ? new Date(blog.createdAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })
+                      : 'Recent';
+                    const authorName = blog.createdBy?.name || 'Admin';
+                    const articleId = `blog-${blog.slug || blog._id}`;
+                    const hasFeaturedImage = Boolean(blog.featuredImage);
+                    const blogTags = Array.isArray(blog.tags)
+                      ? blog.tags
+                          .map((tag) =>
+                            typeof tag === 'string'
+                              ? tag
+                              : tag?.name || tag?.label || null
+                          )
+                          .filter(Boolean)
+                      : null;
+                    return (
+                      <article
+                        key={blog._id}
+                        id={articleId}
+                        className="bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-200 transition-all duration-500 hover:shadow-2xl"
+                      >
+                        {hasFeaturedImage && (
+                          <div className="relative w-full h-72 md:h-96 overflow-hidden">
+                            <>
+                              <img
+                                src={`${API_IMAGE_BASE_URL}${blog.featuredImage}`}
+                                alt={blog.title}
+                                className="w-full h-full object-cover transform transition-transform duration-500 hover:scale-105"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                            </>
+                          </div>
+                        )}
+
+                        <div className="p-6 sm:p-10 lg:p-12 space-y-6">
+                          <div className="flex flex-wrap items-center justify-between gap-4">
+                            <div className="flex flex-wrap items-center gap-4">
+                              {blog.category && (
+                                <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#f0f4ff] text-[#1a2b5c] text-xs font-semibold uppercase tracking-widest rounded-full">
+                                  <FaTag className="w-3.5 h-3.5" />
+                                  {blog.category.name}
+                                </span>
+                              )}
+                              {!hasFeaturedImage && (
+                                <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#1a2b5c]/10 text-[#1a2b5c] text-xs font-semibold uppercase tracking-widest rounded-full">
+                                  <FaRegNewspaper className="w-4 h-4" />
+                                  Editorial Spotlight
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                              <span className="px-4 py-1.5 text-xs font-semibold uppercase tracking-wider bg-[#f8fafc] text-[#1a2b5c] rounded-full shadow-sm">
+                                #{String(index + 1).padStart(2, '0')}
+                              </span>
+                              {blog.published && (
+                                <span className="px-4 py-1.5 text-xs font-semibold uppercase tracking-widest bg-green-500 text-white rounded-full shadow">
+                                  Published
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <header className="space-y-4">
+                            <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight">
+                              {blog.title}
+                            </h3>
+
+                            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                              <span className="flex items-center gap-2">
+                                <FaCalendarAlt className="w-4 h-4 text-[#1a2b5c]" />
+                                {formattedDate}
+                              </span>
+                              <span className="flex items-center gap-2">
+                                <FaUser className="w-4 h-4 text-[#1a2b5c]" />
+                                {authorName}
+                              </span>
+                              {blog.readingTime && (
+                                <span className="flex items-center gap-2 px-3 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-full">
+                                  <FaClock className="w-3.5 h-3.5 text-[#1a2b5c]" />
+                                  {blog.readingTime}
+                                </span>
+                              )}
+                              {blogTags && (
+                                <span className="flex items-center gap-2 px-3 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-full">
+                                  <FaTag className="w-3.5 h-3.5 text-[#1a2b5c]" />
+                                  {blogTags.slice(0, 3).join(', ')}
+                                </span>
+                              )}
+                            </div>
+                          </header>
+
+                          {blog.description && (
+                            <p className="text-lg text-gray-700 leading-relaxed">
+                              {blog.description}
+                            </p>
+                          )}
+
+                          <div
+                            className="prose prose-lg max-w-none text-gray-700 leading-relaxed prose-img:rounded-2xl prose-img:shadow-md prose-headings:text-gray-900"
+                            style={{ fontFamily: 'Roboto, sans-serif' }}
+                            dangerouslySetInnerHTML={
+                              blog.content
+                                ? { __html: blog.content }
+                                : undefined
+                            }
                           />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <div className="text-4xl font-bold text-gray-300">
-                              {blog.title?.charAt(0).toUpperCase() || 'B'}
-                            </div>
-                          </div>
-                        )}
-                        {blog.published && (
-                          <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 text-xs font-semibold rounded-full">
-                            Published
-                          </div>
-                        )}
-                      </div>
 
-                      {/* Blog Content */}
-                      <div className="p-6">
-                        {/* Category Badge */}
-                        {blog.category && (
-                          <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full mb-3">
-                            {blog.category.name}
-                          </span>
-                        )}
-
-                        {/* Title */}
-                        <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#1a2b5c] transition-colors line-clamp-2">
-                          {blog.title}
-                        </h3>
-
-                        {/* Description */}
-                        <p className="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed">
-                          {blog.description || blog.content?.replace(/<[^>]*>/g, '').substring(0, 120) + '...' || 'No description available'}
-                        </p>
-
-                        {/* Meta Info */}
-                        <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
-                          <div className="flex items-center gap-2">
-                            <FaCalendarAlt className="w-3 h-3" />
-                            <span>
-                              {blog.createdAt ? new Date(blog.createdAt).toLocaleDateString('en-US', { 
-                                year: 'numeric', 
-                                month: 'short', 
-                                day: 'numeric' 
-                              }) : 'Recent'}
-                            </span>
-                          </div>
-                          {blog.createdBy && (
-                            <div className="flex items-center gap-2">
-                              <FaUser className="w-3 h-3" />
-                              <span>{blog.createdBy.name || 'Admin'}</span>
-                            </div>
+                          {!blog.content && !blog.description && (
+                            <p className="text-gray-500">
+                              Content coming soon. Stay tuned for more insights.
+                            </p>
                           )}
                         </div>
-
-                        {/* Read More Link */}
-                        <div className="flex items-center gap-2 text-[#1a2b5c] font-semibold text-sm group-hover:gap-3 transition-all">
-                          <span>Read More</span>
-                          <FaArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
+                      </article>
+                    );
+                  })}
                 </div>
               )}
             </div>
