@@ -5,7 +5,7 @@ export default function OnlineCarBooking() {
         <div className="relative flex justify-center">
           <div className="absolute -left-4 top-4 bg-[#1a2b5c] w-full h-full rounded-lg hidden md:block"></div>
           <img
-            src="https://convoytravels.pk/wp-content/uploads/2021/07/Busses-1-1024x443-1.gif"
+            src="/s1.gif"
             alt="Happy passenger in car"
             className="relative rounded-lg w-full max-h-48 md:max-h-56 lg:max-h-64 object-cover shadow-lg"
           />

@@ -4,7 +4,7 @@ export default function AffordableCarRental() {
       <div className="max-w-7xl w-full grid grid-cols-1 md:grid-cols-2 items-center gap-12">
         <div>
           <h2 className="text-[#1a2b5c] text-3xl md:text-4xl font-bold leading-snug mb-6">
-            Affordable Rent a Car in Lahore
+            Affordable Rent a Car in Lahore 
           </h2>
           <p className="text-gray-600 text-base leading-relaxed mb-6">
             Looking for an affordable and convenient way to travel around
@@ -26,7 +26,7 @@ export default function AffordableCarRental() {
         <div className="relative flex justify-center">
           <div className="absolute -right-4 top-4 bg-[#1a2b5c] w-full h-full rounded-lg hidden md:block"></div>
           <img
-            src="https://convoytravels.pk/wp-content/uploads/2024/03/2019-audi-a6-rear-view-iab-77ee.jpg"
+            src="https://americ41.in1.fcomet.com/uploads/2024/03/2019-audi-a6-rear-view-iab-77ee.jpg"
             alt="Cars parked"
             className="relative rounded-lg w-full max-h-48 md:max-h-56 lg:max-h-64 object-cover shadow-lg"
           />

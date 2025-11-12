@@ -4,7 +4,7 @@ export default function CompactHero() {
       <div className="flex items-center space-x-4">
         <div className="w-14 h-14 md:w-16 md:h-16 flex items-center justify-center">
           <img
-            src="https://convoytravels.pk/wp-content/uploads/elementor/thumbs/721911-qiong1d2t31nsvzti80r5qrpns973gdv02iis0zbxc-r1bcy7ch2akd6t264paag0q2m1z3kmnghjfcxivyn4.png"
+            src="/rent.webp"
             alt="Rent Icon"
             className="w-full h-auto object-contain"
           />

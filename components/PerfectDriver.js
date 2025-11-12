@@ -4,20 +4,23 @@ export default function PerfectDriver() {
   const vehicles = [
     {
       title: "Cars",
-      img: "https://convoytravels.pk/wp-content/uploads/2024/03/Corrola.jpg",
+      img: "https://americ41.in1.fcomet.com/wp-content/uploads/2024/03/Corrola.jpg",
     },
     {
       title: "4x4",
-      img: "https://convoytravels.pk/wp-content/uploads/2024/01/Untitled-design-2024-02-02T213538.970.jpg",
+      img: "https://americ41.in1.fcomet.com/wp-content/uploads/2024/01/Untitled-design-2024-02-02T213538.970.jpg",
     },
     {
       title: "Vans & Buses",
-      img: "https://convoytravels.pk/wp-content/uploads/2024/03/Busses-1.jpg",
+      img: "https://americ41.in1.fcomet.com/wp-content/uploads/2024/03/Busses-1.jpg",
     },
   ];
 
   return (
-    <section className="bg-white py-16 px-6 md:px-16 text-center" style={{ fontFamily: 'Roboto, sans-serif' }}>
+    <section
+      className="bg-white py-16 px-6 md:px-16 text-center"
+      style={{ fontFamily: "Roboto, sans-serif" }}
+    >
       <h2 className="text-3xl md:text-5xl font-bold text-[#0d1b2a] mb-12">
         Your Perfect Drive
       </h2>
@@ -46,4 +49,3 @@ export default function PerfectDriver() {
     </section>
   );
 }
-

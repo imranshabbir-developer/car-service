@@ -1,27 +1,27 @@
 export default function PopularBrands() {
   const brands = [
     {
-      img: "https://convoytravels.pk/wp-content/uploads/2024/03/Suzuki250.jpg",
+      img: "/r1.webp",
       name: "Suzuki",
     },
     {
-      img: "https://convoytravels.pk/wp-content/uploads/2024/03/Toyota-250.jpg",
+      img: "/r2.webp",
       name: "Toyota",
     },
     {
-      img: "https://convoytravels.pk/wp-content/uploads/2024/02/Honda250.jpg",
+      img: "/r3.webp",
       name: "Honda",
     },
     {
-      img: "https://convoytravels.pk/wp-content/uploads/2024/02/Others-1.jpg",
+      img: "/r4.webp",
       name: "BMW",
     },
     {
-      img: "https://convoytravels.pk/wp-content/uploads/2024/02/Luxcious250.jpg",
+      img: "/r5.webp",
       name: "Mercedes",
     },
     {
-      img: "https://convoytravels.pk/wp-content/uploads/2024/02/Vans-and-Buses.jpg",
+      img: "/r6.webp",
       name: "Hyundai",
     },
   ];
@@ -55,4 +55,3 @@ export default function PopularBrands() {
     </section>
   );
 }
-

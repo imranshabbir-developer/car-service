@@ -3,7 +3,7 @@ export const blogs = [
   {
     id: 1,
     slug: "kia-sportage-gets-striking-new-look-details",
-    img: "https://convoytravels.pk/wp-content/uploads/2024/05/WhatsApp-Image-2024-05-30-at-12.59.58_2b2df75e-750x430-1.jpg",
+    img: "/b1.webp",
     title: "Kia Sportage Gets \"Striking New Look\" – Details",
     date: "May 31, 2024",
     desc: "Kia Sportage Gets \"Striking New Look\" – Details Kia Motor Pakistan has announced a minor upgrade in its crossover SUV, Kia.",
@@ -27,7 +27,7 @@ export const blogs = [
   {
     id: 2,
     slug: "locally-assembled-haval-jolion-hev-specs-features",
-    img: "https://convoytravels.pk/wp-content/uploads/2021/07/Busses-1-1024x443-1.gif",
+    img: "/b2.gif",
     title: "Locally Assembled Haval Jolion HEV – Specs & Features",
     date: "April 2, 2024",
     desc: "Locally Assembled Haval Jolion HEV – Specs & Features. As we told you earlier, the locally assembled Haval Jolion HEV is launched.",
@@ -57,7 +57,7 @@ export const blogs = [
   {
     id: 3,
     slug: "petrol-price-jacked-up-by-rs-966",
-    img: "https://convoytravels.pk/wp-content/uploads/2024/04/Petrol-Price-Change-Feature-Artwork-750x430-1.jpg",
+    img: "/b3.webp",
     title: "Petrol Price Jacked Up By Rs. 9.66",
     date: "April 2, 2024",
     desc: "Petrol Price Jacked Up By Rs. 9.66. The Ministry of Finance has issued a notification regarding the new prices of petroleum products.",

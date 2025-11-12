@@ -5,7 +5,7 @@ export default function RentCarInfoSection() {
         <div className="relative flex justify-center">
           <div className="absolute -left-4 top-4 bg-[#1a2b5c] w-full h-full rounded-lg hidden md:block"></div>
           <img
-            src="https://convoytravels.pk/wp-content/uploads/2021/07/about-company-img.png"
+            src="https://americ41.in1.fcomet.com/uploads/2021/07/about-company-img.png"
             alt="Happy passenger in car"
             className="relative rounded-lg w-full max-h-48 md:max-h-56 lg:max-h-64 object-cover shadow-lg"
           />

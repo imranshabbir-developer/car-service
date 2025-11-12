@@ -13,7 +13,7 @@ export default function AboutPage() {
           {/* Left Column - Image */}
           <div className="w-full lg:w-[48%] xl:w-[50%] flex-shrink-0 overflow-hidden rounded-tl-[16px] rounded-bl-[16px] sm:rounded-tl-[20px] sm:rounded-bl-[20px] lg:rounded-tr-none lg:rounded-br-none">
             <img
-              src="https://convoytravels.pk/wp-content/uploads/2021/07/about-company-img.png"
+              src="/girl.webp"
               alt="Convoy Travels"
               className="w-full h-full object-cover"
             />
@@ -74,7 +74,7 @@ export default function AboutPage() {
             {/* Column 1 - Total Cars */}
             <div className="flex flex-col items-center text-center">
               <img
-                src="https://convoytravels.pk/wp-content/uploads/2021/07/1.png"
+                src="/1.png"
                 alt="Total Cars"
                 className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 mb-3 sm:mb-4 object-contain"
               />
@@ -89,7 +89,7 @@ export default function AboutPage() {
             {/* Column 2 - Happy Customers */}
             <div className="flex flex-col items-center text-center">
               <img
-                src="https://convoytravels.pk/wp-content/uploads/2021/07/2.png"
+                src="/2.png"
                 alt="Happy Customers"
                 className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 mb-3 sm:mb-4 object-contain"
               />
@@ -181,7 +181,7 @@ export default function AboutPage() {
               {/* RENT Icon */}
               <div className="flex-shrink-0">
                 <img
-                  src="https://convoytravels.pk/wp-content/uploads/elementor/thumbs/721911-qiong1d2t31nsvzti80r5qrpns973gdv02iis0zbxc-r1bcy7ch2akd6t264paag0q2m1z3kmnghjfcxivyn4.png"
+                  src="/rent.webp"
                   alt="RENT"
                   className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-20 lg:h-20 object-contain"
                 />
