@@ -1,22 +1,28 @@
-'use client';
+"use client";
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { FaPhoneAlt, FaBars, FaTimes, FaChevronDown, FaSearch } from "react-icons/fa";
-import { API_BASE_URL } from '@/config/api';
+import {
+  FaPhoneAlt,
+  FaBars,
+  FaTimes,
+  FaChevronDown,
+  FaSearch,
+} from "react-icons/fa";
+import { API_BASE_URL } from "@/config/api";
 import "./navbar-hover.css";
 
 const NavLinkHover = ({ href, children, className = "" }) => {
-  const [hoverState, setHoverState] = useState('');
+  const [hoverState, setHoverState] = useState("");
 
   const handleMouseEnter = () => {
-    setHoverState('hover-in');
+    setHoverState("hover-in");
   };
 
   const handleMouseLeave = () => {
-    setHoverState('hover-out');
+    setHoverState("hover-out");
     setTimeout(() => {
-      setHoverState('');
+      setHoverState("");
     }, 300);
   };
 
@@ -42,7 +48,7 @@ const RippleLink = ({ href, children, className }) => {
     const size = Math.max(rect.width, rect.height);
     const x = e.clientX - rect.left - size / 2;
     const y = e.clientY - rect.top - size / 2;
-    
+
     const newRipple = {
       id: Date.now(),
       x,
@@ -74,9 +80,9 @@ const RippleLink = ({ href, children, className }) => {
             top: ripple.y,
             width: ripple.size,
             height: ripple.size,
-            backgroundColor: 'rgba(30, 45, 96, 0.4)',
-            transform: 'scale(0)',
-            animation: 'ripple 0.6s ease-out',
+            backgroundColor: "rgba(30, 45, 96, 0.4)",
+            transform: "scale(0)",
+            animation: "ripple 0.6s ease-out",
           }}
         />
       ))}
@@ -98,46 +104,50 @@ export default function Navbar() {
       setIsScrolled(scrollPosition > 10);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
-      if (typeof window === 'undefined') return;
-      
+      if (typeof window === "undefined") return;
+
       try {
         const url = `${API_BASE_URL}/categories`;
-        console.log('Fetching categories from:', url);
-        
+        console.log("Fetching categories from:", url);
+
         // Create AbortController for timeout (30 seconds)
         const controller = new AbortController();
         let timeoutId = setTimeout(() => {
           controller.abort();
         }, 30000); // 30 second timeout
-        
+
         try {
           const response = await fetch(url, {
             signal: controller.signal,
           });
-          
+
           // Clear timeout if request succeeds
           clearTimeout(timeoutId);
-          
+
           if (!response.ok) {
-            console.error('Categories API error:', response.status, response.statusText);
+            console.error(
+              "Categories API error:",
+              response.status,
+              response.statusText
+            );
             return;
           }
-          
+
           const data = await response.json();
-          console.log('Categories API response:', data);
-          
+          console.log("Categories API response:", data);
+
           if (data.success && data.data && data.data.categories) {
-            console.log('Setting categories:', data.data.categories.length);
+            console.log("Setting categories:", data.data.categories.length);
             setCategories(data.data.categories);
           } else {
-            console.warn('Categories response structure unexpected:', data);
+            console.warn("Categories response structure unexpected:", data);
           }
         } catch (fetchError) {
           // Clear timeout on error
@@ -145,10 +155,10 @@ export default function Navbar() {
           throw fetchError;
         }
       } catch (error) {
-        if (error.name === 'AbortError') {
-          console.error('Categories fetch timeout. Server may be down.');
+        if (error.name === "AbortError") {
+          console.error("Categories fetch timeout. Server may be down.");
         } else {
-          console.error('Error fetching categories:', error);
+          console.error("Error fetching categories:", error);
         }
       }
     };
@@ -158,18 +168,18 @@ export default function Navbar() {
 
   useEffect(() => {
     if (searchOverlayOpen || menuOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [searchOverlayOpen, menuOpen]);
 
   useEffect(() => {
     const handleEsc = (e) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         if (searchOverlayOpen) {
           setSearchOverlayOpen(false);
         }
@@ -178,23 +188,21 @@ export default function Navbar() {
         }
       }
     };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
   }, [searchOverlayOpen, menuOpen]);
 
   return (
     <>
-      <header 
+      <header
         className={`sticky top-0 z-20 flex items-center justify-between px-6 md:px-16 py-5 border-b-2 transition-all duration-300 ${
-          isScrolled 
-            ? 'bg-white shadow-sm' 
-            : 'bg-white/70 backdrop-blur-sm'
+          isScrolled ? "bg-white shadow-sm" : "bg-white/70 backdrop-blur-sm"
         }`}
-        style={{ fontFamily: 'Roboto, sans-serif' }}
+        style={{ fontFamily: "Roboto, sans-serif" }}
       >
         <Link href="/" className="flex items-center space-x-3 flex-shrink-0">
           <img
-            src="https://convoytravels.pk/wp-content/uploads/2021/07/CONVAY-TRAVELS.png"
+            src="/logo.webp"
             alt="Logo"
             className="w-28 sm:w-32 md:w-36 h-auto"
           />
@@ -207,32 +215,36 @@ export default function Navbar() {
           <NavLinkHover href="/about" className="nav-about">
             About
           </NavLinkHover>
-          <div 
+          <div
             className="relative"
             onMouseEnter={() => setDropdownOpen(true)}
             onMouseLeave={() => setDropdownOpen(false)}
           >
-            <Link 
-              href="/vehicle-types" 
+            <Link
+              href="/vehicle-types"
               className="nav-link-hover nav-vehicle-types inline-flex items-center justify-center gap-1"
               onMouseEnter={(e) => {
-                e.currentTarget.classList.remove('hover-out');
-                e.currentTarget.classList.add('hover-in');
+                e.currentTarget.classList.remove("hover-out");
+                e.currentTarget.classList.add("hover-in");
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.classList.remove('hover-in');
-                e.currentTarget.classList.add('hover-out');
+                e.currentTarget.classList.remove("hover-in");
+                e.currentTarget.classList.add("hover-out");
                 setTimeout(() => {
-                  e.currentTarget.classList.remove('hover-out');
+                  e.currentTarget.classList.remove("hover-out");
                 }, 300);
               }}
             >
               <span className="nav-link-filler"></span>
               <span className="nav-link-text">Vehicle Types</span>
-              <FaChevronDown className={`text-xs transition-transform duration-200 relative z-10 ${dropdownOpen ? 'rotate-180' : ''}`} />
+              <FaChevronDown
+                className={`text-xs transition-transform duration-200 relative z-10 ${
+                  dropdownOpen ? "rotate-180" : ""
+                }`}
+              />
             </Link>
             {dropdownOpen && (
-              <div 
+              <div
                 className="absolute top-full left-0 w-48 z-50 pt-3 -mt-1"
                 onMouseEnter={() => setDropdownOpen(true)}
                 onMouseLeave={() => setDropdownOpen(false)}
@@ -240,9 +252,11 @@ export default function Navbar() {
                 <div className="bg-white rounded-lg shadow-lg py-2 border border-gray-100">
                   {categories.length > 0 ? (
                     categories.map((category) => (
-                      <RippleLink 
+                      <RippleLink
                         key={category._id}
-                        href={`/vehicle-types?category=${encodeURIComponent(category.name)}`}
+                        href={`/vehicle-types?category=${encodeURIComponent(
+                          category.name
+                        )}`}
                         className="block px-4 py-2 text-gray-800 hover:bg-gray-50 transition-colors"
                       >
                         {category.name}
@@ -250,7 +264,9 @@ export default function Navbar() {
                     ))
                   ) : (
                     <div className="px-4 py-2 text-gray-500 text-sm">
-                      {categories.length === 0 ? 'No categories available' : 'Loading categories...'}
+                      {categories.length === 0
+                        ? "No categories available"
+                        : "Loading categories..."}
                     </div>
                   )}
                 </div>
@@ -270,7 +286,7 @@ export default function Navbar() {
             <FaPhoneAlt className="phone-icon" />
             <span>+92 328 1456456</span>
           </button>
-          <button 
+          <button
             onClick={() => setSearchOverlayOpen(true)}
             className="text-gray-800 hover:text-[#1a2b5c] transition-colors p-2"
           >
@@ -302,12 +318,12 @@ export default function Navbar() {
         } transition-transform duration-300 ease-out shadow-2xl md:hidden`}
       >
         <div className="flex justify-between items-center px-6 py-5 border-b border-gray-700/50">
-          <Link href="/" onClick={() => setMenuOpen(false)} className="flex items-center">
-            <img
-              src="https://convoytravels.pk/wp-content/uploads/2021/07/CONVAY-TRAVELS.png"
-              alt="Logo"
-              className="w-28 sm:w-32 h-auto"
-            />
+          <Link
+            href="/"
+            onClick={() => setMenuOpen(false)}
+            className="flex items-center"
+          >
+            <img src="/logo.webp" alt="Logo" className="w-28 sm:w-32 h-auto" />
           </Link>
           <button
             onClick={() => setMenuOpen(false)}
@@ -318,36 +334,48 @@ export default function Navbar() {
           </button>
         </div>
         <nav className="flex flex-col mt-8 space-y-1 px-6 overflow-y-auto flex-1 pb-24">
-          <Link 
-            href="/" 
-            className="px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-300 hover:translate-x-1" 
+          <Link
+            href="/"
+            className="px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-300 hover:translate-x-1"
             onClick={() => setMenuOpen(false)}
           >
             Home
           </Link>
-          <Link 
-            href="/about" 
-            className="px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-300 hover:translate-x-1" 
+          <Link
+            href="/about"
+            className="px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-300 hover:translate-x-1"
             onClick={() => setMenuOpen(false)}
           >
             About
           </Link>
           <div>
-            <button 
+            <button
               className="flex items-center justify-between w-full px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-300 hover:translate-x-1"
               onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)}
             >
               <span>Vehicle Types</span>
-              <FaChevronDown className={`text-xs transition-transform duration-300 ${mobileDropdownOpen ? 'rotate-180' : ''}`} />
+              <FaChevronDown
+                className={`text-xs transition-transform duration-300 ${
+                  mobileDropdownOpen ? "rotate-180" : ""
+                }`}
+              />
             </button>
-            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${mobileDropdownOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+            <div
+              className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                mobileDropdownOpen
+                  ? "max-h-96 opacity-100"
+                  : "max-h-0 opacity-0"
+              }`}
+            >
               <div className="ml-4 mt-2 space-y-1 pb-2">
                 {categories.length > 0 ? (
                   categories.map((category) => (
-                    <Link 
+                    <Link
                       key={category._id}
-                      href={`/vehicle-types?category=${encodeURIComponent(category.name)}`}
-                      className="block px-4 py-2 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-400 hover:translate-x-1" 
+                      href={`/vehicle-types?category=${encodeURIComponent(
+                        category.name
+                      )}`}
+                      className="block px-4 py-2 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-400 hover:translate-x-1"
                       onClick={() => {
                         setMenuOpen(false);
                         setMobileDropdownOpen(false);
@@ -357,21 +385,23 @@ export default function Navbar() {
                     </Link>
                   ))
                 ) : (
-                  <div className="px-4 py-2 text-gray-400 text-sm">No categories available</div>
+                  <div className="px-4 py-2 text-gray-400 text-sm">
+                    No categories available
+                  </div>
                 )}
               </div>
             </div>
           </div>
-          <Link 
-            href="/travel" 
-            className="px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-300 hover:translate-x-1" 
+          <Link
+            href="/travel"
+            className="px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-300 hover:translate-x-1"
             onClick={() => setMenuOpen(false)}
           >
             Travel
           </Link>
-          <Link 
-            href="/contact" 
-            className="px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-300 hover:translate-x-1" 
+          <Link
+            href="/contact"
+            className="px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-300 hover:translate-x-1"
             onClick={() => setMenuOpen(false)}
           >
             Contact Us
@@ -388,7 +418,7 @@ export default function Navbar() {
 
       {/* Search Overlay */}
       {searchOverlayOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-50 flex items-center justify-center"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
@@ -398,7 +428,7 @@ export default function Navbar() {
         >
           {/* Dark Overlay Background */}
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
-          
+
           {/* Close Button */}
           <button
             onClick={() => setSearchOverlayOpen(false)}
@@ -409,18 +439,24 @@ export default function Navbar() {
           </button>
 
           {/* Search Form */}
-          <div 
+          <div
             className="relative bg-white rounded-lg shadow-2xl w-full max-w-md mx-4 p-6 sm:p-8"
             onClick={(e) => e.stopPropagation()}
           >
-            <form className="space-y-4 sm:space-y-5" onSubmit={(e) => {
-              e.preventDefault();
-              // Handle form submission here
-              setSearchOverlayOpen(false);
-            }}>
+            <form
+              className="space-y-4 sm:space-y-5"
+              onSubmit={(e) => {
+                e.preventDefault();
+                // Handle form submission here
+                setSearchOverlayOpen(false);
+              }}
+            >
               {/* Product Name */}
               <div>
-                <label htmlFor="productName" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="productName"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Product Name
                 </label>
                 <input
@@ -434,7 +470,10 @@ export default function Navbar() {
 
               {/* Select Category */}
               <div>
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="category"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Select Category
                 </label>
                 <select
@@ -453,7 +492,10 @@ export default function Navbar() {
 
               {/* Pick-up Date */}
               <div>
-                <label htmlFor="pickupDate" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="pickupDate"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Pick-up Date
                 </label>
                 <input
@@ -466,7 +508,10 @@ export default function Navbar() {
 
               {/* Drop-off Date */}
               <div>
-                <label htmlFor="dropoffDate" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="dropoffDate"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Drop-off Date
                 </label>
                 <input
@@ -491,4 +536,3 @@ export default function Navbar() {
     </>
   );
 }
-
