@@ -8,6 +8,11 @@ import "swiper/css/navigation";
 export const metadata = {
   title: "Convoy Travels - Rent a Car in Lahore",
   description: "Rent a car in Lahore with or without driver. Affordable car rental services.",
+  icons: {
+    icon: "/fav.png",
+    shortcut: "/fav.png",
+    apple: "/fav.png",
+  },
 };
 
 export default function RootLayout({ children }) {
@@ -19,4 +24,3 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
-

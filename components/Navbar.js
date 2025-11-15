@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa";
 import { API_BASE_URL } from "@/config/api";
 import "./navbar-hover.css";
+import SearchModal from "@/components/SearchModal";
 
 const NavLinkHover = ({ href, children, className = "" }) => {
   const [hoverState, setHoverState] = useState("");
@@ -98,6 +99,7 @@ export default function Navbar() {
   const [searchOverlayOpen, setSearchOverlayOpen] = useState(false);
   const [categories, setCategories] = useState([]);
 
+  // Scroll shadow / background
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
@@ -108,7 +110,7 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Fetch categories
+  // Fetch categories (for nav + mobile dropdown)
   useEffect(() => {
     const fetchCategories = async () => {
       if (typeof window === "undefined") return;
@@ -117,18 +119,16 @@ export default function Navbar() {
         const url = `${API_BASE_URL}/categories`;
         console.log("Fetching categories from:", url);
 
-        // Create AbortController for timeout (30 seconds)
         const controller = new AbortController();
         let timeoutId = setTimeout(() => {
           controller.abort();
-        }, 30000); // 30 second timeout
+        }, 30000);
 
         try {
           const response = await fetch(url, {
             signal: controller.signal,
           });
 
-          // Clear timeout if request succeeds
           clearTimeout(timeoutId);
 
           if (!response.ok) {
@@ -150,7 +150,6 @@ export default function Navbar() {
             console.warn("Categories response structure unexpected:", data);
           }
         } catch (fetchError) {
-          // Clear timeout on error
           clearTimeout(timeoutId);
           throw fetchError;
         }
@@ -166,31 +165,27 @@ export default function Navbar() {
     fetchCategories();
   }, []);
 
+  // Lock body scroll for mobile menu only (search modal handles its own)
   useEffect(() => {
-    if (searchOverlayOpen || menuOpen) {
+    if (menuOpen) {
+      const prevOverflow = document.body.style.overflow;
       document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
+      return () => {
+        document.body.style.overflow = prevOverflow || "unset";
+      };
     }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [searchOverlayOpen, menuOpen]);
+  }, [menuOpen]);
 
+  // ESC to close mobile menu
   useEffect(() => {
     const handleEsc = (e) => {
-      if (e.key === "Escape") {
-        if (searchOverlayOpen) {
-          setSearchOverlayOpen(false);
-        }
-        if (menuOpen) {
-          setMenuOpen(false);
-        }
+      if (e.key === "Escape" && menuOpen) {
+        setMenuOpen(false);
       }
     };
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
-  }, [searchOverlayOpen, menuOpen]);
+  }, [menuOpen]);
 
   return (
     <>
@@ -227,26 +222,18 @@ export default function Navbar() {
                 e.currentTarget.classList.remove("hover-out");
                 e.currentTarget.classList.add("hover-in");
               }}
-              // onMouseLeave={(e) => {
-              //   e.currentTarget.classList.remove("hover-in");
-              //   e.currentTarget.classList.add("hover-out");
-              //   setTimeout(() => {
-              //     e.currentTarget.classList.remove("hover-out");
-              //   }, 300);
-              // }}
               onMouseLeave={(e) => {
-  const target = e.currentTarget;  // ✅ save reference
+                const target = e.currentTarget;
 
-  target.classList.remove("hover-in");
-  target.classList.add("hover-out");
+                target.classList.remove("hover-in");
+                target.classList.add("hover-out");
 
-  setTimeout(() => {
-    if (target) {                           // safety check
-      target.classList.remove("hover-out"); // works now
-    }
-  }, 300);
-}}
-
+                setTimeout(() => {
+                  if (target) {
+                    target.classList.remove("hover-out");
+                  }
+                }, 300);
+              }}
             >
               <span className="nav-link-filler"></span>
               <span className="nav-link-text">Vehicle Types</span>
@@ -299,10 +286,10 @@ export default function Navbar() {
             <FaPhoneAlt className="phone-icon" />
             <span>+92 328 1456456</span>
           </button>
-           <button
+          <button
             onClick={() => setSearchOverlayOpen(true)}
             className="text-gray-800 hover:text-[#1a2b5c] transition-colors p-2"
-          > 
+          >
             <FaSearch className="w-5 h-5" />
           </button>
         </div>
@@ -429,123 +416,11 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Search Overlay */}
-      {searchOverlayOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setSearchOverlayOpen(false);
-            }
-          }}
-        >
-          {/* Dark Overlay Background */}
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
-
-          {/* Close Button */}
-          <button
-            onClick={() => setSearchOverlayOpen(false)}
-            className="absolute top-6 right-6 sm:top-8 sm:right-8 z-[60] text-white hover:text-gray-300 transition-colors"
-            aria-label="Close search"
-          >
-            <FaTimes className="w-8 h-8 sm:w-10 sm:h-10" />
-          </button>
-
-          {/* Search Form */}
-          <div
-            className="relative bg-white rounded-lg shadow-2xl w-full max-w-md mx-4 p-6 sm:p-8"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <form
-              className="space-y-4 sm:space-y-5"
-              onSubmit={(e) => {
-                e.preventDefault();
-                // Handle form submission here
-                setSearchOverlayOpen(false);
-              }}
-            >
-              {/* Product Name */}
-              <div>
-                <label
-                  htmlFor="productName"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Product Name
-                </label>
-                <input
-                  type="text"
-                  id="productName"
-                  name="productName"
-                  placeholder="Enter product name"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent outline-none transition-all"
-                />
-              </div>
-
-              {/* Select Category */}
-              <div>
-                <label
-                  htmlFor="category"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Select Category
-                </label>
-                <select
-                  id="category"
-                  name="category"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent outline-none transition-all appearance-none bg-white cursor-pointer"
-                >
-                  <option value="">Select a category</option>
-                  {categories.map((category) => (
-                    <option key={category._id} value={category.name}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Pick-up Date */}
-              <div>
-                <label
-                  htmlFor="pickupDate"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Pick-up Date
-                </label>
-                <input
-                  type="date"
-                  id="pickupDate"
-                  name="pickupDate"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent outline-none transition-all"
-                />
-              </div>
-
-              {/* Drop-off Date */}
-              <div>
-                <label
-                  htmlFor="dropoffDate"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Drop-off Date
-                </label>
-                <input
-                  type="date"
-                  id="dropoffDate"
-                  name="dropoffDate"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent outline-none transition-all"
-                />
-              </div>
-
-              {/* Search Button */}
-              <button
-                type="submit"
-                className="w-full bg-[#1a2b5c] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#0d1b2a] transition-colors duration-300 mt-2"
-              >
-                Search
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Reusable Search Modal – no categories prop anymore */}
+      <SearchModal
+        open={searchOverlayOpen}
+        onClose={() => setSearchOverlayOpen(false)}
+      />
     </>
   );
 }
