@@ -4,15 +4,15 @@ export default function PerfectDriver() {
   const vehicles = [
     {
       title: "Cars",
-      img: "https://americ41.in1.fcomet.com/wp-content/uploads/2024/03/Corrola.jpg",
+      img: "/Corrola.webp",
     },
     {
       title: "4x4",
-      img: "https://americ41.in1.fcomet.com/wp-content/uploads/2024/01/Untitled-design-2024-02-02T213538.970.jpg",
+      img: "/c2.webp",
     },
     {
       title: "Vans & Buses",
-      img: "https://americ41.in1.fcomet.com/wp-content/uploads/2024/03/Busses-1.jpg",
+      img: "/c3.webp",
     },
   ];
 
@@ -31,7 +31,7 @@ export default function PerfectDriver() {
             key={index}
             className="vehicle-card bg-white border border-gray-200 rounded-xl shadow-md hover:shadow-2xl overflow-hidden group"
           >
-            <div className="vehicle-card-image-container bg-gradient-to-b from-gray-50 to-white p-8 sm:p-10 flex justify-center items-center min-h-[280px] sm:min-h-[320px]">
+            <div className="vehicle-card-image-container  p-8 sm:p-10 flex justify-center items-center min-h-[280px] sm:min-h-[320px]">
               <img
                 src={vehicle.img}
                 alt={vehicle.title}

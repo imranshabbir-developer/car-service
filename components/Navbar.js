@@ -227,13 +227,26 @@ export default function Navbar() {
                 e.currentTarget.classList.remove("hover-out");
                 e.currentTarget.classList.add("hover-in");
               }}
+              // onMouseLeave={(e) => {
+              //   e.currentTarget.classList.remove("hover-in");
+              //   e.currentTarget.classList.add("hover-out");
+              //   setTimeout(() => {
+              //     e.currentTarget.classList.remove("hover-out");
+              //   }, 300);
+              // }}
               onMouseLeave={(e) => {
-                e.currentTarget.classList.remove("hover-in");
-                e.currentTarget.classList.add("hover-out");
-                setTimeout(() => {
-                  e.currentTarget.classList.remove("hover-out");
-                }, 300);
-              }}
+  const target = e.currentTarget;  // ✅ save reference
+
+  target.classList.remove("hover-in");
+  target.classList.add("hover-out");
+
+  setTimeout(() => {
+    if (target) {                           // safety check
+      target.classList.remove("hover-out"); // works now
+    }
+  }, 300);
+}}
+
             >
               <span className="nav-link-filler"></span>
               <span className="nav-link-text">Vehicle Types</span>
@@ -286,10 +299,10 @@ export default function Navbar() {
             <FaPhoneAlt className="phone-icon" />
             <span>+92 328 1456456</span>
           </button>
-          <button
+           <button
             onClick={() => setSearchOverlayOpen(true)}
             className="text-gray-800 hover:text-[#1a2b5c] transition-colors p-2"
-          >
+          > 
             <FaSearch className="w-5 h-5" />
           </button>
         </div>

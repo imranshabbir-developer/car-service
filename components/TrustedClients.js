@@ -89,7 +89,6 @@ export default function TrustedClients() {
       </div>
 
       <p className="text-gray-600 mt-10 text-base md:text-lg flex items-center justify-center gap-2">
-        <span className="w-2 h-2 rounded-full bg-[#0d1b2a]"></span>
         Explore our fleet of top-quality.
       </p>
     </section>

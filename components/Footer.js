@@ -14,7 +14,7 @@ export default function Footer() {
         <div className="col-span-2 sm:col-span-1">
           <div className="flex justify-center sm:justify-start mb-4">
             <img
-              src="https://convoytravels.pk/wp-content/uploads/2021/07/CONVAY-TRAVELS-White-latest-1.png"
+              src="/ft_logo.webp"
               alt="Convoy Travels Logo"
               className="w-44 sm:w-52 object-contain"
             />

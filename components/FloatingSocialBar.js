@@ -5,13 +5,13 @@ import Link from 'next/link';
 
 export default function FloatingSocialBar() {
   const socialLinks = [
-    {
-      icon: FaSignInAlt,
-      href: '/login',
-      label: 'Login',
-      bgColor: 'bg-[#1a2b5c]',
-      hoverColor: 'hover:bg-[#0d1b2a]',
-    },
+    // {
+    //   icon: FaSignInAlt,
+    //   href: '/login',
+    //   label: 'Login',
+    //   bgColor: 'bg-[#1a2b5c]',
+    //   hoverColor: 'hover:bg-[#0d1b2a]',
+    // },
     {
       icon: FaWhatsapp,
       href: 'https://api.whatsapp.com/send/?phone=923281456456&text=Hello+Welcome%2C%0D%0AI+am+interesting+in++Honda+Civic&type=phone_number&app_absent=0',
@@ -19,31 +19,31 @@ export default function FloatingSocialBar() {
       bgColor: 'bg-[#25D366]',
       hoverColor: 'hover:bg-[#20BA5A]',
     },
-    {
-      icon: FaTwitter,
-      href: 'https://twitter.com/convoytravels',
-      label: 'Twitter',
-      bgColor: 'bg-[#1DA1F2]',
-      hoverColor: 'hover:bg-[#1a91da]',
-    },
-    {
-      icon: FaLinkedinIn,
-      href: 'https://www.linkedin.com/company/convoytravels',
-      label: 'LinkedIn',
-      bgColor: 'bg-[#0077B5]',
-      hoverColor: 'hover:bg-[#006399]',
-    },
-    {
-      icon: FaFacebookF,
-      href: 'https://www.facebook.com/convoytravels',
-      label: 'Facebook',
-      bgColor: 'bg-[#1877F2]',
-      hoverColor: 'hover:bg-[#166fe5]',
-    },
+    // {
+    //   icon: FaTwitter,
+    //   href: 'https://twitter.com/convoytravels',
+    //   label: 'Twitter',
+    //   bgColor: 'bg-[#1DA1F2]',
+    //   hoverColor: 'hover:bg-[#1a91da]',
+    // },
+    // {
+    //   icon: FaLinkedinIn,
+    //   href: 'https://www.linkedin.com/company/convoytravels',
+    //   label: 'LinkedIn',
+    //   bgColor: 'bg-[#0077B5]',
+    //   hoverColor: 'hover:bg-[#006399]',
+    // },
+    // {
+    //   icon: FaFacebookF,
+    //   href: 'https://www.facebook.com/convoytravels',
+    //   label: 'Facebook',
+    //   bgColor: 'bg-[#1877F2]',
+    //   hoverColor: 'hover:bg-[#166fe5]',
+    // },
   ];
 
   return (
-    <div className="fixed right-0 top-1/2 -translate-y-1/2 z-40 mr-[5px] flex flex-col gap-2 sm:gap-3">
+    <div className="fixed right-0 bottom-0 -translate-y-1/2 z-40 mr-[5px] flex flex-col gap-2 sm:gap-3">
       {socialLinks.map((social, index) => (
         <Link
           key={index}
