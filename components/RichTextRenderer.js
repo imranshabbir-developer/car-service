@@ -7,7 +7,7 @@ const RichTextRenderer = ({ html }) => {
 
   return (
     <div
-      className="ql-editor w-full rounded-[26px] border border-[#e2e8f0] bg-white/90 px-6 py-6 text-[#0f172a] leading-[1.8] shadow-[0_35px_70px_-45px_rgba(15,23,42,0.65)] backdrop-blur-md
+      className="ql-editor w-full rounded-[26px] text-[#0f172a] leading-[1.8] 
       scrollbar-thin scrollbar-thumb-[#94a3b8] scrollbar-track-transparent
       [&>h1]:text-[34px] [&>h1]:font-semibold [&>h1]:leading-tight [&>h1]:mb-4
       [&>h2]:text-[30px] [&>h2]:font-semibold [&>h2]:mb-3 [&>h2]:mt-6

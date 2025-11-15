@@ -342,21 +342,11 @@ export default function VehicleTypesContent() {
 
           {/* Related Blogs Section */}
           {blogs.length > 0 && (
-            <div className="mt-20 pt-16 border-t border-gray-200">
+            <div className="border-t border-gray-200">
               {/* Section header */}
-              <div className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-                <div>
-                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3">
-                    Related Blog Posts
-                  </h2>
-                  <p className="text-gray-600 text-base md:text-lg">
-                    Explore our latest insights and tips about {category} vehicles.
-                  </p>
-                </div>
-                <div className="text-sm text-gray-500 flex items-center gap-2">
-                  <FaClock className="w-4 h-4 text-[#1a2b5c]" />
-                  <span>Last updated: {blogsLastUpdated}</span>
-                </div>
+              <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+               
+               
               </div>
 
               {blogsLoading ? (
@@ -394,7 +384,7 @@ export default function VehicleTypesContent() {
                       <article
                         key={blog._id}
                         id={articleId}
-                        className="group relative w-full rounded-3xl border border-gray-200 bg-[#f9fbff]/80 overflow-hidden transition-all duration-500 hover:border-[#1a2b5c] hover:shadow-2xl hover:-translate-y-1"
+                        className="group relative w-full rounded-3xl overflow-hidden transition-all"
                       >
                         <div className="grid md:grid-cols-3 gap-6 lg:gap-10 items-stretch">
                           {hasFeaturedImage && (
@@ -407,7 +397,7 @@ export default function VehicleTypesContent() {
                               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent opacity-80 transition-opacity duration-500" />
                               <div className="absolute bottom-4 left-4 text-xs font-medium text-white/90 backdrop-blur-sm bg-black/45 px-3 py-1 rounded-full flex items-center gap-2">
                                 <FaRegNewspaper className="w-3 h-3" />
-                                Featured Story
+                                {/* Featured Story */}
                               </div>
                             </div>
                           )}
@@ -417,54 +407,23 @@ export default function VehicleTypesContent() {
                               hasFeaturedImage ? "md:col-span-2" : "md:col-span-3"
                             } bg-gradient-to-b from-white/70 via-white/80 to-white`}
                           >
-                            <div className="flex flex-wrap items-center justify-between gap-4">
-                              <div className="flex flex-wrap items-center gap-3">
-                                {blog.category && (
-                                  <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#f0f4ff] text-[#1a2b5c] text-xs font-semibold uppercase tracking-widest rounded-full">
-                                    <FaTag className="w-3.5 h-3.5" />
-                                    {blog.category.name}
-                                  </span>
-                                )}
-                                <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#e5e9f5] text-[#1a2b5c] text-xs font-semibold uppercase tracking-widest rounded-full">
-                                  <FaRegNewspaper className="w-3.5 h-3.5" />
-                                  Editorial Spotlight
-                                </span>
-                              </div>
+                            
 
-                              <div className="flex items-center gap-3">
-                                <span className="px-4 py-1.5 text-xs font-semibold uppercase tracking-wider bg-[#f8fafc] text-[#1a2b5c] rounded-full shadow-sm">
-                                  #{String(index + 1).padStart(2, "0")}
-                                </span>
-                                {blog.published && (
-                                  <span className="px-4 py-1.5 text-xs font-semibold uppercase tracking-widest bg-green-500 text-white rounded-full shadow">
-                                    Published
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-
-                            <header className="space-y-4">
-                              <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight group-hover:text-[#1a2b5c] transition-colors">
+                            <header>
+                              <h3 className="text-3xl sm:text-3xl font-bold text-gray-900 leading-tight group-hover:text-[#1a2b5c] transition-colors">
                                 {blog.title}
                               </h3>
 
                               <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
-                                <span className="flex items-center gap-2">
-                                  <FaCalendarAlt className="w-4 h-4 text-[#1a2b5c]" />
-                                  {formattedDate}
-                                </span>
-                                <span className="flex items-center gap-2">
-                                  <FaUser className="w-4 h-4 text-[#1a2b5c]" />
-                                  {authorName}
-                                </span>
+                               
                                 {blog.readingTime && (
-                                  <span className="flex items-center gap-2 px-3 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-full">
+                                  <span className="flex items-center gap-2 px-3 py-1 text-xs font-medium text-gray-600 rounded-full">
                                     <FaClock className="w-3.5 h-3.5 text-[#1a2b5c]" />
                                     {blog.readingTime}
                                   </span>
                                 )}
                                 {blogTags && blogTags.length > 0 && (
-                                  <span className="flex items-center gap-2 px-3 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-full">
+                                  <span className="flex items-center gap-2 px-3 py-1 text-xs font-mediumtext-gray-600 rounded-full">
                                     <FaTag className="w-3.5 h-3.5 text-[#1a2b5c]" />
                                     {blogTags.slice(0, 3).join(", ")}
                                   </span>
