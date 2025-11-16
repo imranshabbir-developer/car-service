@@ -78,6 +78,7 @@ export default function DashboardLayout({ children }) {
     { icon: FaBlog, label: 'Blogs', path: '/dashboard/blogs', badge: null },
     { icon: FaClipboardList, label: 'Bookings', path: '/dashboard/bookings', badge: null },
     { icon: FaQuestionCircle, label: 'Questions', path: '/dashboard/questions', badge: null },
+    { icon: FaBlog, label: 'Main Blogs', path: '/dashboard/main-blogs', badge: null },
   ];
 
   const isActive = (path) => {
