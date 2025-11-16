@@ -1,12 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
-import SearchModal from "@/components/SearchModal";
 import "./perfect-driver.css";
 
 export default function PerfectDriver() {
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const router = useRouter();
 
   const vehicles = [
@@ -32,12 +29,6 @@ export default function PerfectDriver() {
   };
 
   const handleCardClick = (vehicle) => {
-    if (vehicle.title === "Cars") {
-      // Open search modal
-      setIsSearchOpen(true);
-      return;
-    }
-
     const categoryParam = categoryParamMap[vehicle.title];
     if (!categoryParam) return;
 
@@ -84,12 +75,6 @@ export default function PerfectDriver() {
           ))}
         </div>
       </section>
-
-      {/* Reuse the same Search Modal (for Cars) */}
-      <SearchModal
-        open={isSearchOpen}
-        onClose={() => setIsSearchOpen(false)}
-      />
     </>
   );
 }

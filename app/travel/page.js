@@ -4,27 +4,44 @@ import { useState, useEffect } from 'react';
 import { FaFacebookF, FaTwitter, FaLinkedinIn, FaChevronLeft, FaChevronRight, FaTimes } from 'react-icons/fa';
 
 export default function TravelPage() {
+  const [mounted, setMounted] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const galleryImages = [
-    'https://convoytravels.pk/wp-content/uploads/2024/03/skardu-shangrila-resort-skardu-9.jpg',
-    'https://convoytravels.pk/wp-content/uploads/2024/03/s68bm0y9Mr4Upm6YsIAbDxKoBnoeSHdobEHMjeoN.jpg',
-    'https://convoytravels.pk/wp-content/uploads/2024/03/5f7c53e92d9b8.png',
-    'https://convoytravels.pk/wp-content/uploads/2024/03/s68bm0y9Mr4Upm6YsIAbDxKoBnoeSHdobEHMjeoN.jpg',
-    'https://convoytravels.pk/wp-content/uploads/2024/03/Gilgit.webp',
-    'https://convoytravels.pk/wp-content/uploads/2024/03/Gilgit.webp'
+    '/travel-page/travel-pic-1.jfif',
+    '/travel-page/travel-pic-2.jpeg',
+    '/travel-page/travel-pic-3.jpg',
+    '/travel-page/travel-pic-4.jfif',
+    '/travel-page/travel-pic-5.jfif',
+    '/travel-page/travel-pic-6.jpg'
   ];
+
+  // Set mounted to true after component mounts (client-side only)
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Handle body scroll lock when lightbox opens/closes
+  useEffect(() => {
+    if (!mounted) return;
+    
+    if (lightboxOpen) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prevOverflow || 'unset';
+      };
+    }
+  }, [lightboxOpen, mounted]);
 
   const openLightbox = (index) => {
     setCurrentImageIndex(index);
     setLightboxOpen(true);
-    document.body.style.overflow = 'hidden';
   };
 
   const closeLightbox = () => {
     setLightboxOpen(false);
-    document.body.style.overflow = 'unset';
   };
 
   const nextImage = () => {
@@ -157,7 +174,7 @@ export default function TravelPage() {
       </div>
 
       {/* Lightbox Modal */}
-      {lightboxOpen && (
+      {mounted && lightboxOpen && (
         <div
           className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
           onClick={closeLightbox}
