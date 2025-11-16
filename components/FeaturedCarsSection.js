@@ -150,9 +150,9 @@ export default function FeaturedCarsSection() {
           </h2>
         </div>
 
-        <button className="bg-[#1a2b5c] text-white text-sm md:text-base font-semibold px-6 py-3 mt-6 md:mt-0 rounded-sm hover:bg-[#0d1b2a] transition">
+        <Link href="/cars" className="bg-[#1a2b5c] text-white text-sm md:text-base font-semibold px-6 py-3 mt-6 md:mt-0 rounded-sm hover:bg-[#0d1b2a] transition inline-block">
           View All Cars
-        </button>
+        </Link>
       </div>
 
       <div className="bg-white py-12 px-6 md:px-20 max-w-7xl mx-auto" style={{ fontFamily: 'Roboto, sans-serif' }}>
