@@ -282,10 +282,10 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden md:flex items-center gap-3">
-          <button className="phone-ring-button bg-[#0d1b2a] text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-[#112d4e] relative">
+          <a href="tel:+923281456456" className="phone-ring-button bg-[#0d1b2a] text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-[#112d4e] relative">
             <FaPhoneAlt className="phone-icon" />
             <span>+92 328 1456456</span>
-          </button>
+          </a>
           <button
             onClick={() => setSearchOverlayOpen(true)}
             className="text-gray-800 hover:text-[#1a2b5c] transition-colors p-2"
@@ -313,11 +313,11 @@ export default function Navbar() {
 
       {/* Mobile Menu Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full w-72 sm:w-80 bg-gradient-to-b from-[#0d1b2a] to-[#1a2650] text-white z-30 transform ${
+        className={`fixed top-0 left-0 h-full w-72 sm:w-80 bg-white text-gray-800 z-30 transform ${
           menuOpen ? "translate-x-0" : "-translate-x-full"
         } transition-transform duration-300 ease-out shadow-2xl md:hidden`}
       >
-        <div className="flex justify-between items-center px-6 py-5 border-b border-gray-700/50">
+        <div className="flex justify-between items-center px-6 py-5 border-b border-gray-200">
           <Link
             href="/"
             onClick={() => setMenuOpen(false)}
@@ -327,7 +327,7 @@ export default function Navbar() {
           </Link>
           <button
             onClick={() => setMenuOpen(false)}
-            className="text-white text-2xl hover:text-gray-300 transition-colors p-2"
+            className="text-gray-800 text-2xl hover:text-gray-600 transition-colors p-2"
             aria-label="Close menu"
           >
             <FaTimes />
@@ -336,21 +336,21 @@ export default function Navbar() {
         <nav className="flex flex-col mt-8 space-y-1 px-6 overflow-y-auto flex-1 pb-24">
           <Link
             href="/"
-            className="px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-300 hover:translate-x-1"
+            className="px-4 py-3 rounded-lg hover:bg-gray-100 hover:text-[#0d1b2a] transition-all duration-200 text-gray-700 hover:translate-x-1"
             onClick={() => setMenuOpen(false)}
           >
             Home
           </Link>
           <Link
             href="/about"
-            className="px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-300 hover:translate-x-1"
+            className="px-4 py-3 rounded-lg hover:bg-gray-100 hover:text-[#0d1b2a] transition-all duration-200 text-gray-700 hover:translate-x-1"
             onClick={() => setMenuOpen(false)}
           >
             About
           </Link>
           <div>
             <button
-              className="flex items-center justify-between w-full px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-300 hover:translate-x-1"
+              className="flex items-center justify-between w-full px-4 py-3 rounded-lg hover:bg-gray-100 hover:text-[#0d1b2a] transition-all duration-200 text-gray-700 hover:translate-x-1"
               onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)}
             >
               <span>Vehicle Types</span>
@@ -375,7 +375,7 @@ export default function Navbar() {
                       href={`/vehicle-types?category=${encodeURIComponent(
                         category.name
                       )}`}
-                      className="block px-4 py-2 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-400 hover:translate-x-1"
+                      className="block px-4 py-2 rounded-lg hover:bg-gray-100 hover:text-[#0d1b2a] transition-all duration-200 text-gray-600 hover:translate-x-1"
                       onClick={() => {
                         setMenuOpen(false);
                         setMobileDropdownOpen(false);
@@ -385,7 +385,7 @@ export default function Navbar() {
                     </Link>
                   ))
                 ) : (
-                  <div className="px-4 py-2 text-gray-400 text-sm">
+                  <div className="px-4 py-2 text-gray-500 text-sm">
                     No categories available
                   </div>
                 )}
@@ -394,25 +394,25 @@ export default function Navbar() {
           </div>
           <Link
             href="/travel"
-            className="px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-300 hover:translate-x-1"
+            className="px-4 py-3 rounded-lg hover:bg-gray-100 hover:text-[#0d1b2a] transition-all duration-200 text-gray-700 hover:translate-x-1"
             onClick={() => setMenuOpen(false)}
           >
             Travel
           </Link>
           <Link
             href="/contact"
-            className="px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white transition-all duration-200 text-gray-300 hover:translate-x-1"
+            className="px-4 py-3 rounded-lg hover:bg-gray-100 hover:text-[#0d1b2a] transition-all duration-200 text-gray-700 hover:translate-x-1"
             onClick={() => setMenuOpen(false)}
           >
             Contact Us
           </Link>
         </nav>
 
-        <div className="absolute bottom-6 sm:bottom-8 left-0 right-0 px-6">
-          <button className="phone-ring-button phone-ring-center w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 py-3 rounded-lg flex items-center justify-center space-x-2 relative shadow-lg">
+        <div className="absolute bottom-6 sm:bottom-8 left-0 right-0 px-6 hidden">
+          <a href="tel:+923281456456" className="phone-ring-button phone-ring-center w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 py-3 rounded-lg flex items-center justify-center space-x-2 relative shadow-lg">
             <FaPhoneAlt className="phone-icon" />
             <span className="font-semibold">+92 328 1456456</span>
-          </button>
+          </a>
         </div>
       </div>
 

@@ -36,6 +36,9 @@ const getBlogExcerpt = (htmlContent = "", limit = 170) => {
 export default function VehicleTypesContent() {
   const searchParams = useSearchParams();
   const category = searchParams.get("category") || null;
+  const brand = searchParams.get("brand") || null;
+  const pickupDateParam = searchParams.get("pickupDate") || null;
+  const dropoffDateParam = searchParams.get("dropoffDate") || null;
 
   const [searchQuery, setSearchQuery] = useState("");
   const [viewType, setViewType] = useState("grid"); // 'grid' or 'list'
@@ -46,10 +49,23 @@ export default function VehicleTypesContent() {
   const [blogsLoading, setBlogsLoading] = useState(false);
   const itemsPerPage = 12;
 
+  // Store dates in localStorage if provided via query params
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (pickupDateParam) {
+        localStorage.setItem('pickupDate', pickupDateParam);
+      }
+      if (dropoffDateParam) {
+        localStorage.setItem('dropoffDate', dropoffDateParam);
+      }
+    }
+  }, [pickupDateParam, dropoffDateParam]);
+
   // Fetch cars from API
   useEffect(() => {
     const fetchCars = async () => {
-      if (!category) return; // Only fetch if category is selected
+      // Fetch cars if category is provided (either from direct navigation or from hero section)
+      if (!category && !brand) return;
 
       try {
         setLoading(true);
@@ -86,7 +102,7 @@ export default function VehicleTypesContent() {
     };
 
     fetchCars();
-  }, [category]);
+  }, [category, brand]);
 
   // Fetch blogs for the category
   useEffect(() => {
@@ -126,20 +142,29 @@ export default function VehicleTypesContent() {
     }
   }, [category]);
 
-  // Filter cars based on search query and category
+  // Filter cars based on search query, category, and brand
   const filteredCars = useMemo(() => {
-    let categoryCars = cars;
+    let filtered = cars;
 
+    // Filter by category if provided
     if (category) {
-      categoryCars = cars.filter(
+      filtered = filtered.filter(
         (car) => car.category?.toLowerCase() === category.toLowerCase()
       );
     }
 
-    if (!searchQuery.trim()) return categoryCars;
+    // Filter by brand if provided
+    if (brand) {
+      filtered = filtered.filter(
+        (car) => car.brand?.toLowerCase() === brand.toLowerCase()
+      );
+    }
+
+    // Apply search query filter if provided
+    if (!searchQuery.trim()) return filtered;
 
     const query = searchQuery.toLowerCase().trim();
-    return categoryCars.filter(
+    return filtered.filter(
       (car) =>
         car.name?.toLowerCase().includes(query) ||
         car.price?.toLowerCase().includes(query) ||
@@ -147,7 +172,7 @@ export default function VehicleTypesContent() {
         car.brand?.toLowerCase().includes(query) ||
         car.model?.toLowerCase().includes(query)
     );
-  }, [category, searchQuery, cars]);
+  }, [category, brand, searchQuery, cars]);
 
   const blogsLastUpdated = useMemo(() => {
     if (!blogs.length) return "Recently updated";

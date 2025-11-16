@@ -43,7 +43,7 @@ export default function FloatingSocialBar() {
   ];
 
   return (
-    <div className="fixed right-0 bottom-0 -translate-y-1/2 z-40 mr-[5px] flex flex-col gap-2 sm:gap-3">
+    <div className="fixed right-0 bottom-0 md:-translate-y-1/2 mb-12 md:mb-0 z-40 mr-[5px] flex flex-col gap-2 sm:gap-3">
       {socialLinks.map((social, index) => (
         <Link
           key={index}
@@ -73,7 +73,7 @@ export default function FloatingSocialBar() {
           aria-label={social.label}
         >
           <span className="group-hover:scale-110 transition-transform duration-300">
-            <social.icon className="w-4 h-4 sm:w-5 sm:h-5" />
+            <social.icon className={`w-4 h-4 sm:w-5 sm:h-5 ${social.label === 'WhatsApp' ? 'animate-pulse' : ''}`} />
           </span>
           {/* Tooltip - Hidden on mobile, visible on hover */}
           <span className="absolute right-full mr-3 px-2 sm:px-3 py-1 sm:py-1.5 bg-gray-900 text-white text-xs sm:text-sm font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none hidden sm:block">
