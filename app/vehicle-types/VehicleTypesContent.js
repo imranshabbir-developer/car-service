@@ -39,6 +39,7 @@ export default function VehicleTypesContent() {
   const brand = searchParams.get("brand") || null;
   const pickupDateParam = searchParams.get("pickupDate") || null;
   const dropoffDateParam = searchParams.get("dropoffDate") || null;
+  const searchParam = searchParams.get("search") || null;
 
   const [searchQuery, setSearchQuery] = useState("");
   const [viewType, setViewType] = useState("grid"); // 'grid' or 'list'
@@ -48,6 +49,13 @@ export default function VehicleTypesContent() {
   const [blogs, setBlogs] = useState([]);
   const [blogsLoading, setBlogsLoading] = useState(false);
   const itemsPerPage = 12;
+
+  // Set search query from URL parameter if provided
+  useEffect(() => {
+    if (searchParam) {
+      setSearchQuery(searchParam);
+    }
+  }, [searchParam]);
 
   // Store dates in localStorage if provided via query params
   useEffect(() => {
@@ -64,8 +72,8 @@ export default function VehicleTypesContent() {
   // Fetch cars from API
   useEffect(() => {
     const fetchCars = async () => {
-      // Fetch cars if category is provided (either from direct navigation or from hero section)
-      if (!category && !brand) return;
+      // Fetch cars if category is provided (from direct navigation, hero section, or search modal)
+      if (!category) return;
 
       try {
         setLoading(true);
@@ -102,7 +110,7 @@ export default function VehicleTypesContent() {
     };
 
     fetchCars();
-  }, [category, brand]);
+  }, [category]);
 
   // Fetch blogs for the category
   useEffect(() => {
