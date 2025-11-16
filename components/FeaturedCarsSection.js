@@ -134,9 +134,9 @@ export default function FeaturedCarsSection() {
         <p className="text-lg md:text-xl mb-4">
           Drive with Us Today! - Convoy Travels: Trusted by Over 1000 Customers
         </p>
-        <button className="border border-white text-white px-6 py-2 rounded-md hover:bg-white hover:text-[#1a2b5c] transition">
+        {/* <button className="border border-white text-white px-6 py-2 rounded-md hover:bg-white hover:text-[#1a2b5c] transition">
           Reserve a Car
-        </button>
+        </button> */}
       </div>
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center py-16 px-6 md:px-20 max-w-7xl mx-auto">
@@ -160,7 +160,7 @@ export default function FeaturedCarsSection() {
           {cars.map((car, index) => {
             const cardContent = (
               <div className="featured-car-card border border-gray-200 shadow-lg rounded-xl overflow-hidden bg-white group h-full">
-                <div className="featured-car-image-container w-full h-[280px] sm:h-[260px] lg:h-[280px] flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+                <div className="featured-car-image-container w-full h-[280px] sm:h-[260px] lg:h-[280px] flex items-center justify-center">
                   <img
                     src={car.image}
                     alt={car.name}
@@ -183,7 +183,12 @@ export default function FeaturedCarsSection() {
                     <FaMapMarkerAlt className="text-[#1a2b5c]" />
                     <span>{car.location || 'Location not specified'}</span>
                   </div>
-                  <ul className="text-gray-600 text-sm space-y-2 mb-6">
+                   <div className="text-gray-600 text-sm flex items-center gap-2 mb-4">
+                      <FaUser className="text-[#1a2b5c]" /> {car.seats || 4} Seats 
+                      <FaCogs className="text-[#1a2b5c]" /> {car.transmission || 'Automatic'}
+                      <FaSnowflake className="text-[#1a2b5c]" /> {car.fuelType || 'Petrol'}
+                  </div>
+                  {/* <ul className="text-gray-600 text-sm space-y-2 mb-6">
                     <li className="flex items-center gap-2">
                       <FaUser className="text-[#1a2b5c]" /> {car.seats || 4} Seats
                     </li>
@@ -193,7 +198,7 @@ export default function FeaturedCarsSection() {
                     <li className="flex items-center gap-2">
                       <FaSnowflake className="text-[#1a2b5c]" /> {car.fuelType || 'Petrol'}
                     </li>
-                  </ul>
+                  </ul> */}
                   <div className="book-now-button w-full bg-[#1a2b5c] text-white py-3 rounded-lg hover:bg-[#0d1b2a] transition-colors duration-300 font-semibold text-center">
                     Book Now
                   </div>

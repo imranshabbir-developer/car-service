@@ -14,7 +14,7 @@ export default function Footer() {
         <div className="col-span-2 sm:col-span-1">
           <div className="flex justify-center sm:justify-start mb-4">
             <img
-              src="https://convoytravels.pk/wp-content/uploads/2021/07/CONVAY-TRAVELS-White-latest-1.png"
+              src="/ft_logo.webp"
               alt="Convoy Travels Logo"
               className="w-44 sm:w-52 object-contain"
             />
@@ -86,37 +86,58 @@ export default function Footer() {
               <div className="flex justify-center sm:justify-start">
                 <FaMapMarkerAlt className="mt-1" />
               </div>
-              <span className="mt-1 sm:mt-0">
+              <a
+                href="https://www.google.com/maps/place/Convoy+Travels+%26+Rent+A+Car+.+Rent+a+car+in+lahore/@31.4396234,74.2654729,15z"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1 sm:mt-0 hover:text-white transition-all"
+              >
                 872 Block R1 Johar Town Lahore
-              </span>
+              </a>
             </li>
+
             <li className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 pb-2 border-b border-gray-600">
               <div className="flex justify-center sm:justify-start">
                 <FaClock />
               </div>
               <span className="mt-1 sm:mt-0">24/7 Open</span>
             </li>
+
             <li className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 pb-2 border-b border-gray-600">
               <div className="flex justify-center sm:justify-start">
                 <FaEnvelope />
               </div>
-              <span className="mt-1 sm:mt-0">convoytravels786@gmail.com</span>
+              <a
+                href="https://mail.google.com/mail/?view=cm&fs=1&to=convoytravels786@gmail.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1 sm:mt-0 hover:text-white transition-all"
+              >
+                convoytravels786@gmail.com
+              </a>
             </li>
+
             <li className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 pb-2 border-b border-gray-600">
               <div className="flex justify-center sm:justify-start">
                 <FaPhoneAlt />
               </div>
-              <span className="mt-1 sm:mt-0">+923281456456</span>
+              <a
+                href="https://wa.me/923281456456"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1 sm:mt-0 hover:text-white transition-all"
+              >
+                +923281456456
+              </a>
             </li>
           </ul>
         </div>
       </div>
 
-      {/* Footer Copyright Section */}
+      {/* Footer Copyright */}
       <div className="flex justify-center items-center text-gray-300 mt-6 text-sm sm:text-base text-center font-semibold">
         <p>© Copyright 2025 by Convoy Travels</p>
       </div>
     </footer>
   );
 }
-

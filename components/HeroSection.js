@@ -90,7 +90,7 @@ export default function HeroSection() {
       className="relative bg-cover bg-gray-100 bg-opacity-10 bg-center min-h-screen"
       style={{
         backgroundImage:
-          "url('https://convoytravels.pk/wp-content/uploads/2025/09/Convoy-Travel.png')",
+          "url('/bg.png')",
       }}
     >
       <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/65 to-black/70 z-10"></div>

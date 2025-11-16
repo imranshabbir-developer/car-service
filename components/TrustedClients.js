@@ -1,43 +1,43 @@
-'use client';
+"use client";
 
 import Slider from "react-slick";
 
 export default function TrustedClients() {
   const logos = [
     {
-      src: "https://convoytravels.pk/wp-content/uploads/2024/11/Mediamodifier-Design-Template-10-1.png",
+      src: "/t1.webp",
       alt: "World Health Organization",
     },
     {
-      src: "https://convoytravels.pk/wp-content/uploads/2024/11/United-Solar-Group-logo-final-for-white-BG-2.png",
+      src: "/t2.webp",
       alt: "United Solar Group",
     },
     {
-      src: "https://convoytravels.pk/wp-content/uploads/2024/11/kppl-logo.webp",
+      src: "/t3.webp",
       alt: "Khyber Petroleum",
     },
     {
-      src: "https://convoytravels.pk/wp-content/uploads/2024/11/denime-factory.jpg",
+      src: "/t4.webp",
       alt: "Denim Factory",
     },
     {
-      src: "https://convoytravels.pk/wp-content/uploads/2024/11/16439d4f4e6054.webp",
+      src: "/t5.webp",
       alt: "PAK-TURK MAARIF",
     },
     {
-      src: "https://convoytravels.pk/wp-content/uploads/2024/11/OGDCL_logo.svg.png",
+      src: "/t6.webp",
       alt: "Gas Development Company",
     },
     {
-      src: "https://convoytravels.pk/wp-content/uploads/2024/11/web-logo-1024x389-1.png",
+      src: "/t7.webp",
       alt: "Lords College of Pharmacy",
     },
     {
-      src: "https://convoytravels.pk/wp-content/uploads/2025/05/eastern-group-of-science.jpeg",
+      src: "/t8.webp",
       alt: "Eastern Group of Companies",
     },
     {
-      src: "https://convoytravels.pk/wp-content/uploads/2025/05/nespak.jpg",
+      src: "/t9.webp",
       alt: "National Engineering Services Pakistan",
     },
   ];
@@ -89,10 +89,8 @@ export default function TrustedClients() {
       </div>
 
       <p className="text-gray-600 mt-10 text-base md:text-lg flex items-center justify-center gap-2">
-        <span className="w-2 h-2 rounded-full bg-[#0d1b2a]"></span>
         Explore our fleet of top-quality.
       </p>
     </section>
   );
 }
-

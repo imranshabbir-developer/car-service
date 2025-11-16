@@ -6,7 +6,7 @@ export default function VehicleCard({ car }) {
     <Link href={`/cars/${car.id}`} className="block">
       <div className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 group w-full cursor-pointer">
         {/* Image Section */}
-        <div className="relative w-full h-72 sm:h-80 lg:h-72 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="relative w-full h-72 sm:h-80 lg:h-72 overflow-hidden">
         <img
           src={car.image}
           alt={car.name}

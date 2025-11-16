@@ -22,7 +22,7 @@ export default function Home() {
       <TrustedClients />
       <PerfectDriver />
       <FeaturedCarsSection />
-      <RentCarInfoSection />
+      <RentCarInfoSection /> 
       <AffordableRentCarSection />
       <OnlineCarBooking />
       <AffordableCarRental />
