@@ -9,6 +9,7 @@ import Link from 'next/link';
 import SimilarListings from '@/components/SimilarListings';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { generateSlug, isObjectId } from '@/utils/slug';
 
 const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/800x600?text=Vehicle+Image';
 
@@ -90,8 +91,19 @@ const mapFallbackCar = (fallbackCar) => {
 export default function CarDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const carId = params.id;
-  const fallbackCar = mapFallbackCar(getCarById(carId));
+  const paramValue = params.id;
+  
+  // Determine if param is an ID or slug
+  const isId = isObjectId(paramValue);
+  const actualCarId = useMemo(() => {
+    if (isId) {
+      return paramValue;
+    }
+    // If it's a slug, we'll find the car ID in the fetch effect
+    return null;
+  }, [paramValue, isId]);
+  
+  const fallbackCar = isId ? mapFallbackCar(getCarById(actualCarId)) : null;
   
   // All hooks must be called before any conditional returns
   const [activeTab, setActiveTab] = useState('booking');
@@ -116,7 +128,7 @@ export default function CarDetailPage() {
     message: '',
   });
   const [car, setCar] = useState(fallbackCar);
-  const [loading, setLoading] = useState(!fallbackCar);
+  const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bookingFeedback, setBookingFeedback] = useState(null);
@@ -125,13 +137,38 @@ export default function CarDetailPage() {
     let isMounted = true;
 
     const fetchCarDetails = async () => {
-      if (!fallbackCar) {
-        setLoading(true);
-      }
+      setLoading(true);
       setFetchError(null);
 
       try {
-        const response = await fetch(`${API_BASE_URL}/cars/${carId}`);
+        let carIdToFetch = actualCarId;
+
+        // If param is a slug, find the car by slug first
+        if (!isId && paramValue) {
+          const allCarsResponse = await fetch(`${API_BASE_URL}/cars`);
+          const allCarsData = await allCarsResponse.json();
+          
+          if (allCarsData.success && allCarsData.data && allCarsData.data.cars) {
+            const matchingCar = allCarsData.data.cars.find(car => {
+              const carSlug = generateSlug(car.name);
+              return carSlug === paramValue;
+            });
+            
+            if (matchingCar) {
+              carIdToFetch = matchingCar._id;
+            } else {
+              throw new Error('Car not found');
+            }
+          } else {
+            throw new Error('Car not found');
+          }
+        }
+
+        if (!carIdToFetch) {
+          throw new Error('Car not found');
+        }
+
+        const response = await fetch(`${API_BASE_URL}/cars/${carIdToFetch}`);
 
         if (!response.ok) {
           throw new Error(
@@ -149,14 +186,26 @@ export default function CarDetailPage() {
         }
 
         if (isMounted) {
-          setCar(transformApiCar(apiCar));
+          const transformedCar = transformApiCar(apiCar);
+          setCar(transformedCar);
+          
+          // Update URL to use slug if it's currently using ID (for SEO and clean URLs)
+          if (isId && typeof window !== 'undefined') {
+            const carSlug = generateSlug(transformedCar.name);
+            const newUrl = `/cars/${carSlug}`;
+            if (window.location.pathname !== newUrl) {
+              window.history.replaceState({}, '', newUrl);
+            }
+          }
         }
       } catch (error) {
         console.error('Error fetching car details:', error);
         if (isMounted) {
           setFetchError(error.message);
-          const fallbackCar = mapFallbackCar(getCarById(carId));
-          setCar(fallbackCar);
+          if (isId) {
+            const fallbackCar = mapFallbackCar(getCarById(actualCarId));
+            setCar(fallbackCar);
+          }
         }
       } finally {
         if (isMounted) {
@@ -170,7 +219,7 @@ export default function CarDetailPage() {
     return () => {
       isMounted = false;
     };
-  }, [carId, fallbackCar]);
+  }, [paramValue, isId, actualCarId]);
 
   // Handle body scroll lock when modal is open
   useEffect(() => {

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { FaUser, FaSnowflake, FaCogs, FaMapMarkerAlt } from "react-icons/fa";
 import { API_BASE_URL, API_IMAGE_BASE_URL } from "@/config/api";
+import { generateSlug } from "@/utils/slug";
 import "./featured-cars.css";
 
 const FALLBACK_CARS = [
@@ -207,8 +208,9 @@ export default function FeaturedCarsSection() {
             );
 
             if (car.id) {
+              const carSlug = car.slug || generateSlug(car.name) || car.id;
               return (
-                <Link key={car.id} href={`/cars/${car.id}`} className="block h-full">
+                <Link key={car.id} href={`/cars/${carSlug}`} className="block h-full">
                   {cardContent}
                 </Link>
               );

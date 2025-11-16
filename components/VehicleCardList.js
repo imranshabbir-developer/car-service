@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { FaHeart, FaMapMarkerAlt } from "react-icons/fa";
+import { generateSlug } from "@/utils/slug";
 
 export default function VehicleCardList({ car }) {
+  const carSlug = car.slug || generateSlug(car.name) || car.id;
   return (
-    <Link href={`/cars/${car.id}`} className="block">
+    <Link href={`/cars/${carSlug}`} className="block">
       <div className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 group w-full cursor-pointer">
         <div className="flex flex-col sm:flex-row">
           {/* Image Section - Left Side */}
