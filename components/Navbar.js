@@ -190,20 +190,20 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`sticky top-0 z-20 flex items-center justify-between px-6 md:px-16 py-5 border-b-2 transition-all duration-300 ${
+        className={`sticky top-0 z-20 flex items-center justify-between px-4 sm:px-6 md:px-16 py-4 sm:py-5 border-b-2 transition-all duration-300 ${
           isScrolled ? "bg-white shadow-sm" : "bg-white/70 backdrop-blur-sm"
         }`}
         style={{ fontFamily: "Roboto, sans-serif" }}
       >
-        <Link href="/" className="flex items-center space-x-3 flex-shrink-0">
+        <Link href="/" className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0 min-w-0">
           <img
             src="/logo.webp"
             alt="Logo"
-            className="w-28 sm:w-32 md:w-36 h-auto"
+            className="w-24 sm:w-28 md:w-32 lg:w-36 h-auto"
           />
         </Link>
 
-        <nav className="hidden md:flex space-x-4 lg:space-x-5 text-gray-800 font-medium">
+        <nav className="hidden md:flex space-x-3 lg:space-x-4 xl:space-x-5 text-gray-800 font-medium flex-shrink-0 text-sm lg:text-base">
           <NavLinkHover href="/" className="nav-home">
             Home
           </NavLinkHover>
@@ -251,17 +251,19 @@ export default function Navbar() {
               >
                 <div className="bg-white rounded-lg shadow-lg py-2 border border-gray-100">
                   {categories.length > 0 ? (
-                    categories.map((category) => (
-                      <RippleLink
-                        key={category._id}
-                        href={`/vehicle-types?category=${encodeURIComponent(
-                          category.name
-                        )}`}
-                        className="block px-4 py-2 text-gray-800 hover:bg-gray-50 transition-colors"
-                      >
-                        {category.name}
-                      </RippleLink>
-                    ))
+                    categories
+                      .filter((category) => category.name?.toUpperCase() !== "4X4")
+                      .map((category) => (
+                        <RippleLink
+                          key={category._id}
+                          href={`/vehicle-types?category=${encodeURIComponent(
+                            category.name
+                          )}`}
+                          className="block px-4 py-2 text-gray-800 hover:bg-gray-50 transition-colors"
+                        >
+                          {category.name}
+                        </RippleLink>
+                      ))
                   ) : (
                     <div className="px-4 py-2 text-gray-500 text-sm">
                       {categories.length === 0
@@ -281,21 +283,26 @@ export default function Navbar() {
           </NavLinkHover>
         </nav>
 
-        <div className="hidden md:flex items-center gap-3">
-          <a href="tel:+923281456456" className="phone-ring-button bg-[#0d1b2a] text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-[#112d4e] relative">
-            <FaPhoneAlt className="phone-icon" />
-            <span>+92 328 1456456</span>
+        <div className="hidden md:flex items-center gap-2 lg:gap-3 flex-shrink-0">
+          <a 
+            href="tel:+923281456456" 
+            className="phone-ring-button bg-[#0d1b2a] text-white px-3 lg:px-4 py-2 rounded-lg flex items-center space-x-1.5 lg:space-x-2 hover:bg-[#112d4e] relative whitespace-nowrap"
+          >
+            <FaPhoneAlt className="phone-icon flex-shrink-0" />
+            <span className="hidden lg:inline">+92 328 1456456</span>
+            <span className="lg:hidden text-sm">Call</span>
           </a>
           <button
             onClick={() => setSearchOverlayOpen(true)}
-            className="text-gray-800 hover:text-[#1a2b5c] transition-colors p-2"
+            className="text-gray-800 hover:text-[#1a2b5c] transition-colors p-2 flex-shrink-0"
+            aria-label="Search"
           >
             <FaSearch className="w-5 h-5" />
           </button>
         </div>
 
         <button
-          className="md:hidden text-2xl text-[#0d1b2a] focus:outline-none z-50 relative"
+          className="md:hidden text-2xl text-[#0d1b2a] focus:outline-none z-50 relative flex-shrink-0 ml-2"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
         >
@@ -369,14 +376,16 @@ export default function Navbar() {
             >
               <div className="ml-4 mt-2 space-y-1 pb-2">
                 {categories.length > 0 ? (
-                  categories.map((category) => (
-                    <Link
-                      key={category._id}
-                      href={`/vehicle-types?category=${encodeURIComponent(
-                        category.name
-                      )}`}
-                      className="block px-4 py-2 rounded-lg hover:bg-gray-100 hover:text-[#0d1b2a] transition-all duration-200 text-gray-600 hover:translate-x-1"
-                      onClick={() => {
+                  categories
+                    .filter((category) => category.name?.toUpperCase() !== "4X4")
+                    .map((category) => (
+                      <Link
+                        key={category._id}
+                        href={`/vehicle-types?category=${encodeURIComponent(
+                          category.name
+                        )}`}
+                        className="block px-4 py-2 rounded-lg hover:bg-gray-100 hover:text-[#0d1b2a] transition-all duration-200 text-gray-600 hover:translate-x-1"
+                        onClick={() => {
                         setMenuOpen(false);
                         setMobileDropdownOpen(false);
                       }}

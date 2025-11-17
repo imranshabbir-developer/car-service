@@ -36,6 +36,7 @@ const getBlogExcerpt = (htmlContent = "", limit = 170) => {
 export default function VehicleTypesContent() {
   const searchParams = useSearchParams();
   const category = searchParams.get("category") || null;
+  const allCars = searchParams.get("allCars") === "true";
   const brand = searchParams.get("brand") || null;
   const pickupDateParam = searchParams.get("pickupDate") || null;
   const dropoffDateParam = searchParams.get("dropoffDate") || null;
@@ -72,8 +73,8 @@ export default function VehicleTypesContent() {
   // Fetch cars from API
   useEffect(() => {
     const fetchCars = async () => {
-      // Fetch cars if category is provided (from direct navigation, hero section, or search modal)
-      if (!category) return;
+      // Fetch cars if category is provided or allCars is true
+      if (!category && !allCars) return;
 
       try {
         setLoading(true);
@@ -110,7 +111,7 @@ export default function VehicleTypesContent() {
     };
 
     fetchCars();
-  }, [category]);
+  }, [category, allCars]);
 
   // Fetch blogs for the category
   useEffect(() => {
@@ -154,8 +155,15 @@ export default function VehicleTypesContent() {
   const filteredCars = useMemo(() => {
     let filtered = cars;
 
-    // Filter by category if provided
-    if (category) {
+    // If allCars is true, exclude "Vans & Buses" category
+    if (allCars) {
+      filtered = filtered.filter(
+        (car) => car.category?.toLowerCase() !== "vans & buses"
+      );
+    }
+
+    // Filter by category if provided (and not allCars)
+    if (category && !allCars) {
       filtered = filtered.filter(
         (car) => car.category?.toLowerCase() === category.toLowerCase()
       );
@@ -180,7 +188,7 @@ export default function VehicleTypesContent() {
         car.brand?.toLowerCase().includes(query) ||
         car.model?.toLowerCase().includes(query)
     );
-  }, [category, brand, searchQuery, cars]);
+  }, [category, allCars, brand, searchQuery, cars]);
 
   const blogsLastUpdated = useMemo(() => {
     if (!blogs.length) return "Recently updated";
@@ -212,7 +220,7 @@ export default function VehicleTypesContent() {
   // Reset to page 1 when search or category changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, category]);
+  }, [searchQuery, category, allCars]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -223,13 +231,13 @@ export default function VehicleTypesContent() {
 
   return (
     <>
-      {category ? (
+      {(category || allCars) ? (
         <>
           {/* Category Header with Search and View Toggle */}
           <div className="mb-8 sm:mb-12">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900">
-                {category}
+                {allCars ? "Cars" : category}
               </h1>
 
               {/* Search Bar and View Toggle */}
@@ -373,8 +381,8 @@ export default function VehicleTypesContent() {
             </div>
           )}
 
-          {/* Related Blogs Section */}
-          {blogs.length > 0 && (
+          {/* Related Blogs Section - Only show for specific categories, not for allCars */}
+          {!allCars && blogs.length > 0 && (
             <div className="border-t border-gray-200">
               {/* Section header */}
               <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">

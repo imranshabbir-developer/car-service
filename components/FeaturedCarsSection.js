@@ -90,7 +90,8 @@ export default function FeaturedCarsSection() {
 
     const fetchFeaturedCars = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/cars`);
+        // Fetch only featured and available cars from the API
+        const response = await fetch(`${API_BASE_URL}/cars?isFeatured=true&status=available`);
 
         if (!response.ok) {
           throw new Error(`Failed to load cars: ${response.status}`);
@@ -100,10 +101,8 @@ export default function FeaturedCarsSection() {
         const apiCars = data?.data?.cars || [];
 
         if (isMounted) {
-          const featuredCars = apiCars
-            .filter((car) => car?.isFeatured === true && car?.status === "available")
-            .slice(0, 8)
-            .map(transformCar);
+          // Transform all featured cars (no filtering needed as API already filtered)
+          const featuredCars = apiCars.map(transformCar);
           
           // Only update if we have featured cars, otherwise keep fallback or show empty
           if (featuredCars.length > 0) {

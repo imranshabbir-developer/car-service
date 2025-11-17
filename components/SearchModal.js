@@ -230,11 +230,13 @@ export default function SearchModal({ open, onClose }) {
 
               {!categoriesLoading &&
                 !categoriesError &&
-                categories.map((category) => (
-                  <option key={category._id} value={category.name}>
-                    {category.name}
-                  </option>
-                ))}
+                categories
+                  .filter((category) => category.name?.toUpperCase() !== "4X4")
+                  .map((category) => (
+                    <option key={category._id} value={category.name}>
+                      {category.name}
+                    </option>
+                  ))}
             </select>
           </div>
 

@@ -1,9 +1,17 @@
 'use client';
 
+import { useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Navigation, Autoplay } from "swiper/modules";
+import { FaStar, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import "swiper/css";
+import "swiper/css/navigation";
 
 export default function ReviewsSection() {
+  const swiperRef = useRef(null);
+  const [isBeginning, setIsBeginning] = useState(true);
+  const [isEnd, setIsEnd] = useState(false);
+
   const reviews = [
     {
       name: "Anum Ahmad",
@@ -36,101 +44,188 @@ export default function ReviewsSection() {
   ];
 
   return (
-    <section className="py-16 px-6 md:px-20 bg-white">
-      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-10">
-        <div className="text-center lg:text-left lg:w-1/3">
-          <h3 className="text-black text-xl font-semibold mb-2">EXCELLENT</h3>
-          <div className="flex justify-center lg:justify-start mb-2">
-            {Array(5)
-              .fill()
-              .map((_, i) => (
-                <span key={i} className="text-yellow-400 text-2xl">
-                  ★
-                </span>
-              ))}
-          </div>
-          <p className="text-gray-700 mb-2">
-            Based on <span className="font-bold">102 reviews</span>
-          </p>
-          <img
-            src="https://cdn.trustindex.io/assets/platform/Google/icon.svg"
-            alt="Google"
-            className="w-24 mx-auto lg:mx-0"
-          />
+    <section className="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 md:px-12 lg:px-20 bg-gradient-to-b from-gray-50 to-white" style={{ fontFamily: 'Roboto, sans-serif' }}>
+      <div className="max-w-7xl mx-auto">
+        {/* Section Header */}
+        <div className="text-center mb-8 sm:mb-10 md:mb-12">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1a2b5c] mb-4">
+            What Our Customers Say
+          </h2>
+          <div className="w-20 h-1 bg-[#1a2b5c] mx-auto"></div>
         </div>
 
-        <div className="lg:w-2/3 w-full">
-          <Swiper
-            slidesPerView={1}
-            spaceBetween={16}
-            navigation={true}
-            modules={[Navigation]}
-            breakpoints={{
-              768: { slidesPerView: 2 },
-              1024: { slidesPerView: 3 },
-            }}
-            className="pb-6"
-          >
-            {reviews.map((review, index) => (
-              <SwiperSlide key={index} className="scale-95">
-                <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 h-full flex flex-col justify-between">
-                  <div className="flex items-center mb-2">
-                    <img
-                      src={review.img}
-                      alt={review.name}
-                      className="w-8 h-8 rounded-full mr-2"
-                    />
-                    <div>
-                      <h4 className="font-semibold text-gray-800 flex items-center gap-1 text-sm">
-                        {review.name}
-                        <img
-                          src="https://cdn.trustindex.io/assets/platform/Google/icon.svg"
-                          alt="G"
-                          className="w-3 h-3"
-                        />
-                      </h4>
-                      <p className="text-xs text-gray-500">{review.time}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex mb-1">
-                    {Array(5)
-                      .fill()
-                      .map((_, i) => (
-                        <span
-                          key={i}
-                          className={`text-base ${
-                            i < review.stars
-                              ? "text-yellow-400"
-                              : "text-gray-300"
-                          }`}
-                        >
-                          ★
-                        </span>
-                      ))}
-                    <img
-                      src="https://cdn.trustindex.io/assets/icon/ti-verified.svg"
-                      alt="verified"
-                      className="w-3 h-3 ml-1"
-                    />
-                  </div>
-
-                  <p className="text-gray-600 text-xs mb-2 leading-relaxed">
-                    {review.text}
-                  </p>
-                  <a
-                    href="#"
-                    className="text-gray-500 text-xs font-medium hover:underline"
-                  >
-                    Read more
-                  </a>
+        <div className="flex flex-col lg:flex-row items-stretch gap-8 lg:gap-12">
+          {/* Rating Summary Section */}
+          <div className="w-full lg:w-1/3 flex flex-col items-center lg:items-start lg:pr-8">
+            <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 w-full max-w-sm border border-gray-100 h-[320px] flex flex-col justify-between">
+              <div className="text-center lg:text-left mb-6">
+                <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+                  EXCELLENT
+                </h3>
+                <div className="flex justify-center lg:justify-start items-center gap-1 mb-3">
+                  {Array(5)
+                    .fill()
+                    .map((_, i) => (
+                      <FaStar
+                        key={i}
+                        className="text-yellow-400 text-xl sm:text-2xl"
+                        fill="currentColor"
+                      />
+                    ))}
                 </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+                <p className="text-gray-600 text-sm sm:text-base">
+                  Based on <span className="font-bold text-gray-900">102 reviews</span>
+                </p>
+              </div>
+              
+              <div className="flex justify-center lg:justify-start pt-4 border-t border-gray-200">
+                <img
+                  src="https://cdn.trustindex.io/assets/platform/Google/icon.svg"
+                  alt="Google"
+                  className="w-20 sm:w-24 h-auto"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Reviews Carousel Section */}
+          <div className="w-full lg:w-2/3 relative">
+            {/* Custom Navigation Buttons - Outside Carousel */}
+            <button
+              onClick={() => swiperRef.current?.slidePrev()}
+              disabled={isBeginning}
+              className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-12 z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full shadow-lg border-2 flex items-center justify-center transition-all duration-300 group ${
+                isBeginning
+                  ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
+                  : 'bg-white border-gray-200 text-[#1a2b5c] hover:bg-[#1a2b5c] hover:text-white hover:border-[#1a2b5c] hover:scale-110 hover:shadow-xl'
+              }`}
+              aria-label="Previous review"
+            >
+              <FaChevronLeft className="text-lg lg:text-xl" />
+            </button>
+            
+            <button
+              onClick={() => swiperRef.current?.slideNext()}
+              disabled={isEnd}
+              className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-12 z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full shadow-lg border-2 flex items-center justify-center transition-all duration-300 group ${
+                isEnd
+                  ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
+                  : 'bg-white border-gray-200 text-[#1a2b5c] hover:bg-[#1a2b5c] hover:text-white hover:border-[#1a2b5c] hover:scale-110 hover:shadow-xl'
+              }`}
+              aria-label="Next review"
+            >
+              <FaChevronRight className="text-lg lg:text-xl" />
+            </button>
+
+            <Swiper
+              onSwiper={(swiper) => {
+                swiperRef.current = swiper;
+                setIsBeginning(swiper.isBeginning);
+                setIsEnd(swiper.isEnd);
+              }}
+              onSlideChange={(swiper) => {
+                setIsBeginning(swiper.isBeginning);
+                setIsEnd(swiper.isEnd);
+              }}
+              slidesPerView={1}
+              spaceBetween={20}
+              navigation={false}
+              autoplay={{
+                delay: 4000,
+                disableOnInteraction: false,
+              }}
+              modules={[Autoplay]}
+              breakpoints={{
+                640: {
+                  slidesPerView: 1,
+                  spaceBetween: 20,
+                },
+                768: {
+                  slidesPerView: 2,
+                  spaceBetween: 24,
+                },
+                1024: {
+                  slidesPerView: 2,
+                  spaceBetween: 24,
+                },
+                1280: {
+                  slidesPerView: 3,
+                  spaceBetween: 24,
+                },
+              }}
+              className="reviews-swiper"
+            >
+              {reviews.map((review, index) => (
+                <SwiperSlide key={index} className="h-auto">
+                  <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-5 sm:p-6 h-[320px] flex flex-col border border-gray-100 group">
+                    {/* Review Header */}
+                    <div className="flex items-start gap-3 mb-4">
+                      <div className="relative flex-shrink-0">
+                        <img
+                          src={review.img}
+                          alt={review.name}
+                          className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover ring-2 ring-gray-100 group-hover:ring-[#1a2b5c] transition-all duration-300"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h4 className="font-semibold text-gray-900 text-sm sm:text-base truncate">
+                            {review.name}
+                          </h4>
+                          <img
+                            src="https://cdn.trustindex.io/assets/platform/Google/icon.svg"
+                            alt="Google"
+                            className="w-4 h-4 flex-shrink-0"
+                          />
+                        </div>
+                        <p className="text-xs sm:text-sm text-gray-500">{review.time}</p>
+                      </div>
+                    </div>
+
+                    {/* Stars Rating */}
+                    <div className="flex items-center gap-1 mb-4">
+                      {Array(5)
+                        .fill()
+                        .map((_, i) => (
+                          <FaStar
+                            key={i}
+                            className={`text-sm sm:text-base ${
+                              i < review.stars
+                                ? "text-yellow-400"
+                                : "text-gray-300"
+                            }`}
+                            fill={i < review.stars ? "currentColor" : "none"}
+                          />
+                        ))}
+                      <img
+                        src="https://cdn.trustindex.io/assets/icon/ti-verified.svg"
+                        alt="verified"
+                        className="w-4 h-4 ml-1 flex-shrink-0"
+                      />
+                    </div>
+
+                    {/* Review Text */}
+                    <div className="flex-1 mb-4 overflow-hidden">
+                      <p className="text-gray-700 text-sm sm:text-base leading-relaxed line-clamp-4">
+                        {review.text}
+                      </p>
+                    </div>
+
+                    {/* Read More Link */}
+                    <a
+                      href="#"
+                      className="text-[#1a2b5c] text-xs sm:text-sm font-medium hover:underline inline-flex items-center gap-1 self-start transition-colors"
+                    >
+                      Read more
+                      <span className="text-[#1a2b5c]">→</span>
+                    </a>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
         </div>
       </div>
     </section>
   );
 }
-

@@ -29,6 +29,12 @@ export default function PerfectDriver() {
   };
 
   const handleCardClick = (vehicle) => {
+    // Special handling for "Cars" - show all categories except "Vans & Buses"
+    if (vehicle.title === "Cars") {
+      router.push(`/vehicle-types?allCars=true`);
+      return;
+    }
+
     const categoryParam = categoryParamMap[vehicle.title];
     if (!categoryParam) return;
 

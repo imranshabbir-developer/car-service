@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FaHeart, FaMapMarkerAlt } from "react-icons/fa";
+import { FaMapMarkerAlt } from "react-icons/fa";
 import { generateSlug } from "@/utils/slug";
 
 export default function VehicleCardList({ car }) {
@@ -20,15 +20,6 @@ export default function VehicleCardList({ car }) {
                 Featured
               </div>
             )}
-            <button 
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-              className="absolute top-3 right-3 bg-white/90 hover:bg-white p-2.5 rounded-full shadow-md transition-all duration-300 hover:scale-110 z-10"
-            >
-              <FaHeart className="w-4 h-4 text-gray-700" />
-            </button>
           </div>
 
           {/* Details Section - Right Side */}
