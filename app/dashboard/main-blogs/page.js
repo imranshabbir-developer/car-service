@@ -309,7 +309,7 @@ export default function MainBlogsPage() {
         </div>
       ) : filteredBlogs.length === 0 ? (
         <div className="text-center py-20 text-gray-500">
-          No blogs found. Click "Add Blog" to create one.
+          No blogs found. Click &quot;Add Blog&quot; to create one.
         </div>
       ) : (
         <div className="bg-white rounded-lg shadow overflow-hidden">
