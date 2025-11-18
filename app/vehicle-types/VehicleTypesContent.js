@@ -155,12 +155,8 @@ export default function VehicleTypesContent() {
   const filteredCars = useMemo(() => {
     let filtered = cars;
 
-    // If allCars is true, exclude "Vans & Buses" category
-    if (allCars) {
-      filtered = filtered.filter(
-        (car) => car.category?.toLowerCase() !== "vans & buses"
-      );
-    }
+    // If allCars is true, show all cars (including Vans & Buses)
+    // No filtering needed - just show all cars
 
     // Filter by category if provided (and not allCars)
     if (category && !allCars) {

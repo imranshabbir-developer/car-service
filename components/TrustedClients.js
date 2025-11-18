@@ -87,7 +87,7 @@ export default function TrustedClients() {
       {
         breakpoint: 480,
         settings: {
-          slidesToShow: 1,
+          slidesToShow: 2,
           slidesToScroll: 1,
           arrows: false,
         },
@@ -106,12 +106,13 @@ export default function TrustedClients() {
         <Slider {...settings} className="trusted-clients-slider">
           {logos.map((logo, index) => (
             <div key={index}>
-              <div className="flex items-center justify-center h-full px-2 sm:px-4 md:px-6">
-                <div className="w-full h-full flex items-center justify-center bg-gray-50 rounded-lg p-4 sm:p-6 md:p-8 hover:bg-gray-100 transition-colors duration-300">
+              <div className="flex items-center justify-center h-full px-2 sm:px-3 md:px-4">
+                <div className="w-full h-[85px] sm:h-[120px] md:h-[160px] lg:h-[180px] flex items-center justify-center bg-white rounded-lg p-1.5 sm:p-4 md:p-6 lg:p-8 hover:shadow-md transition-all duration-300 shadow-sm border border-gray-100">
                   <img
                     src={logo.src}
                     alt={logo.alt}
-                    className="w-full h-auto max-h-16 object-contain"
+                    className="w-full h-full max-w-full max-h-full object-contain scale-125 sm:scale-100"
+                    style={{ objectFit: 'contain' }}
                   />
                 </div>
               </div>

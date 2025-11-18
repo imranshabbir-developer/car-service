@@ -8,7 +8,7 @@ export default function LocationMap() {
       <div className="w-full max-w-7xl mx-auto rounded-lg overflow-hidden shadow-md">
         <iframe
           title="Convoy Travels Map"
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13609.330705337598!2d74.2805106!3d31.4762152!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391903b859e21f09%3A0x35ee51d2fcd12e1a!2sConvoy%20Travels%20-%20Rent%20A%20Car%20in%20Lahore%20with%20Driver!5e0!3m2!1sen!2s!4v1730259069447!5m2!1sen!2s"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3403.4567890123!2d74.2757659!3d31.4552579!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3919011c61ee45f1%3A0x36711d0a6a1ea134!2sConvoy%20Travels%20-%20Rent%20A%20Car%20in%20Lahore%20with%20Driver%20%26%20Self-drive!5e0!3m2!1sen!2s!4v1735000000000!5m2!1sen!2s"
           width="100%"
           height="450"
           allowFullScreen=""

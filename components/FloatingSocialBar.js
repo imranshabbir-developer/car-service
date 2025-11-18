@@ -69,11 +69,13 @@ export default function FloatingSocialBar() {
             hover:scale-110 
             group
             relative
+            ${social.label === 'WhatsApp' ? 'whatsapp-bump-button' : ''}
+            overflow-visible
           `}
           aria-label={social.label}
         >
-          <span className="group-hover:scale-110 transition-transform duration-300">
-            <social.icon className={`w-4 h-4 sm:w-5 sm:h-5 ${social.label === 'WhatsApp' ? 'animate-pulse' : ''}`} />
+          <span className={`group-hover:scale-110 transition-transform duration-300 ${social.label === 'WhatsApp' ? 'whatsapp-icon' : ''}`}>
+            <social.icon className="w-4 h-4 sm:w-5 sm:h-5" />
           </span>
           {/* Tooltip - Hidden on mobile, visible on hover */}
           <span className="absolute right-full mr-3 px-2 sm:px-3 py-1 sm:py-1.5 bg-gray-900 text-white text-xs sm:text-sm font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none hidden sm:block">

@@ -11,12 +11,7 @@ const brandImageMap = {
   'toyota': '/r2.webp',
   'honda': '/r3.webp',
   'hyundai': '/r4.webp',
-  'mercedes': '/mercedes-logo.jpg',
-  'bmw': '/bmw-logo.jpg',
-  'audi': '/audi-logo.jpg',
-  // 'ford': '/limousine-logo.jpg',
-    'kia': '/kia-logo.jpg',
-  
+  'lemousine': '/limousine-logo.jpg',
 };
 
 export default function PopularBrands() {
@@ -31,22 +26,26 @@ export default function PopularBrands() {
         const data = await response.json();
 
         if (data.success && data.data && data.data.cars) {
-          // Extract unique brands from cars
+          // Extract unique brands from cars, but only those mapped in brandImageMap
           const uniqueBrands = new Set();
           
           data.data.cars.forEach((car) => {
             if (car.brand && car.brand.trim()) {
-              uniqueBrands.add(car.brand.trim());
+              const brandKey = car.brand.trim().toLowerCase();
+              // Only add brands that exist in brandImageMap
+              if (brandImageMap[brandKey]) {
+                uniqueBrands.add(car.brand.trim());
+              }
             }
           });
 
-          // Convert to array and sort alphabetically
+          // Convert to array, map to include image, and sort alphabetically
           const brandsArray = Array.from(uniqueBrands)
             .map((brandName) => {
               const brandKey = brandName.toLowerCase();
               return {
                 name: brandName, // Keep original brand name from API
-                img: brandImageMap[brandKey] || '/limousine-logo.jpg', // Use mapped image or default
+                img: brandImageMap[brandKey], // Use mapped image
               };
             })
             .sort((a, b) => a.name.localeCompare(b.name));
@@ -84,12 +83,12 @@ export default function PopularBrands() {
             No brands available at the moment.
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 md:gap-8">
+          <div className="flex flex-wrap justify-center gap-6 md:gap-8">
             {brands.map((brand, index) => (
               <Link
                 key={`${brand.name}-${index}`}
                 href={`/brands/${encodeURIComponent(brand.name.toLowerCase())}`}
-                className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 flex items-center justify-center p-6 cursor-pointer"
+                className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 flex items-center justify-center p-6 cursor-pointer min-w-[140px] sm:min-w-[160px]"
               >
                 <img
                   src={brand.img}
