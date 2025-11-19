@@ -101,7 +101,7 @@ export default function Footer() {
               <div className="flex justify-center sm:justify-start">
                 <FaClock />
               </div>
-              <span className="mt-1 sm:mt-0">Business Hour's: 10AM to 9PM 
+              <span className="mt-1 sm:mt-0">Business Hour&apos;s: 10AM to 9PM 
               <br /> -(Sunday closed)-              </span>
             </li>
             <li className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 pb-2 border-b border-gray-600">

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { FaPlus, FaSearch, FaEdit, FaTrash, FaSpinner, FaTimes, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
+import { logger } from '@/utils/logger';
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState([]);
@@ -62,7 +63,7 @@ export default function CategoriesPage() {
           setCategories(data.data.categories);
           setFilteredCategories(data.data.categories);
         } else {
-          console.warn('Categories response structure unexpected:', data);
+          logger.warn('Categories response structure unexpected:', data);
           setCategories([]);
           setFilteredCategories([]);
           showNotification('Failed to fetch categories: Invalid response format', 'error');
@@ -82,7 +83,7 @@ export default function CategoriesPage() {
       } else {
         showNotification('Error fetching categories', 'error');
       }
-      console.error('Error:', error);
+      logger.error('Error:', error);
       setCategories([]);
       setFilteredCategories([]);
     } finally {
@@ -95,6 +96,7 @@ export default function CategoriesPage() {
     if (typeof window !== 'undefined') {
       fetchCategories();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Live search filter
@@ -148,7 +150,7 @@ export default function CategoriesPage() {
       }
     } catch (error) {
       showNotification('Error fetching category details', 'error');
-      console.error('Error:', error);
+      logger.error('Error:', error);
     }
   };
 
@@ -226,7 +228,7 @@ export default function CategoriesPage() {
       }
     } catch (error) {
       showNotification('Error saving category', 'error');
-      console.error('Error:', error);
+      logger.error('Error:', error);
     }
   };
 
@@ -255,7 +257,7 @@ export default function CategoriesPage() {
       }
     } catch (error) {
       showNotification('Error deleting category', 'error');
-      console.error('Error:', error);
+      logger.error('Error:', error);
     } finally {
       setDeletingId(null);
     }
@@ -295,7 +297,7 @@ export default function CategoriesPage() {
         </div>
         <button
           onClick={handleCreate}
-          className="flex items-center space-x-2 bg-[#1a2b5c] text-white px-4 py-2 rounded-lg hover:bg-[#0d1b2a] transition-colors"
+          className="flex items-center space-x-2 btn-gradient-primary text-white px-4 py-2 rounded-lg font-semibold relative z-10"
         >
           <FaPlus />
           <span>Add Category</span>
@@ -530,13 +532,13 @@ export default function CategoriesPage() {
                   <button
                     type="button"
                     onClick={handleCloseModal}
-                    className="px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="px-4 py-2 text-sm btn-gradient-outline text-gray-700 rounded-lg font-semibold relative z-10"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 text-sm bg-[#1a2b5c] text-white rounded-lg hover:bg-[#0d1b2a] transition-colors"
+                    className="px-4 py-2 text-sm btn-gradient-primary text-white rounded-lg font-semibold relative z-10"
                   >
                     {editingCategory ? 'Update' : 'Create'}
                   </button>

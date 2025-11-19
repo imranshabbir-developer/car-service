@@ -86,7 +86,7 @@ export default function BlogSection() {
                       </p>
                       <Link
                         href={`/main-blog/${blog.slug || blog._id}`}
-                        className="read-more-button inline-block bg-[#1a2b5c] text-white text-xs sm:text-sm px-4 py-2 rounded hover:bg-[#132045] transition-colors duration-300 relative"
+                        className="read-more-button inline-block btn-gradient-primary text-white text-xs sm:text-sm px-4 py-2 rounded relative z-10"
                       >
                         <span className="read-more-button-text">Read More</span>
                       </Link>
@@ -99,7 +99,7 @@ export default function BlogSection() {
             {blogs.length > 0 && (
               <Link
                 href="/main-blogs"
-                className="inline-block bg-[#1a2b5c] text-white font-medium px-6 py-3 rounded hover:bg-[#132045] transition-colors duration-300"
+                className="inline-block btn-gradient-primary text-white font-medium px-6 py-3 rounded relative z-10"
               >
                 View All Blogs
               </Link>

@@ -14,6 +14,7 @@ import {
   FaImage,
 } from 'react-icons/fa';
 import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
+import { logger } from '@/utils/logger';
 
 export default function CarsPage() {
   const [cars, setCars] = useState([]);
@@ -68,7 +69,7 @@ export default function CarsPage() {
       }
     } catch (error) {
       showNotification('Error fetching cars', 'error');
-      console.error('Error:', error);
+      logger.error('Error:', error);
     } finally {
       setLoading(false);
     }
@@ -98,7 +99,7 @@ export default function CarsPage() {
         }
         
         if (!response.ok) {
-          console.error('Categories API error:', response.status);
+          logger.error('Categories API error:', response.status);
           return;
         }
         
@@ -107,7 +108,7 @@ export default function CarsPage() {
         if (data.success && data.data && data.data.categories) {
           setCategories(data.data.categories);
         } else {
-          console.warn('Categories response structure unexpected:', data);
+          logger.warn('Categories response structure unexpected:', data);
         }
       } catch (fetchError) {
         // Clear timeout on error
@@ -118,9 +119,9 @@ export default function CarsPage() {
       }
     } catch (error) {
       if (error.name === 'AbortError') {
-        console.error('Categories fetch timeout. Server may be down.');
+        logger.error('Categories fetch timeout. Server may be down.');
       } else {
-        console.error('Error fetching categories:', error);
+        logger.error('Error fetching categories:', error);
       }
     }
   };
@@ -131,6 +132,7 @@ export default function CarsPage() {
       fetchCars();
       fetchCategories();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Live search and featured filter
@@ -297,7 +299,7 @@ export default function CarsPage() {
       }
     } catch (error) {
       showNotification('Error fetching car details', 'error');
-      console.error('Error:', error);
+      logger.error('Error:', error);
     }
   };
 
@@ -393,7 +395,7 @@ export default function CarsPage() {
       }
     } catch (error) {
       showNotification('Error saving car', 'error');
-      console.error('Error:', error);
+      logger.error('Error:', error);
     }
   };
 
@@ -422,7 +424,7 @@ export default function CarsPage() {
       }
     } catch (error) {
       showNotification('Error deleting car', 'error');
-      console.error('Error:', error);
+      logger.error('Error:', error);
     } finally {
       setDeletingId(null);
     }
@@ -481,7 +483,7 @@ export default function CarsPage() {
             </select>
             <button
               onClick={handleCreate}
-              className="flex items-center space-x-2 bg-[#1a2b5c] text-white px-4 py-2 rounded-lg hover:bg-[#0d1b2a] transition-colors"
+              className="flex items-center space-x-2 btn-gradient-primary text-white px-4 py-2 rounded-lg font-semibold relative z-10"
             >
               <FaPlus />
               <span className="hidden sm:inline">Add Car</span>
@@ -912,13 +914,13 @@ export default function CarsPage() {
                   <button
                     type="button"
                     onClick={handleCloseModal}
-                    className="px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="px-4 py-2 text-sm btn-gradient-outline text-gray-700 rounded-lg font-semibold relative z-10"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 text-sm bg-[#1a2b5c] text-white rounded-lg hover:bg-[#0d1b2a] transition-colors"
+                    className="px-4 py-2 text-sm btn-gradient-primary text-white rounded-lg font-semibold relative z-10"
                   >
                     {editingCar ? 'Update Car' : 'Create Car'}
                   </button>

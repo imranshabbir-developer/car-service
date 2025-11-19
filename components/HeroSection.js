@@ -310,7 +310,7 @@ export default function HeroSection() {
                 type="button"
                 onClick={handleFindCar}
                 disabled={isSearching}
-                className="w-full py-3 rounded-lg bg-[#18274f] hover:bg-[#0f2140] disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-lg font-semibold shadow-lg transition-colors"
+                className="w-full py-3 rounded-lg btn-gradient-primary disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-lg font-semibold shadow-lg relative z-10"
               >
                 {isSearching ? 'Searching...' : 'Find Your Car'}
               </button>

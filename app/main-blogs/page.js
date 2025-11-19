@@ -112,7 +112,7 @@ export default function MainBlogsPage() {
                     <p className="text-gray-600 text-xs sm:text-sm mb-4 leading-relaxed line-clamp-3">
                       {blog.description}
                     </p>
-                    <span className="inline-block bg-[#1a2b5c] text-white text-xs sm:text-sm px-4 py-2 rounded hover:bg-[#132045] transition-colors duration-300">
+                    <span className="inline-block btn-gradient-primary text-white text-xs sm:text-sm px-4 py-2 rounded relative z-10">
                       Read More
                     </span>
                   </div>

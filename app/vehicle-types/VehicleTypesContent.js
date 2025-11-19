@@ -300,7 +300,7 @@ export default function VehicleTypesContent() {
                     onClick={() => setViewType("grid")}
                     className={`p-2 rounded transition-colors ${
                       viewType === "grid"
-                        ? "bg-[#1a2b5c] text-white"
+                        ? "btn-gradient-primary text-white"
                         : "text-gray-600 hover:bg-gray-100"
                     }`}
                     aria-label="Grid View"
@@ -311,7 +311,7 @@ export default function VehicleTypesContent() {
                     onClick={() => setViewType("list")}
                     className={`p-2 rounded transition-colors ${
                       viewType === "list"
-                        ? "bg-[#1a2b5c] text-white"
+                        ? "btn-gradient-primary text-white"
                         : "text-gray-600 hover:bg-gray-100"
                     }`}
                     aria-label="List View"
@@ -355,7 +355,7 @@ export default function VehicleTypesContent() {
                     className={`p-2 rounded-lg transition-all ${
                       currentPage === 1
                         ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-white border border-gray-300 text-gray-700 hover:bg-[#1a2b5c] hover:text-white hover:border-[#1a2b5c]"
+                        : "btn-gradient-outline text-gray-700"
                     }`}
                     aria-label="Previous Page"
                   >
@@ -375,7 +375,7 @@ export default function VehicleTypesContent() {
                           onClick={() => handlePageChange(page)}
                           className={`min-w-[40px] h-10 px-3 rounded-lg transition-all font-medium ${
                             currentPage === page
-                              ? "bg-[#1a2b5c] text-white"
+                              ? "btn-gradient-primary text-white"
                               : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
                           }`}
                         >
@@ -401,7 +401,7 @@ export default function VehicleTypesContent() {
                     className={`p-2 rounded-lg transition-all ${
                       currentPage === totalPages
                         ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-white border border-gray-300 text-gray-700 hover:bg-[#1a2b5c] hover:text-white hover:border-[#1a2b5c]"
+                        : "btn-gradient-outline text-gray-700"
                     }`}
                     aria-label="Next Page"
                   >

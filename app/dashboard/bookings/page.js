@@ -46,21 +46,21 @@ const ACTIONS = [
     key: 'confirmed',
     label: 'Confirm',
     styles:
-      'bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200',
+      'btn-gradient-secondary text-white relative z-10',
     icon: FaCheckCircle,
   },
   {
     key: 'approved',
     label: 'Approve',
     styles:
-      'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200',
+      'btn-gradient-success text-white relative z-10',
     icon: FaThumbsUp,
   },
   {
     key: 'rejected',
     label: 'Reject',
     styles:
-      'bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200',
+      'btn-gradient-danger text-white relative z-10',
     icon: FaTimesCircle,
   },
 ];
@@ -123,7 +123,7 @@ export default function BookingsPage() {
       setBookings(normalised);
       setFilteredBookings(normalised);
     } catch (error) {
-      console.error('Error fetching bookings:', error);
+      logger.error('Error fetching bookings:', error);
       showNotification(
         error.message || 'Unable to load bookings. Please try again later.',
         'error'
@@ -135,6 +135,7 @@ export default function BookingsPage() {
 
   useEffect(() => {
     fetchBookings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -214,7 +215,7 @@ export default function BookingsPage() {
 
       showNotification('Booking status updated successfully.');
     } catch (error) {
-      console.error('Error updating booking status:', error);
+      logger.error('Error updating booking status:', error);
       showNotification(
         error.message || 'Failed to update booking status.',
         'error'
@@ -304,7 +305,7 @@ export default function BookingsPage() {
             </select>
             <button
               onClick={fetchBookings}
-              className="px-4 py-2.5 rounded-xl border border-[#1a2b5c] text-[#1a2b5c] text-sm font-semibold hover:bg-[#1a2b5c] hover:text-white transition-colors"
+              className="px-4 py-2.5 rounded-xl btn-gradient-outline text-[#1a2b5c] text-sm font-semibold relative z-10"
             >
               Refresh
             </button>

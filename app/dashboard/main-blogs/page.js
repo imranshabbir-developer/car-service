@@ -15,6 +15,7 @@ import {
   FaEyeSlash,
 } from 'react-icons/fa';
 import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
+import { logger } from '@/utils/logger';
 
 export default function MainBlogsPage() {
   const [blogs, setBlogs] = useState([]);
@@ -60,7 +61,7 @@ export default function MainBlogsPage() {
       }
     } catch (error) {
       showNotification('Error fetching blogs', 'error');
-      console.error('Error:', error);
+      logger.error('Error:', error);
     } finally {
       setLoading(false);
     }
@@ -70,6 +71,7 @@ export default function MainBlogsPage() {
     if (typeof window !== 'undefined') {
       fetchBlogs();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -185,7 +187,7 @@ export default function MainBlogsPage() {
       }
     } catch (error) {
       showNotification('Error saving blog', 'error');
-      console.error('Error:', error);
+      logger.error('Error:', error);
     }
   };
 
@@ -215,7 +217,7 @@ export default function MainBlogsPage() {
       }
     } catch (error) {
       showNotification('Error deleting blog', 'error');
-      console.error('Error:', error);
+      logger.error('Error:', error);
     } finally {
       setDeletingId(null);
     }
@@ -244,7 +246,7 @@ export default function MainBlogsPage() {
       }
     } catch (error) {
       showNotification('Error updating blog status', 'error');
-      console.error('Error:', error);
+      logger.error('Error:', error);
     }
   };
 
@@ -264,7 +266,7 @@ export default function MainBlogsPage() {
         <h1 className="text-2xl sm:text-3xl font-bold text-[#1a2b5c]">Main Blogs</h1>
         <button
           onClick={() => handleOpenModal()}
-          className="bg-[#1a2b5c] text-white px-4 py-2 rounded-lg hover:bg-[#132045] transition-colors flex items-center gap-2"
+          className="btn-gradient-primary text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 relative z-10"
         >
           <FaPlus /> Add Blog
         </button>
@@ -493,13 +495,13 @@ export default function MainBlogsPage() {
                   <button
                     type="button"
                     onClick={handleCloseModal}
-                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                    className="px-4 py-2 btn-gradient-outline text-gray-700 rounded-lg font-semibold relative z-10"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-[#1a2b5c] text-white rounded-lg hover:bg-[#132045]"
+                    className="px-4 py-2 btn-gradient-primary text-white rounded-lg font-semibold relative z-10"
                   >
                     {editingBlog ? 'Update' : 'Create'}
                   </button>

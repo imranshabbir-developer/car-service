@@ -18,6 +18,20 @@ import {
   FaTimes,
 } from 'react-icons/fa';
 import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
+import { logger } from '@/utils/logger';
+import {
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
 export default function DashboardPage() {
   const [cars, setCars] = useState([]);
@@ -72,6 +86,13 @@ export default function DashboardPage() {
     { month: 'Dec', bookings: 0, revenue: 0 },
   ]);
 
+  // Pie chart data - Booking statuses
+  const [bookingStatusData, setBookingStatusData] = useState([
+    { name: 'Confirmed Bookings', value: 0, color: '#10B981' },
+    { name: 'Approved Bookings', value: 0, color: '#3B82F6' },
+    { name: 'Rejected Bookings', value: 0, color: '#EF4444' },
+  ]);
+
   // Simple toast notification
   const showNotification = (message, type = 'success') => {
     setNotification({ message, type });
@@ -107,12 +128,22 @@ export default function DashboardPage() {
           revenue: Math.floor(Math.random() * 500000),
         }));
         setMonthlyData(dummyMonthlyData);
+
+        // Generate dummy booking status data for pie chart
+        const confirmed = Math.floor(Math.random() * 100) + 50;
+        const approved = Math.floor(Math.random() * 80) + 30;
+        const rejected = Math.floor(Math.random() * 20) + 5;
+        setBookingStatusData([
+          { name: 'Confirmed Bookings', value: confirmed, color: '#10B981' },
+          { name: 'Approved Bookings', value: approved, color: '#3B82F6' },
+          { name: 'Rejected Bookings', value: rejected, color: '#EF4444' },
+        ]);
       } else {
         showNotification('Failed to fetch cars', 'error');
       }
     } catch (error) {
       showNotification('Error fetching cars', 'error');
-      console.error('Error:', error);
+      logger.error('Error:', error);
     } finally {
       setLoading(false);
     }
@@ -142,7 +173,7 @@ export default function DashboardPage() {
         }
         
         if (!response.ok) {
-          console.error('Categories API error:', response.status);
+          logger.error('Categories API error:', response.status);
           return;
         }
         
@@ -151,7 +182,7 @@ export default function DashboardPage() {
         if (data.success && data.data && data.data.categories) {
           setCategories(data.data.categories);
         } else {
-          console.warn('Categories response structure unexpected:', data);
+          logger.warn('Categories response structure unexpected:', data);
         }
       } catch (fetchError) {
         // Clear timeout on error
@@ -162,9 +193,9 @@ export default function DashboardPage() {
       }
     } catch (error) {
       if (error.name === 'AbortError') {
-        console.error('Categories fetch timeout. Server may be down.');
+        logger.error('Categories fetch timeout. Server may be down.');
       } else {
-        console.error('Error fetching categories:', error);
+        logger.error('Error fetching categories:', error);
       }
     }
   };
@@ -175,6 +206,7 @@ export default function DashboardPage() {
       fetchCars();
       fetchCategories();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Live search and featured filter
@@ -339,7 +371,7 @@ export default function DashboardPage() {
       }
     } catch (error) {
       showNotification('Error fetching car details', 'error');
-      console.error('Error:', error);
+      logger.error('Error:', error);
     }
   };
 
@@ -430,7 +462,7 @@ export default function DashboardPage() {
       }
     } catch (error) {
       showNotification('Error saving car', 'error');
-      console.error('Error:', error);
+      logger.error('Error:', error);
     }
   };
 
@@ -459,7 +491,7 @@ export default function DashboardPage() {
       }
     } catch (error) {
       showNotification('Error deleting car', 'error');
-      console.error('Error:', error);
+      logger.error('Error:', error);
     } finally {
       setDeletingId(null);
     }
@@ -503,11 +535,6 @@ export default function DashboardPage() {
       iconColor: 'text-purple-600',
     },
   ];
-
-  // Find max value for chart scaling
-  const maxChartValue = Math.max(
-    ...monthlyData.map(d => Math.max(d.bookings * 1000, d.revenue))
-  );
 
   return (
     <div className="space-y-6">
@@ -565,10 +592,141 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Monthly Chart */}
-      <div className="flex">
-        <div>left side</div>
-        <div>right side</div>
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        {/* Left Side - Monthly Bookings & Revenue Chart */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+          <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-4">Monthly Bookings & Revenue</h3>
+          <div className="w-full" style={{ minHeight: '300px' }}>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={monthlyData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                <XAxis 
+                  dataKey="month" 
+                  stroke="#6B7280"
+                  style={{ fontSize: '11px' }}
+                  tick={{ fill: '#6B7280' }}
+                />
+                <YAxis 
+                  yAxisId="left"
+                  stroke="#10B981"
+                  style={{ fontSize: '11px' }}
+                  tick={{ fill: '#10B981' }}
+                  width={50}
+                />
+                <YAxis 
+                  yAxisId="right"
+                  orientation="right"
+                  stroke="#3B82F6"
+                  style={{ fontSize: '11px' }}
+                  tick={{ fill: '#3B82F6' }}
+                  width={60}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#fff', 
+                    border: '1px solid #E5E7EB', 
+                    borderRadius: '8px',
+                    fontSize: '12px',
+                    padding: '8px'
+                  }}
+                  formatter={(value, name) => {
+                    if (name === 'Bookings') {
+                      return [value, 'Bookings'];
+                    } else if (name === 'Revenue') {
+                      return [`PKR ${value.toLocaleString()}`, 'Revenue'];
+                    }
+                    return [value, name];
+                  }}
+                />
+                <Legend 
+                  wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }}
+                  iconType="line"
+                  iconSize={12}
+                />
+                <Line 
+                  yAxisId="left"
+                  type="monotone" 
+                  dataKey="bookings" 
+                  stroke="#10B981" 
+                  strokeWidth={2}
+                  dot={{ fill: '#10B981', r: 3 }}
+                  activeDot={{ r: 5 }}
+                  name="Bookings"
+                />
+                <Line 
+                  yAxisId="right"
+                  type="monotone" 
+                  dataKey="revenue" 
+                  stroke="#3B82F6" 
+                  strokeWidth={2}
+                  dot={{ fill: '#3B82F6', r: 3 }}
+                  activeDot={{ r: 5 }}
+                  name="Revenue"
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Right Side - Booking Status Pie Chart */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+          <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-4">Booking Status Overview</h3>
+          <div className="w-full" style={{ minHeight: '300px' }}>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={bookingStatusData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) => {
+                    const displayName = name.split(' ')[0];
+                    return `${displayName}: ${(percent * 100).toFixed(0)}%`;
+                  }}
+                  outerRadius={70}
+                  innerRadius={0}
+                  fill="#8884d8"
+                  dataKey="value"
+                  paddingAngle={2}
+                >
+                  {bookingStatusData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} stroke={entry.color} strokeWidth={2} />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#fff', 
+                    border: '1px solid #E5E7EB', 
+                    borderRadius: '8px',
+                    fontSize: '12px',
+                    padding: '8px'
+                  }}
+                  formatter={(value, name) => [value, name]}
+                />
+                <Legend 
+                  wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }}
+                  iconType="circle"
+                  iconSize={8}
+                  formatter={(value) => <span style={{ color: '#374151', fontSize: '11px' }}>{value}</span>}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          {/* Summary Stats */}
+          <div className="mt-4 grid grid-cols-3 gap-2 sm:gap-4 pt-4 border-t border-gray-100">
+            {bookingStatusData.map((item, index) => (
+              <div key={index} className="text-center">
+                <div 
+                  className="w-3 h-3 rounded-full mx-auto mb-1.5"
+                  style={{ backgroundColor: item.color }}
+                ></div>
+                <p className="text-sm sm:text-base font-bold text-gray-900">{item.value}</p>
+                <p className="text-xs text-gray-500 mt-0.5">{item.name.split(' ')[0]}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Cars Table */}
@@ -600,7 +758,7 @@ export default function DashboardPage() {
             </select>
             <button
               onClick={handleCreate}
-              className="flex items-center space-x-2 bg-[#1a2b5c] text-white px-4 py-2 rounded-lg hover:bg-[#0d1b2a] transition-colors"
+              className="flex items-center space-x-2 btn-gradient-primary text-white px-4 py-2 rounded-lg font-semibold relative z-10"
             >
               <FaPlus />
               <span className="hidden sm:inline">Add Car</span>
@@ -622,8 +780,10 @@ export default function DashboardPage() {
                   <tr className="border-b border-gray-200">
                     <th className="text-left py-3 px-2 font-semibold text-gray-700">Photo</th>
                     <th className="text-left py-3 px-2 font-semibold text-gray-700">Name</th>
+                    <th className="text-left py-3 px-2 font-semibold text-gray-700">Brand</th>
                     <th className="text-left py-3 px-2 font-semibold text-gray-700">Model</th>
                     <th className="text-left py-3 px-2 font-semibold text-gray-700">Year</th>
+                    <th className="text-left py-3 px-2 font-semibold text-gray-700">SerialNo</th>
                     <th className="text-left py-3 px-2 font-semibold text-gray-700">Category</th>
                     <th className="text-left py-3 px-2 font-semibold text-gray-700">Rent/Day</th>
                     <th className="text-left py-3 px-2 font-semibold text-gray-700">Transmission</th>
@@ -635,7 +795,7 @@ export default function DashboardPage() {
                 <tbody>
                   {filteredCars.length === 0 ? (
                     <tr>
-                      <td colSpan="10" className="py-8 text-center text-gray-500">
+                      <td colSpan="12" className="py-8 text-center text-gray-500">
                         {searchTerm ? 'No cars found matching your search.' : 'No cars available.'}
                       </td>
                     </tr>
@@ -656,8 +816,10 @@ export default function DashboardPage() {
                           )}
                         </td>
                         <td className="py-3 px-2 text-gray-900 font-medium">{car.name}</td>
+                        <td className="py-3 px-2 text-gray-600">{car.brand || '-'}</td>
                         <td className="py-3 px-2 text-gray-600">{car.model}</td>
                         <td className="py-3 px-2 text-gray-600">{car.year}</td>
+                        <td className="py-3 px-2 text-gray-600 font-medium">{car.serialNo || 1}</td>
                         <td className="py-3 px-2">
                           {car.category ? (
                             <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">
@@ -1012,13 +1174,13 @@ export default function DashboardPage() {
                   <button
                     type="button"
                     onClick={handleCloseModal}
-                    className="px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="px-4 py-2 text-sm btn-gradient-outline text-gray-700 rounded-lg font-semibold relative z-10"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 text-sm bg-[#1a2b5c] text-white rounded-lg hover:bg-[#0d1b2a] transition-colors"
+                    className="px-4 py-2 text-sm btn-gradient-primary text-white rounded-lg font-semibold relative z-10"
                   >
                     {editingCar ? 'Update Car' : 'Create Car'}
                   </button>

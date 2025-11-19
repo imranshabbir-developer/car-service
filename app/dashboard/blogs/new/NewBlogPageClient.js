@@ -12,6 +12,7 @@ import {
   FaSave,
 } from 'react-icons/fa';
 import { API_BASE_URL } from '@/config/api';
+import { logger } from '@/utils/logger';
 
 // Dynamically import ReactQuill to avoid SSR issues
 const ReactQuill = nextDynamic(() => import('react-quill-new'), { ssr: false });
@@ -58,7 +59,7 @@ export default function NewBlogPageClient() {
           clearTimeout(timeoutId);
           
           if (!response.ok) {
-            console.error('Categories API error:', response.status);
+            logger.error('Categories API error:', response.status);
             return;
           }
           
@@ -67,7 +68,7 @@ export default function NewBlogPageClient() {
           if (data.success && data.data && data.data.categories) {
             setCategories(data.data.categories);
           } else {
-            console.warn('Categories response structure unexpected:', data);
+            logger.warn('Categories response structure unexpected:', data);
             setCategories([]);
           }
         } catch (fetchError) {
@@ -77,9 +78,9 @@ export default function NewBlogPageClient() {
         }
       } catch (error) {
         if (error.name === 'AbortError') {
-          console.error('Categories fetch timeout. Server may be down.');
+          logger.error('Categories fetch timeout. Server may be down.');
         } else {
-          console.error('Error fetching categories:', error);
+          logger.error('Error fetching categories:', error);
         }
         setCategories([]);
       }
@@ -108,7 +109,7 @@ export default function NewBlogPageClient() {
             router.push('/dashboard/blogs');
           }
         } catch (error) {
-          console.error('Error fetching blog:', error);
+          logger.error('Error fetching blog:', error);
           showNotification('Error fetching blog details', 'error');
           router.push('/dashboard/blogs');
         } finally {
@@ -183,7 +184,7 @@ export default function NewBlogPageClient() {
       }
     } catch (error) {
       showNotification('Error saving blog', 'error');
-      console.error('Error:', error);
+      logger.error('Error:', error);
     } finally {
       setLoading(false);
     }
@@ -361,14 +362,14 @@ export default function NewBlogPageClient() {
             <button
               type="button"
               onClick={() => router.push('/dashboard/blogs')}
-              className="px-6 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-6 py-3 text-sm font-medium btn-gradient-outline text-gray-700 rounded-lg relative z-10"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center justify-center space-x-2 px-6 py-3 text-sm font-medium text-white bg-[#1a2b5c] rounded-lg hover:bg-[#0d1b2a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center justify-center space-x-2 px-6 py-3 text-sm font-medium text-white btn-gradient-primary rounded-lg disabled:opacity-50 disabled:cursor-not-allowed relative z-10"
             >
               {loading ? (
                 <>

@@ -288,7 +288,7 @@ export default function SearchModal({ open, onClose }) {
           <button
             type="submit"
             disabled={isSearching}
-            className="w-full bg-[#1a2b5c] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#0d1b2a] disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-300 mt-2"
+            className="w-full btn-gradient-primary text-white py-3 px-6 rounded-lg font-semibold disabled:bg-gray-400 disabled:cursor-not-allowed mt-2 relative z-10"
           >
             {isSearching ? 'Searching...' : 'Search'}
           </button>

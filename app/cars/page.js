@@ -194,7 +194,7 @@ export default function AllCarsPage() {
                   setSelectedCategory("");
                   setSearchQuery("");
                 }}
-                className="px-4 py-3 text-[#1a2b5c] border border-[#1a2b5c] rounded-lg hover:bg-[#1a2b5c] hover:text-white transition-colors duration-300 whitespace-nowrap"
+                className="px-4 py-3 btn-gradient-outline text-[#1a2b5c] rounded-lg font-semibold whitespace-nowrap relative z-10"
               >
                 Clear Filters
               </button>
@@ -234,7 +234,7 @@ export default function AllCarsPage() {
                   setSelectedCategory("");
                   setSearchQuery("");
                 }}
-                className="px-6 py-3 bg-[#1a2b5c] text-white rounded-lg hover:bg-[#0d1b2a] transition-colors duration-300"
+                className="px-6 py-3 btn-gradient-primary text-white rounded-lg font-semibold relative z-10"
               >
                 Clear All Filters
               </button>

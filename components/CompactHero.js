@@ -31,7 +31,7 @@ export default function CompactHero() {
         <div className="mt-6 md:mt-0">
           <button
             onClick={() => setIsSearchOpen(true)}
-            className="border border-[#0b2850] text-[#0b2850] font-semibold px-6 md:px-10 py-2 md:py-3 rounded-lg hover:bg-[#0b2850] hover:text-white transition"
+            className="btn-gradient-outline text-[#0b2850] font-semibold px-6 md:px-10 py-2 md:py-3 rounded-lg relative z-10"
           >
             Find Anything
           </button>

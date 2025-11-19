@@ -72,7 +72,7 @@ export default function PerfectDriver() {
                   className="h-48 md:h-64 object-contain group-hover:scale-110 transition-transform duration-500 ease-out"
                 />
               </div>
-              <div className="vehicle-card-bottom bg-[#0d1b2a] text-white text-lg sm:text-xl font-semibold py-4 sm:py-5 px-6">
+              <div className="vehicle-card-bottom text-white text-lg sm:text-xl font-semibold py-4 sm:py-5 px-6">
                 <span className="vehicle-card-bottom-text relative z-10 inline-block">
                   {vehicle.title}
                 </span>

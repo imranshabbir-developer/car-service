@@ -174,7 +174,7 @@ export default function FeaturedCarsSection() {
           </h2>
         </div>
 
-        <Link href="/cars" className="bg-[#1a2b5c] text-white text-sm md:text-base font-semibold px-6 py-3 mt-6 md:mt-0 rounded-sm hover:bg-[#0d1b2a] transition inline-block">
+        <Link href="/cars" className="btn-gradient-primary text-white text-sm md:text-base font-semibold px-6 py-3 mt-6 md:mt-0 rounded-sm inline-block relative z-10">
           View All Cars
         </Link>
       </div>
@@ -223,7 +223,7 @@ export default function FeaturedCarsSection() {
                       <FaSnowflake className="text-[#1a2b5c]" /> {car.fuelType || 'Petrol'}
                     </li>
                   </ul> */}
-                  <div className="book-now-button w-full bg-[#1a2b5c] text-white py-3 rounded-lg hover:bg-[#0d1b2a] transition-colors duration-300 font-semibold text-center">
+                  <div className="book-now-button w-full btn-gradient-primary text-white py-3 rounded-lg font-semibold text-center relative z-10 cursor-pointer">
                     Book Now
                   </div>
                 </div>

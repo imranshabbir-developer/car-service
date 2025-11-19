@@ -78,7 +78,7 @@ export default function MainBlogDetailPage() {
           <p className="text-gray-600 mb-6">{error || 'The blog you are looking for does not exist.'}</p>
           <Link
             href="/main-blogs"
-            className="inline-block bg-[#1a2b5c] text-white px-6 py-3 rounded-lg hover:bg-[#132045] transition-colors"
+            className="inline-block btn-gradient-primary text-white px-6 py-3 rounded-lg font-semibold relative z-10"
           >
             View All Blogs
           </Link>

@@ -286,7 +286,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-2 lg:gap-3 flex-shrink-0">
           <a 
             href="tel:+923281456456" 
-            className="phone-ring-button bg-[#0d1b2a] text-white px-3 lg:px-4 py-2 rounded-lg flex items-center space-x-1.5 lg:space-x-2 hover:bg-[#112d4e] relative whitespace-nowrap"
+            className="phone-ring-button btn-gradient-primary text-white px-3 lg:px-4 py-2 rounded-lg flex items-center space-x-1.5 lg:space-x-2 relative whitespace-nowrap"
           >
             <FaPhoneAlt className="phone-icon flex-shrink-0" />
             <span className="hidden lg:inline">+92 328 1456456</span>

@@ -97,7 +97,7 @@ export default function ReviewsSection() {
               className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-12 z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full shadow-lg border-2 flex items-center justify-center transition-all duration-300 group ${
                 isBeginning
                   ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
-                  : 'bg-white border-gray-200 text-[#1a2b5c] hover:bg-[#1a2b5c] hover:text-white hover:border-[#1a2b5c] hover:scale-110 hover:shadow-xl'
+                  : 'btn-gradient-outline text-[#1a2b5c] hover:scale-110 hover:shadow-xl relative z-10'
               }`}
               aria-label="Previous review"
             >
@@ -110,7 +110,7 @@ export default function ReviewsSection() {
               className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-12 z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full shadow-lg border-2 flex items-center justify-center transition-all duration-300 group ${
                 isEnd
                   ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
-                  : 'bg-white border-gray-200 text-[#1a2b5c] hover:bg-[#1a2b5c] hover:text-white hover:border-[#1a2b5c] hover:scale-110 hover:shadow-xl'
+                  : 'btn-gradient-outline text-[#1a2b5c] hover:scale-110 hover:shadow-xl relative z-10'
               }`}
               aria-label="Next review"
             >

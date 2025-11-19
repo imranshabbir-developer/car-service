@@ -300,7 +300,7 @@ export default function CarDetailPage() {
           <p className="text-gray-600 mb-6">The car you&apos;re looking for doesn&apos;t exist.</p>
           <Link 
             href="/vehicle-types"
-            className="inline-flex items-center gap-2 bg-[#1a2b5c] text-white px-6 py-3 rounded-lg hover:bg-[#0d1b2a] transition-colors"
+            className="inline-flex items-center gap-2 btn-gradient-primary text-white px-6 py-3 rounded-lg font-semibold relative z-10"
           >
             <FaArrowLeft />
             Back to Vehicles
@@ -520,7 +520,7 @@ export default function CarDetailPage() {
             </div>
             <button 
               onClick={() => setQuestionModalOpen(true)}
-              className="bg-[#1a2b5c] text-white px-6 py-3 rounded-lg hover:bg-[#0d1b2a] transition-colors duration-300 font-semibold"
+              className="btn-gradient-primary text-white px-6 py-3 rounded-lg font-semibold relative z-10"
             >
               Ask a Question
             </button>
@@ -712,8 +712,8 @@ export default function CarDetailPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`w-full bg-[#1a2b5c] text-white py-4 rounded-lg transition-colors duration-300 font-semibold text-lg mt-6 ${
-                    isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#0d1b2a]'
+                  className={`w-full btn-gradient-primary text-white py-4 rounded-lg font-semibold text-lg mt-6 relative z-10 ${
+                    isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
                   }`}
                 >
                   {isSubmitting ? 'Submitting...' : 'Book Now'}
@@ -868,8 +868,8 @@ export default function CarDetailPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`w-full bg-[#1a2b5c] text-white py-4 rounded-lg transition-colors duration-300 font-semibold text-lg mt-6 ${
-                    isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#0d1b2a]'
+                  className={`w-full btn-gradient-primary text-white py-4 rounded-lg font-semibold text-lg mt-6 relative z-10 ${
+                    isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
                   }`}
                 >
                   {isSubmitting ? 'Submitting...' : 'Send'}
@@ -1037,13 +1037,13 @@ export default function CarDetailPage() {
                 <button
                   type="button"
                   onClick={() => setQuestionModalOpen(false)}
-                  className="flex-1 bg-gray-200 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-300"
+                  className="flex-1 btn-gradient-outline text-gray-700 py-3 px-6 rounded-lg font-semibold relative z-10"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 bg-[#1a2b5c] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#0d1b2a] transition-colors duration-300"
+                  className="flex-1 btn-gradient-primary text-white py-3 px-6 rounded-lg font-semibold relative z-10"
                 >
                   Send Question
                 </button>

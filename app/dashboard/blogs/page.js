@@ -13,6 +13,7 @@ import {
   FaTimes,
 } from 'react-icons/fa';
 import { API_BASE_URL } from '@/config/api';
+import { logger } from '@/utils/logger';
 
 export default function BlogsPage() {
   const router = useRouter();
@@ -46,7 +47,7 @@ export default function BlogsPage() {
       }
     } catch (error) {
       showNotification('Error fetching blogs', 'error');
-      console.error('Error:', error);
+      logger.error('Error:', error);
       setBlogs([]);
       setFilteredBlogs([]);
     } finally {
@@ -59,6 +60,7 @@ export default function BlogsPage() {
     if (typeof window !== 'undefined') {
       fetchBlogs();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Live search filter
@@ -110,7 +112,7 @@ export default function BlogsPage() {
       }
     } catch (error) {
       showNotification('Error deleting blog', 'error');
-      console.error('Error:', error);
+      logger.error('Error:', error);
     } finally {
       setDeletingId(null);
     }
@@ -167,7 +169,7 @@ export default function BlogsPage() {
             </div>
             <button
               onClick={handleCreate}
-              className="flex items-center space-x-2 bg-[#1a2b5c] text-white px-4 py-2 rounded-lg hover:bg-[#0d1b2a] transition-colors"
+              className="flex items-center space-x-2 btn-gradient-primary text-white px-4 py-2 rounded-lg font-semibold relative z-10"
             >
               <FaPlus />
               <span className="hidden sm:inline">Add Blog</span>
