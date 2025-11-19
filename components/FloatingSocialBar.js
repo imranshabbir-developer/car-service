@@ -43,7 +43,7 @@ export default function FloatingSocialBar() {
   ];
 
   return (
-    <div className="fixed right-0 bottom-0 md:-translate-y-1/2 mb-12 md:mb-0 z-40 mr-[5px] flex flex-col gap-2 sm:gap-3">
+    <div className="hidden md:flex fixed right-0 bottom-0 md:-translate-y-1/2 mb-12 md:mb-0 z-40 mr-[5px] flex-col gap-2 sm:gap-3">
       {socialLinks.map((social, index) => (
         <Link
           key={index}

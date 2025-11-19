@@ -40,6 +40,7 @@ export default function CarsPage() {
     fuelType: '',
     seats: '',
     registrationNumber: '',
+    serialNo: '',
     isFeatured: false,
     carPhotos: [],
     existingGallery: [], // For editing - existing images from server
@@ -242,6 +243,7 @@ export default function CarsPage() {
       fuelType: '',
       seats: '',
       registrationNumber: '',
+      serialNo: '',
       carPhotos: [],
       existingGallery: [],
     });
@@ -284,6 +286,7 @@ export default function CarsPage() {
           fuelType: car.fuelType || '',
           seats: car.seats || '',
           registrationNumber: car.registrationNumber || '',
+          serialNo: car.serialNo || 1,
           isFeatured: car.isFeatured || false,
           carPhotos: [],
           existingGallery: gallery,
@@ -314,6 +317,7 @@ export default function CarsPage() {
       fuelType: '',
       seats: '',
       registrationNumber: '',
+      serialNo: '',
       carPhotos: [],
       existingGallery: [],
     });
@@ -339,6 +343,11 @@ export default function CarsPage() {
     formDataToSend.append('fuelType', formData.fuelType);
     formDataToSend.append('seats', formData.seats);
     formDataToSend.append('registrationNumber', formData.registrationNumber);
+    // Always send serialNo - convert to number, default to 1 if empty
+    const serialNoValue = formData.serialNo !== '' && formData.serialNo !== null && formData.serialNo !== undefined 
+      ? String(formData.serialNo) 
+      : '1';
+    formDataToSend.append('serialNo', serialNoValue);
     formDataToSend.append('isFeatured', formData.isFeatured);
     
     // Append multiple image files
@@ -494,8 +503,10 @@ export default function CarsPage() {
                   <tr className="border-b border-gray-200">
                     <th className="text-left py-3 px-2 font-semibold text-gray-700">Photo</th>
                     <th className="text-left py-3 px-2 font-semibold text-gray-700">Name</th>
+                    <th className="text-left py-3 px-2 font-semibold text-gray-700">Brand</th>
                     <th className="text-left py-3 px-2 font-semibold text-gray-700">Model</th>
                     <th className="text-left py-3 px-2 font-semibold text-gray-700">Year</th>
+                    <th className="text-left py-3 px-2 font-semibold text-gray-700">SerialNo</th>
                     <th className="text-left py-3 px-2 font-semibold text-gray-700">Category</th>
                     <th className="text-left py-3 px-2 font-semibold text-gray-700">Rent/Day</th>
                     <th className="text-left py-3 px-2 font-semibold text-gray-700">Transmission</th>
@@ -507,7 +518,7 @@ export default function CarsPage() {
                 <tbody>
                   {filteredCars.length === 0 ? (
                     <tr>
-                      <td colSpan="10" className="py-8 text-center text-gray-500">
+                      <td colSpan="12" className="py-8 text-center text-gray-500">
                         {searchTerm ? 'No cars found matching your search.' : 'No cars available.'}
                       </td>
                     </tr>
@@ -528,8 +539,10 @@ export default function CarsPage() {
                           )}
                         </td>
                         <td className="py-3 px-2 text-gray-900 font-medium">{car.name}</td>
+                        <td className="py-3 px-2 text-gray-600">{car.brand || '-'}</td>
                         <td className="py-3 px-2 text-gray-600">{car.model}</td>
                         <td className="py-3 px-2 text-gray-600">{car.year}</td>
+                        <td className="py-3 px-2 text-gray-600 font-medium">{car.serialNo || 1}</td>
                         <td className="py-3 px-2">
                           {car.category ? (
                             <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">
@@ -808,6 +821,21 @@ export default function CarsPage() {
                         className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
                         placeholder="ABC-123"
                       />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">
+                        Serial Number
+                      </label>
+                      <input
+                        type="number"
+                        name="serialNo"
+                        value={formData.serialNo}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
+                        placeholder="1"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Controls display order (lower numbers appear first)</p>
                     </div>
 
                     <div>

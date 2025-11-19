@@ -78,6 +78,8 @@ const transformCar = (car) => {
     transmission: car.transmission || "Automatic",
     fuelType: car.fuelType || "Petrol",
     featured: car.isFeatured === true,
+    category: car.category?.name || "",
+    serialNo: car.serialNo || 1, // Include serialNo and category for sorting
   };
 };
 
@@ -102,7 +104,29 @@ export default function FeaturedCarsSection() {
 
         if (isMounted) {
           // Transform all featured cars (no filtering needed as API already filtered)
-          const featuredCars = apiCars.map(transformCar);
+          let featuredCars = apiCars.map(transformCar);
+          
+          // Sort by serialNo within each category
+          // Group by category first, then sort each group by serialNo
+          const groupedByCategory = featuredCars.reduce((acc, car) => {
+            const catKey = car.category?.toLowerCase() || 'uncategorized';
+            if (!acc[catKey]) {
+              acc[catKey] = [];
+            }
+            acc[catKey].push(car);
+            return acc;
+          }, {});
+
+          // Sort each category group by serialNo, then flatten
+          featuredCars = Object.values(groupedByCategory)
+            .map((categoryCars) => {
+              return categoryCars.sort((a, b) => {
+                const serialNoA = a.serialNo || 1;
+                const serialNoB = b.serialNo || 1;
+                return serialNoA - serialNoB;
+              });
+            })
+            .flat();
           
           // Only update if we have featured cars, otherwise keep fallback or show empty
           if (featuredCars.length > 0) {

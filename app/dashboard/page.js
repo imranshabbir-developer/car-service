@@ -566,46 +566,9 @@ export default function DashboardPage() {
       </div>
 
       {/* Monthly Chart */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
-        <h2 className="text-lg font-bold text-gray-900 mb-4">Monthly Overview</h2>
-        <div className="h-64 flex items-end justify-between space-x-1">
-          {monthlyData.map((monthData, index) => (
-            <div key={index} className="flex-1 flex flex-col items-center space-y-2">
-              <div className="w-full flex flex-row items-end justify-center space-x-1 h-48">
-                {/* Bookings Bar */}
-                <div
-                  className="flex-1 bg-green-500 rounded-t transition-all hover:bg-green-600 cursor-pointer"
-                  style={{
-                    height: `${(monthData.bookings * 1000 / maxChartValue) * 100}%`,
-                    minHeight: '4px',
-                  }}
-                  title={`Bookings: ${monthData.bookings}`}
-                ></div>
-                {/* Revenue Bar */}
-                <div
-                  className="flex-1 bg-blue-500 rounded-t transition-all hover:bg-blue-600 cursor-pointer"
-                  style={{
-                    height: `${(monthData.revenue / maxChartValue) * 100}%`,
-                    minHeight: '4px',
-                  }}
-                  title={`Revenue: PKR ${monthData.revenue.toLocaleString()}`}
-                ></div>
-              </div>
-              <span className="text-xs font-medium text-gray-600">{monthData.month}</span>
-            </div>
-          ))}
-        </div>
-        {/* Legend */}
-        <div className="flex items-center justify-center space-x-6 mt-4">
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-green-500 rounded"></div>
-            <span className="text-xs text-gray-600">Bookings</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-blue-500 rounded"></div>
-            <span className="text-xs text-gray-600">Revenue</span>
-          </div>
-        </div>
+      <div className="flex">
+        <div>left side</div>
+        <div>right side</div>
       </div>
 
       {/* Cars Table */}

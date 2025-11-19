@@ -269,7 +269,8 @@ export default function CarDetailPage() {
     if (formData.selfDriver) {
       extraChargePerDay = car.selfDriverPrice || 500;
     } else if (formData.outOfStation) {
-      extraChargePerDay = car.outOfStationPrice || 1000;
+      // Always add 1000 rupees when out of station is selected
+      extraChargePerDay = 1000;
     }
     
     // Calculate total: (base rate + extra charge) * number of days

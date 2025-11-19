@@ -99,6 +99,7 @@ export default function VehicleTypesContent() {
             transmission: car.transmission,
             fuelType: car.fuelType,
             seats: car.seats,
+            serialNo: car.serialNo || 1, // Include serialNo for sorting
           }));
           setCars(transformedCars);
         }
@@ -155,8 +156,16 @@ export default function VehicleTypesContent() {
   const filteredCars = useMemo(() => {
     let filtered = cars;
 
-    // If allCars is true, show all cars (including Vans & Buses)
-    // No filtering needed - just show all cars
+    // If allCars is true, show all vehicles except 4X4 and Vans & Buses
+    if (allCars) {
+      filtered = filtered.filter(
+        (car) => {
+          const carCategory = car.category?.toLowerCase();
+          // Exclude 4X4 and Vans & Buses, show everything else
+          return carCategory !== '4x4' && carCategory !== 'vans & buses';
+        }
+      );
+    }
 
     // Filter by category if provided (and not allCars)
     if (category && !allCars) {
@@ -173,17 +182,51 @@ export default function VehicleTypesContent() {
     }
 
     // Apply search query filter if provided
-    if (!searchQuery.trim()) return filtered;
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      filtered = filtered.filter(
+        (car) =>
+          car.name?.toLowerCase().includes(query) ||
+          car.price?.toLowerCase().includes(query) ||
+          car.location?.toLowerCase().includes(query) ||
+          car.brand?.toLowerCase().includes(query) ||
+          car.model?.toLowerCase().includes(query)
+      );
+    }
 
-    const query = searchQuery.toLowerCase().trim();
-    return filtered.filter(
-      (car) =>
-        car.name?.toLowerCase().includes(query) ||
-        car.price?.toLowerCase().includes(query) ||
-        car.location?.toLowerCase().includes(query) ||
-        car.brand?.toLowerCase().includes(query) ||
-        car.model?.toLowerCase().includes(query)
-    );
+    // Sort by serialNo within each category
+    // Group by category first, then sort each group by serialNo
+    if (allCars) {
+      // For allCars view: group by category, sort each group by serialNo, then flatten
+      const groupedByCategory = filtered.reduce((acc, car) => {
+        const catKey = car.category?.toLowerCase() || 'uncategorized';
+        if (!acc[catKey]) {
+          acc[catKey] = [];
+        }
+        acc[catKey].push(car);
+        return acc;
+      }, {});
+
+      // Sort each category group by serialNo, then flatten
+      const sorted = Object.values(groupedByCategory)
+        .map((categoryCars) => {
+          return categoryCars.sort((a, b) => {
+            const serialNoA = a.serialNo || 1;
+            const serialNoB = b.serialNo || 1;
+            return serialNoA - serialNoB;
+          });
+        })
+        .flat();
+
+      return sorted;
+    } else {
+      // For single category view: just sort by serialNo
+      return filtered.sort((a, b) => {
+        const serialNoA = a.serialNo || 1;
+        const serialNoB = b.serialNo || 1;
+        return serialNoA - serialNoB;
+      });
+    }
   }, [category, allCars, brand, searchQuery, cars]);
 
   const blogsLastUpdated = useMemo(() => {

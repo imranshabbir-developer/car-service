@@ -49,16 +49,23 @@ export default function HeroSection() {
         if (data.success && data.data && data.data.cars) {
           // Store cars data for later use
           setCarsData(data.data.cars);
-          // Extract unique brands from cars
+          // Allowed brands for dropdown - only these will be shown
+          const allowedBrands = ['Honda', 'Hyundai', 'Kia', 'Suzuki', 'Toyota'];
+          // Extract unique brands from cars and filter to only allowed brands
           const uniqueBrands = [...new Set(data.data.cars.map(car => car.brand).filter(brand => brand))];
+          // Filter to only include allowed brands (case-insensitive comparison)
+          const filteredBrands = uniqueBrands.filter(brand => {
+            const brandLower = brand.trim().toLowerCase();
+            return allowedBrands.some(allowed => allowed.toLowerCase() === brandLower);
+          });
           // Sort brands alphabetically
-          uniqueBrands.sort();
-          setBrands(uniqueBrands);
+          filteredBrands.sort();
+          setBrands(filteredBrands);
         }
       } catch (error) {
         console.error('Error fetching brands:', error);
         // Fallback to default brands if API fails
-        setBrands(['Toyota', 'Honda', 'Suzuki', 'Kia', 'Hyundai']);
+        setBrands(['Honda', 'Hyundai', 'Kia', 'Suzuki', 'Toyota']);
       } finally {
         setLoadingBrands(false);
       }

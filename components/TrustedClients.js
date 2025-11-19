@@ -25,7 +25,7 @@ export default function TrustedClients() {
       alt: "PAK-TURK MAARIF",
     },
     {
-      src: "/t6.webp",
+      src: "/t6.png",
       alt: "Gas Development Company",
     },
     {
@@ -55,32 +55,18 @@ export default function TrustedClients() {
     cssEase: "ease-in-out",
     responsive: [
       {
-        breakpoint: 1280,
-        settings: {
-          slidesToShow: 4,
-          slidesToScroll: 1,
-        },
-      },
-      {
         breakpoint: 1024,
         settings: {
           slidesToShow: 3,
           slidesToScroll: 1,
+          arrows: true,
         },
       },
       {
         breakpoint: 768,
         settings: {
           slidesToShow: 2,
-          slidesToScroll: 1,
-          arrows: false,
-        },
-      },
-      {
-        breakpoint: 640,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
+          slidesToScroll: 2,
           arrows: false,
         },
       },
@@ -88,7 +74,7 @@ export default function TrustedClients() {
         breakpoint: 480,
         settings: {
           slidesToShow: 2,
-          slidesToScroll: 1,
+          slidesToScroll: 2,
           arrows: false,
         },
       },
@@ -106,12 +92,12 @@ export default function TrustedClients() {
         <Slider {...settings} className="trusted-clients-slider">
           {logos.map((logo, index) => (
             <div key={index}>
-              <div className="flex items-center justify-center h-full px-2 sm:px-3 md:px-4">
-                <div className="w-full h-[85px] sm:h-[120px] md:h-[160px] lg:h-[180px] flex items-center justify-center bg-white rounded-lg p-1.5 sm:p-4 md:p-6 lg:p-8 hover:shadow-md transition-all duration-300 shadow-sm border border-gray-100">
+              <div className="flex items-center justify-center h-full px-2 md:px-3 lg:px-4">
+                <div className="w-full flex items-center justify-center bg-white p-3 md:p-6 lg:p-8">
                   <img
                     src={logo.src}
                     alt={logo.alt}
-                    className="w-full h-full max-w-full max-h-full object-contain scale-125 sm:scale-100"
+                    className="w-full h-auto max-h-[120px] md:max-h-[140px] lg:max-h-[160px] object-contain"
                     style={{ objectFit: 'contain' }}
                   />
                 </div>

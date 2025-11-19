@@ -55,6 +55,7 @@ export default function BrandDetailPage() {
             fuelType: car.fuelType,
             seats: car.seats,
             slug: car.slug,
+            serialNo: car.serialNo || 1, // Include serialNo for sorting
           }));
           setCars(transformedCars);
 
@@ -108,7 +109,29 @@ export default function BrandDetailPage() {
       );
     }
 
-    return filtered;
+    // Sort by serialNo within each category
+    // Group by category first, then sort each group by serialNo
+    const groupedByCategory = filtered.reduce((acc, car) => {
+      const catKey = car.category?.toLowerCase() || 'uncategorized';
+      if (!acc[catKey]) {
+        acc[catKey] = [];
+      }
+      acc[catKey].push(car);
+      return acc;
+    }, {});
+
+    // Sort each category group by serialNo, then flatten
+    const sorted = Object.values(groupedByCategory)
+      .map((categoryCars) => {
+        return categoryCars.sort((a, b) => {
+          const serialNoA = a.serialNo || 1;
+          const serialNoB = b.serialNo || 1;
+          return serialNoA - serialNoB;
+        });
+      })
+      .flat();
+
+    return sorted;
   }, [cars, brandNameFromUrl, searchQuery]);
 
   // Pagination calculations

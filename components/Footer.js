@@ -4,6 +4,7 @@ import {
   FaEnvelope,
   FaPhoneAlt,
   FaArrowRight,
+  FaHeadset,
 } from "react-icons/fa";
 
 export default function Footer() {
@@ -100,7 +101,14 @@ export default function Footer() {
               <div className="flex justify-center sm:justify-start">
                 <FaClock />
               </div>
-              <span className="mt-1 sm:mt-0">24/7 Open</span>
+              <span className="mt-1 sm:mt-0">Business Hour's: 10AM to 9PM 
+              <br /> -(Sunday closed)-              </span>
+            </li>
+            <li className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 pb-2 border-b border-gray-600">
+              <div className="flex justify-center sm:justify-start">
+                <FaHeadset />
+              </div>
+              <span className="mt-1 sm:mt-0">Helpline: 24/7 Open</span>
             </li>
 
             <li className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 pb-2 border-b border-gray-600">
