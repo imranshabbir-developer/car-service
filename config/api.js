@@ -1,7 +1,7 @@
 // API Configuration
 // Production API URL (default)
-const PRODUCTION_API_URL = 'https://backend-rent-car-convoy-travel.up.railway.app/api/v1';
-const PRODUCTION_IMAGE_URL = 'https://backend-rent-car-convoy-travel.up.railway.app';
+const PRODUCTION_API_URL = 'https://api.convoytravels.pk/api/v1';
+const PRODUCTION_IMAGE_URL = 'https://api.convoytravels.pk';
 
 // Development API URL (fallback)
 const DEVELOPMENT_API_URL = 'http://localhost:5000/api/v1';
