@@ -267,10 +267,11 @@ export default function CarDetailPage() {
     // Extra charge per day based on selection
     let extraChargePerDay = 0;
     if (formData.selfDriver) {
-      extraChargePerDay = car.selfDriverPrice || 500;
-    } else if (formData.outOfStation) {
+      extraChargePerDay += car.selfDriverPrice || 500;
+    }
+    if (formData.outOfStation) {
       // Always add 1000 rupees when out of station is selected
-      extraChargePerDay = 1000;
+      extraChargePerDay += 1000;
     }
     
     // Calculate total: (base rate + extra charge) * number of days
@@ -359,7 +360,7 @@ export default function CarDetailPage() {
     if (!formData.selfDriver && !formData.outOfStation) {
       setBookingFeedback({
         type: 'error',
-        message: 'Please choose either Self Without Driver or Out of Station option.',
+        message: 'Please select at least one option (Self Without Driver or Out of Station).',
       });
       setActiveTab('booking');
       return;
@@ -658,17 +659,10 @@ export default function CarDetailPage() {
                   <label className="flex items-center justify-between cursor-pointer">
                     <div className="flex items-center gap-3">
                       <input
-                        type="radio"
-                        name="driverOption"
-                        value="selfDriver"
-                        checked={formData.selfDriver && !formData.outOfStation}
-                        onChange={() => {
-                          setFormData(prev => ({
-                            ...prev,
-                            selfDriver: true,
-                            outOfStation: false
-                          }));
-                        }}
+                        type="checkbox"
+                        name="selfDriver"
+                        checked={formData.selfDriver}
+                        onChange={handleInputChange}
                         className="w-4 h-4 text-[#1a2b5c] focus:ring-[#1a2b5c]"
                       />
                       <span className="text-gray-700 font-medium">Self Without Driver</span>
@@ -679,17 +673,10 @@ export default function CarDetailPage() {
                   <label className="flex items-center justify-between cursor-pointer">
                     <div className="flex items-center gap-3">
                       <input
-                        type="radio"
-                        name="driverOption"
-                        value="outOfStation"
-                        checked={formData.outOfStation && !formData.selfDriver}
-                        onChange={() => {
-                          setFormData(prev => ({
-                            ...prev,
-                            outOfStation: true,
-                            selfDriver: false
-                          }));
-                        }}
+                        type="checkbox"
+                        name="outOfStation"
+                        checked={formData.outOfStation}
+                        onChange={handleInputChange}
                         className="w-4 h-4 text-[#1a2b5c] focus:ring-[#1a2b5c]"
                       />
                       <span className="text-gray-700 font-medium">Out of Station</span>

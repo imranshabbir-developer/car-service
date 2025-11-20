@@ -46,7 +46,7 @@ export default function PerfectDriver() {
   return (
     <>
       <section
-        className="bg-white py-16 px-6 md:px-16 text-center"
+        className="bg-white py-4 px-6 md:px-16 text-center"
         style={{ fontFamily: "Roboto, sans-serif" }}
       >
         <h2 className="text-3xl md:text-5xl font-bold text-[#0d1b2a] mb-12">

@@ -1,8 +1,37 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import Slider from "react-slick";
 
 export default function TrustedClients() {
+  const [slidesConfig, setSlidesConfig] = useState({
+    slidesToShow: 4,
+    arrows: true,
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      const isBelow1024 = width < 1024;
+
+      setSlidesConfig({
+        slidesToShow: isBelow1024 ? 2 : 4,
+        arrows: !isBelow1024,
+      });
+    };
+
+    if (typeof window !== "undefined") {
+      handleResize();
+      window.addEventListener("resize", handleResize);
+    }
+
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("resize", handleResize);
+      }
+    };
+  }, []);
+
   const logos = [
     {
       src: "/t1.webp",
@@ -42,44 +71,21 @@ export default function TrustedClients() {
     },
   ];
 
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 1000,
-    autoplay: true,
-    autoplaySpeed: 2500,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    arrows: true,
-    pauseOnHover: true,
-    cssEase: "ease-in-out",
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 1,
-          arrows: true,
-        },
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 2,
-          arrows: false,
-        },
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 2,
-          arrows: false,
-        },
-      },
-    ],
-  };
+  const settings = useMemo(
+    () => ({
+      dots: true,
+      infinite: true,
+      speed: 1000,
+      autoplay: true,
+      autoplaySpeed: 2500,
+      slidesToShow: slidesConfig.slidesToShow,
+      slidesToScroll: slidesConfig.slidesToShow === 2 ? 1 : 1,
+      arrows: slidesConfig.arrows,
+      pauseOnHover: true,
+      cssEase: "ease-in-out",
+    }),
+    [slidesConfig]
+  );
 
   return (
     <section className="bg-white py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-16 text-center">
