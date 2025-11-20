@@ -75,9 +75,9 @@ export default function TrustedClients() {
     () => ({
       dots: true,
       infinite: true,
-      speed: 1000,
+      speed: 700,
       autoplay: true,
-      autoplaySpeed: 2500,
+      autoplaySpeed: 1800,
       slidesToShow: slidesConfig.slidesToShow,
       slidesToScroll: slidesConfig.slidesToShow === 2 ? 1 : 1,
       arrows: slidesConfig.arrows,

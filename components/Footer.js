@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   FaMapMarkerAlt,
   FaClock,
@@ -6,8 +7,72 @@ import {
   FaArrowRight,
   FaHeadset,
 } from "react-icons/fa";
+import { API_BASE_URL } from "@/config/api";
 
 export default function Footer() {
+  const fallbackVehicleTypes = [
+    "Comfort",
+    "Business",
+    "Standard",
+    "Economy",
+    "Luxury Vehicle",
+    "Vans & Buses",
+  ];
+
+  const [vehicleCategories, setVehicleCategories] = useState(
+    fallbackVehicleTypes.slice(0, 5)
+  );
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/categories`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch categories");
+        }
+
+        const data = await response.json();
+        const apiCategories =
+          data?.data?.categories?.map((category) => category?.name?.trim()) ||
+          [];
+
+        let filtered = apiCategories
+          .filter(Boolean)
+          .map((value) => value.trim())
+          .filter((value, index, self) => self.indexOf(value) === index)
+          .filter((value) => value.toLowerCase() !== "4x4");
+
+        if (filtered.length < 5) {
+          const fallbackToAdd = fallbackVehicleTypes.filter(
+            (fallbackItem) =>
+              fallbackItem.toLowerCase() !== "4x4" &&
+              !filtered.some(
+                (existing) =>
+                  existing.toLowerCase() === fallbackItem.toLowerCase()
+              )
+          );
+          filtered = [...filtered, ...fallbackToAdd];
+        }
+
+        filtered = filtered.slice(0, 5);
+
+        if (filtered.length && isMounted) {
+          setVehicleCategories(filtered);
+        }
+      } catch (error) {
+        console.error("Error fetching footer categories:", error);
+      }
+    };
+
+    fetchCategories();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
     <footer className="bg-[#081c2f] mt-20 text-white py-12 px-6 sm:px-10 md:px-14 lg:px-20 xl:px-32">
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 md:gap-10 border-b border-gray-700 pb-10">
@@ -32,14 +97,7 @@ export default function Footer() {
             Vehicle Types
           </h3>
           <ul className="space-y-3 sm:space-y-4 text-gray-300 font-semibold">
-            {[
-              "Comfort",
-              "Business",
-              "Standard",
-              "Economy",
-              "Luxury Vehicle",
-              "Vans & Buses",
-            ].map((item, index) => (
+            {vehicleCategories.map((item, index) => (
               <li
                 key={index}
                 className="flex items-center justify-center sm:justify-start space-x-2 cursor-pointer group hover:text-white transition-all"
