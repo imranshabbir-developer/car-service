@@ -8,7 +8,7 @@ import OnlineCarBooking from "@/components/OnlineCarBooking";
 import AffordableCarRental from "@/components/AffordableCarRental";
 import AffordableCarRentalWithDriver from "@/components/AffordableCarRentalWithDriver";
 import PopularBrands from "@/components/PopularBrands";
-import BlogSection from "@/components/BlogSection";
+// import BlogSection from "@/components/BlogSection";
 import ReviewsSection from "@/components/ReviewsSection";
 import CompactHero from "@/components/CompactHero";
 import FAQSection from "@/components/FAQSection";
@@ -28,7 +28,7 @@ export default function Home() {
       <AffordableCarRental />
       <AffordableCarRentalWithDriver />
       <PopularBrands />
-      <BlogSection />
+      {/* <BlogSection /> */}
       <ReviewsSection />
       <CompactHero />
       <FAQSection />

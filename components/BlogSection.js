@@ -44,7 +44,7 @@ export default function BlogSection() {
     <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-12 lg:px-20 bg-white" style={{ fontFamily: 'Roboto, sans-serif' }}>
       <div className="max-w-7xl mx-auto text-center">
         <h2 className="text-[#1a2b5c] text-3xl sm:text-4xl md:text-5xl font-bold mb-8 sm:mb-12">
-          Blog Post
+          Blog Posts
         </h2>
 
         {loading ? (
