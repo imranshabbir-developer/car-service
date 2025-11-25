@@ -24,6 +24,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'backend-rent-car-convoy-travel.up.railway.app',
       },
+      {
+        protocol: 'https',
+        hostname: 'api.convoytravels.pk',
+      },
     ],
   },
   eslint: {

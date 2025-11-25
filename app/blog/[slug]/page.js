@@ -137,7 +137,7 @@ export default async function BlogDetailPage({ params }) {
       "name": "Convoy Travels",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://convoytravels.pk/wp-content/uploads/2021/07/CONVAY-TRAVELS.png",
+        "url": "https://via.placeholder.com/1200x630?text=Convoy+Travels",
       },
     },
     "mainEntityOfPage": {

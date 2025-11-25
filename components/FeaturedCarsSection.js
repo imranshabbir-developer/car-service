@@ -8,13 +8,26 @@ import { API_BASE_URL, API_IMAGE_BASE_URL } from "@/config/api";
 import { generateSlug } from "@/utils/slug";
 import "./featured-cars.css";
 
+// Generate SVG placeholder image (works offline, no external dependency)
+const generatePlaceholderImage = (text) => {
+  const svg = `
+    <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+      <rect width="800" height="600" fill="#f3f4f6"/>
+      <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="24" fill="#6b7280" text-anchor="middle" dominant-baseline="middle">
+        ${text}
+      </text>
+    </svg>
+  `.trim();
+  return `data:image/svg+xml;base64,${btoa(svg)}`;
+};
+
 const FALLBACK_CARS = [
   {
     id: null,
     name: "Suzuki Cultus",
     price: "Rs 4,000",
     priceFull: "Rs 4,000 /perday",
-    image: "https://convoytravels.pk/wp-content/uploads/2025/05/Suzuki-Cultus.jpg",
+    image: generatePlaceholderImage("Suzuki Cultus"),
     location: "Lahore, Punjab, Pakistan",
     seats: 4,
     transmission: "Automatic",
@@ -26,7 +39,7 @@ const FALLBACK_CARS = [
     name: "Suzuki Wagon R",
     price: "Rs 4,000",
     priceFull: "Rs 4,000 /perday",
-    image: "https://convoytravels.pk/wp-content/uploads/2025/05/Suzuki-Wagonr.jpg",
+    image: generatePlaceholderImage("Suzuki Wagon R"),
     location: "Lahore, Punjab, Pakistan",
     seats: 4,
     transmission: "Automatic",
@@ -38,7 +51,7 @@ const FALLBACK_CARS = [
     name: "Toyota Corolla (GLI 1.3)",
     price: "Rs 6,000",
     priceFull: "Rs 6,000 /perday",
-    image: "https://convoytravels.pk/wp-content/uploads/2025/05/Toyota-Corolla.jpg",
+    image: generatePlaceholderImage("Toyota Corolla"),
     location: "Lahore, Punjab, Pakistan",
     seats: 4,
     transmission: "Automatic",
@@ -50,7 +63,7 @@ const FALLBACK_CARS = [
     name: "KIA Sportage",
     price: "Rs 12,000",
     priceFull: "Rs 12,000 /perday",
-    image: "https://convoytravels.pk/wp-content/uploads/2025/05/Kia-Sportage.jpg",
+    image: generatePlaceholderImage("KIA Sportage"),
     location: "Lahore, Punjab, Pakistan",
     seats: 4,
     transmission: "Automatic",
@@ -93,10 +106,15 @@ export default function FeaturedCarsSection() {
     const fetchFeaturedCars = async () => {
       try {
         // Fetch only featured and available cars from the API
-        const response = await fetch(`${API_BASE_URL}/cars?isFeatured=true&status=available`);
+        const response = await fetch(`${API_BASE_URL}/cars?isFeatured=true&status=available`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
 
         if (!response.ok) {
-          throw new Error(`Failed to load cars: ${response.status}`);
+          throw new Error(`Failed to load cars: ${response.status} ${response.statusText}`);
         }
 
         const data = await response.json();
@@ -138,6 +156,12 @@ export default function FeaturedCarsSection() {
         }
       } catch (error) {
         console.error("Error fetching featured cars:", error);
+        console.error("API URL:", `${API_BASE_URL}/cars?isFeatured=true&status=available`);
+        console.error("Error details:", error.message);
+        // Keep fallback cars on error
+        if (isMounted) {
+          setCars(FALLBACK_CARS);
+        }
       } finally {
         if (isMounted) {
           setLoading(false);

@@ -43,7 +43,18 @@ export default function HeroSection() {
     const fetchBrands = async () => {
       try {
         setLoadingBrands(true);
-        const response = await fetch(`${API_BASE_URL}/cars`);
+        const response = await fetch(`${API_BASE_URL}/cars`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        // Check if response is ok before parsing JSON
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
 
         if (data.success && data.data && data.data.cars) {
@@ -64,6 +75,7 @@ export default function HeroSection() {
         }
       } catch (error) {
         console.error('Error fetching brands:', error);
+        console.error('API URL:', `${API_BASE_URL}/cars`);
         // Fallback to default brands if API fails
         setBrands(['Honda', 'Hyundai', 'Kia', 'Suzuki', 'Toyota']);
       } finally {
