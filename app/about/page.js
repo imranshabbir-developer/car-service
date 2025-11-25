@@ -2,7 +2,52 @@ import { FaClock, FaFacebookF, FaInstagram } from "react-icons/fa";
 
 export const metadata = {
   title: "About Us - Convoy Travels",
-  description: "Learn about Convoy Travels - Your trusted car rental service in Lahore",
+  description:
+    "Discover Convoy Travels, Lahore's trusted rent-a-car partner offering curated fleets, expert chauffeurs, and seamless booking support for every journey.",
+  keywords: [
+    "Convoy Travels",
+    "about Convoy Travels",
+    "rent a car Lahore",
+    "chauffeur services Lahore",
+    "corporate travel Lahore",
+    "wedding car rentals",
+    "airport transfer Lahore",
+  ],
+  alternates: {
+    canonical: "https://convoytravels.pk/about",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
+  openGraph: {
+    title: "About Convoy Travels | Lahore Car Rental Experts",
+    description:
+      "Meet the Convoy Travels team and explore how we deliver premium, reliable car rental services across Lahore for leisure, corporate, and event travel.",
+    url: "https://convoytravels.pk/about",
+    siteName: "Convoy Travels Pakistan",
+    images: [
+      {
+        url: "https://convoytravels.pk/og-cover.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Convoy Travels premium car rental experience in Lahore",
+      },
+    ],
+    locale: "en_PK",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Convoy Travels | Lahore Car Rental Experts",
+    description:
+      "Learn more about Convoy Travels and how we help thousands of customers enjoy premium cars, vetted drivers, and 24/7 support in Lahore.",
+    images: ["https://convoytravels.pk/og-cover.jpg"],
+  },
 };
 
 export default function AboutPage() {
