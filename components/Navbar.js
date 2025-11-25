@@ -215,8 +215,8 @@ export default function Navbar() {
             onMouseEnter={() => setDropdownOpen(true)}
             onMouseLeave={() => setDropdownOpen(false)}
           >
-            <Link
-              href="/vehicle-types"
+            <button
+              type="button"
               className="nav-link-hover nav-vehicle-types inline-flex items-center justify-center gap-1"
               onMouseEnter={(e) => {
                 e.currentTarget.classList.remove("hover-out");
@@ -234,6 +234,9 @@ export default function Navbar() {
                   }
                 }, 300);
               }}
+              onClick={() => setDropdownOpen((prev) => !prev)}
+              aria-haspopup="true"
+              aria-expanded={dropdownOpen}
             >
               <span className="nav-link-filler"></span>
               <span className="nav-link-text">Vehicle Types</span>
@@ -242,7 +245,7 @@ export default function Navbar() {
                   dropdownOpen ? "rotate-180" : ""
                 }`}
               />
-            </Link>
+            </button>
             {dropdownOpen && (
               <div
                 className="absolute top-full left-0 w-48 z-50 pt-3 -mt-1"

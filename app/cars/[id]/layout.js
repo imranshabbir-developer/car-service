@@ -20,7 +20,8 @@ const formatCarName = (value) => {
 };
 
 export async function generateMetadata({ params }) {
-  const rawParam = params.id || "";
+  const resolvedParams = await params;
+  const rawParam = resolvedParams?.id || "";
   const decodedParam = decodeURIComponent(rawParam);
   const carName = formatCarName(decodedParam);
   const canonicalPath = rawParam ? `/cars/${rawParam}` : "/cars";
@@ -35,7 +36,6 @@ export async function generateMetadata({ params }) {
       "chauffeur car hire lahore",
       "self drive car lahore",
     ],
-    type: "product",
   });
 }
 

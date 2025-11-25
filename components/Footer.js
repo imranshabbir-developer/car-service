@@ -9,18 +9,19 @@ import {
 } from "react-icons/fa";
 import { API_BASE_URL } from "@/config/api";
 
+const DEFAULT_VEHICLE_TYPES = [
+  "Comfort",
+  "Business",
+  "Standard",
+  "Economy",
+  "Luxury Vehicle",
+  "Vans & Buses",
+];
+
 export default function Footer() {
-  const fallbackVehicleTypes = [
-    "Comfort",
-    "Business",
-    "Standard",
-    "Economy",
-    "Luxury Vehicle",
-    "Vans & Buses",
-  ];
 
   const [vehicleCategories, setVehicleCategories] = useState(
-    fallbackVehicleTypes.slice(0, 5)
+    DEFAULT_VEHICLE_TYPES.slice(0, 5)
   );
 
   useEffect(() => {
@@ -45,7 +46,7 @@ export default function Footer() {
           .filter((value) => value.toLowerCase() !== "4x4");
 
         if (filtered.length < 5) {
-          const fallbackToAdd = fallbackVehicleTypes.filter(
+          const fallbackToAdd = DEFAULT_VEHICLE_TYPES.filter(
             (fallbackItem) =>
               fallbackItem.toLowerCase() !== "4x4" &&
               !filtered.some(
