@@ -53,7 +53,7 @@ const transformApiCar = (apiCar) => {
     location,
     availability: apiCar?.isAvailable ? 'Available' : 'Currently Unavailable',
     selfDriverPrice: apiCar?.depositAmount ?? 500,
-    outOfStationPrice: apiCar?.rentPerDay ?? 1000,
+    outOfStationPrice: 1000,
     seats: apiCar?.seats,
     transmission: apiCar?.transmission,
     fuelType: apiCar?.fuelType,
@@ -84,7 +84,7 @@ const mapFallbackCar = (fallbackCar) => {
     image: images.length ? images[0] : PLACEHOLDER_IMAGE,
     availability: fallbackCar.availability || 'Weekdays',
     selfDriverPrice: fallbackCar.selfDriverPrice ?? 500,
-    outOfStationPrice: fallbackCar.outOfStationPrice ?? 1000,
+    outOfStationPrice: 1000,
   };
 };
 
@@ -681,7 +681,7 @@ export default function CarDetailPage() {
                       />
                       <span className="text-gray-700 font-medium">Out of Station</span>
                     </div>
-                    <span className="text-gray-600">Rs{car.outOfStationPrice || 1000} / perday</span>
+                    <span className="text-gray-600">Rs 1000 / perday</span>
                   </label>
                 </div>
 
