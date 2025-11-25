@@ -14,6 +14,22 @@ import CompactHero from "@/components/CompactHero";
 import FAQSection from "@/components/FAQSection";
 import LocationMap from "@/components/LocationMap";
 import MobileContactBar from "@/components/MobileContactBar";
+import { buildPageMetadata } from "@/utils/seo";
+
+export const metadata = buildPageMetadata({
+  title: "Convoy Travels | Rent a Car in Lahore with or without Driver",
+  description:
+    "Hire economy, business, and luxury cars in Lahore with Convoy Travels. Flexible chauffeur options, transparent pricing, and 24/7 booking support across Pakistan.",
+  path: "/",
+  keywords: [
+    "rent a car Lahore",
+    "convoy travels",
+    "self drive car rental",
+    "chauffeur service lahore",
+    "wedding car rental",
+    "airport transfer lahore",
+  ],
+});
 
 export default function Home() {
   return (

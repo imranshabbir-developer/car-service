@@ -1,10 +1,19 @@
 import { Suspense } from 'react';
 import VehicleTypesContent from './VehicleTypesContent';
+import { buildPageMetadata } from '@/utils/seo';
 
-export const metadata = {
-  title: "Vehicle Types - Convoy Travels",
-  description: "Explore our diverse fleet of vehicles available for rent in Lahore",
-};
+export const metadata = buildPageMetadata({
+  title: "Vehicle Categories | Chauffeur & Self-Drive Cars in Lahore",
+  description:
+    "Browse economy, business, luxury, SUV, and van categories from Convoy Travels to match your trip, wedding, corporate visit, or airport transfer.",
+  path: "/vehicle-types",
+  keywords: [
+    "vehicle categories Lahore",
+    "luxury car rental",
+    "SUV hire lahore",
+    "business car rental pakistan",
+  ],
+});
 
 export default function VehicleTypesPage() {
   return (
