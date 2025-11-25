@@ -13,6 +13,10 @@ export const metadata = {
     shortcut: "/favicon.ico",
     apple: "/favicon.ico",
   },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({ children }) {
