@@ -32,11 +32,27 @@ export default function NewBlogPageClient() {
   const [fetching, setFetching] = useState(false);
   const [notification, setNotification] = useState(null);
   const [quillMounted, setQuillMounted] = useState(false);
+  // SEO fields
+  const [metaTitle, setMetaTitle] = useState('');
+  const [metaDescription, setMetaDescription] = useState('');
+  const [slug, setSlug] = useState('');
+  const [canonicalUrl, setCanonicalUrl] = useState('');
 
   // Mount Quill after component mounts
   useEffect(() => {
     setQuillMounted(true);
   }, []);
+
+  // Auto-generate slug from title
+  useEffect(() => {
+    if (title && !editId && !slug) {
+      const generatedSlug = title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+      setSlug(generatedSlug);
+    }
+  }, [title, editId]);
 
   // Fetch categories
   useEffect(() => {
@@ -104,6 +120,11 @@ export default function NewBlogPageClient() {
             setCategory(blog.category?._id || blog.category || '');
             setContent(blog.content || '');
             setPublished(blog.published || false);
+            // SEO fields
+            setMetaTitle(blog.metaTitle || '');
+            setMetaDescription(blog.metaDescription || '');
+            setSlug(blog.slug || '');
+            setCanonicalUrl(blog.canonicalUrl || '');
           } else {
             showNotification('Failed to fetch blog details', 'error');
             router.push('/dashboard/blogs');
@@ -152,6 +173,11 @@ export default function NewBlogPageClient() {
         category,
         content,
         published,
+        // SEO fields
+        metaTitle: metaTitle.trim() || undefined,
+        metaDescription: metaDescription.trim() || undefined,
+        slug: slug.trim() || undefined,
+        canonicalUrl: canonicalUrl.trim() || undefined,
       };
 
       const url = editId
@@ -355,6 +381,67 @@ export default function NewBlogPageClient() {
                 }`}
               />
             </button>
+          </div>
+
+          {/* SEO Section */}
+          <div className="border-t pt-6 mt-6">
+            <h3 className="text-base font-bold text-gray-800 mb-4">SEO Settings (Optional)</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  SEO Title (Meta Title)
+                </label>
+                <input
+                  type="text"
+                  value={metaTitle}
+                  onChange={(e) => setMetaTitle(e.target.value)}
+                  placeholder="Auto-generated from blog title"
+                  className="w-full px-4 py-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Slug
+                </label>
+                <input
+                  type="text"
+                  value={slug}
+                  onChange={(e) => setSlug(e.target.value)}
+                  placeholder="Auto-generated from blog title"
+                  className="w-full px-4 py-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  SEO Description (Meta Description)
+                </label>
+                <textarea
+                  value={metaDescription}
+                  onChange={(e) => setMetaDescription(e.target.value)}
+                  rows={3}
+                  placeholder="Auto-generated from content"
+                  className="w-full px-4 py-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Canonical URL
+                </label>
+                <input
+                  type="text"
+                  value={canonicalUrl}
+                  onChange={(e) => setCanonicalUrl(e.target.value)}
+                  placeholder="https://convoytravels.pk/blog/..."
+                  className="w-full px-4 py-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Leave empty to auto-generate from slug
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Action Buttons */}

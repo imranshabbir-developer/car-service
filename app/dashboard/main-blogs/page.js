@@ -17,6 +17,15 @@ import {
 import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
 import { logger } from '@/utils/logger';
 
+// Auto-generate slug from title
+const generateSlugFromTitle = (title) => {
+  if (!title) return '';
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+};
+
 export default function MainBlogsPage() {
   const [blogs, setBlogs] = useState([]);
   const [filteredBlogs, setFilteredBlogs] = useState([]);
@@ -33,6 +42,11 @@ export default function MainBlogsPage() {
     description: '',
     isPublished: false,
     image: null,
+    // SEO fields
+    seoTitle: '',
+    seoDescription: '',
+    slug: '',
+    canonicalUrl: '',
   });
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -85,6 +99,17 @@ export default function MainBlogsPage() {
     setFilteredBlogs(filtered);
   }, [searchTerm, blogs]);
 
+  // Auto-generate slug from blog title
+  useEffect(() => {
+    if (formData.blogTitle && !editingBlog && !formData.slug) {
+      const slug = generateSlugFromTitle(formData.blogTitle);
+      setFormData((prev) => ({
+        ...prev,
+        slug,
+      }));
+    }
+  }, [formData.blogTitle, editingBlog]);
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -111,6 +136,11 @@ export default function MainBlogsPage() {
       description: '',
       isPublished: false,
       image: null,
+      // SEO fields
+      seoTitle: '',
+      seoDescription: '',
+      slug: '',
+      canonicalUrl: '',
     });
     setImagePreview(null);
     setEditingBlog(null);
@@ -127,6 +157,11 @@ export default function MainBlogsPage() {
         description: blog.description || '',
         isPublished: blog.isPublished || false,
         image: null,
+        // SEO fields
+        seoTitle: blog.seoTitle || '',
+        seoDescription: blog.seoDescription || '',
+        slug: blog.slug || '',
+        canonicalUrl: blog.canonicalUrl || '',
       });
       setImagePreview(blog.image ? `${API_IMAGE_BASE_URL}${blog.image}` : null);
     } else {
@@ -155,6 +190,12 @@ export default function MainBlogsPage() {
       formDataToSend.append('blogTitle', formData.blogTitle);
       formDataToSend.append('description', formData.description);
       formDataToSend.append('isPublished', formData.isPublished);
+      
+      // SEO fields
+      if (formData.seoTitle) formDataToSend.append('seoTitle', formData.seoTitle);
+      if (formData.seoDescription) formDataToSend.append('seoDescription', formData.seoDescription);
+      if (formData.slug) formDataToSend.append('slug', formData.slug);
+      if (formData.canonicalUrl) formDataToSend.append('canonicalUrl', formData.canonicalUrl);
       
       if (formData.image) {
         formDataToSend.append('image', formData.image);
@@ -489,6 +530,71 @@ export default function MainBlogsPage() {
                   <label className="text-sm font-medium text-gray-700">
                     Publish
                   </label>
+                </div>
+
+                {/* SEO Section */}
+                <div className="border-t pt-4 mt-4">
+                  <h3 className="text-sm font-bold text-gray-800 mb-3">SEO Settings (Optional)</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">
+                        SEO Title
+                      </label>
+                      <input
+                        type="text"
+                        name="seoTitle"
+                        value={formData.seoTitle}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
+                        placeholder="Auto-generated from blog title"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">
+                        Slug
+                      </label>
+                      <input
+                        type="text"
+                        name="slug"
+                        value={formData.slug}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
+                        placeholder="Auto-generated from blog title"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">
+                        SEO Description
+                      </label>
+                      <textarea
+                        name="seoDescription"
+                        value={formData.seoDescription}
+                        onChange={handleInputChange}
+                        rows={2}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
+                        placeholder="Auto-generated from description"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">
+                        Canonical URL
+                      </label>
+                      <input
+                        type="text"
+                        name="canonicalUrl"
+                        value={formData.canonicalUrl}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
+                        placeholder="https://convoytravels.pk/main-blog/..."
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Leave empty to auto-generate from slug
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex justify-end gap-3 pt-4">

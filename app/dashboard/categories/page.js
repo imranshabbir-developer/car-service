@@ -5,6 +5,15 @@ import { FaPlus, FaSearch, FaEdit, FaTrash, FaSpinner, FaTimes, FaCheckCircle, F
 import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
 import { logger } from '@/utils/logger';
 
+// Auto-generate slug from name
+const generateSlugFromName = (name) => {
+  if (!name) return '';
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+};
+
 export default function CategoriesPage() {
   const [categories, setCategories] = useState([]);
   const [filteredCategories, setFilteredCategories] = useState([]);
@@ -17,6 +26,11 @@ export default function CategoriesPage() {
     description: '',
     status: 'Active',
     photo: null,
+    // SEO fields
+    seoTitle: '',
+    seoDescription: '',
+    slug: '',
+    canonicalUrl: '',
   });
   const [deletingId, setDeletingId] = useState(null);
   const [notification, setNotification] = useState(null);
@@ -112,6 +126,17 @@ export default function CategoriesPage() {
     }
   }, [searchTerm, categories]);
 
+  // Auto-generate slug from name
+  useEffect(() => {
+    if (formData.name && !editingCategory && !formData.slug) {
+      const slug = generateSlugFromName(formData.name);
+      setFormData((prev) => ({
+        ...prev,
+        slug,
+      }));
+    }
+  }, [formData.name, editingCategory]);
+
   // Handle form input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -143,6 +168,11 @@ export default function CategoriesPage() {
           description: data.data.category.description,
           status: data.data.category.status,
           photo: null,
+          // SEO fields
+          seoTitle: data.data.category.seoTitle || '',
+          seoDescription: data.data.category.seoDescription || '',
+          slug: data.data.category.slug || '',
+          canonicalUrl: data.data.category.canonicalUrl || '',
         });
         setShowModal(true);
       } else {
@@ -162,6 +192,11 @@ export default function CategoriesPage() {
       description: '',
       status: 'Active',
       photo: null,
+      // SEO fields
+      seoTitle: '',
+      seoDescription: '',
+      slug: '',
+      canonicalUrl: '',
     });
     setShowModal(true);
   };
@@ -175,6 +210,11 @@ export default function CategoriesPage() {
       description: '',
       status: 'Active',
       photo: null,
+      // SEO fields
+      seoTitle: '',
+      seoDescription: '',
+      slug: '',
+      canonicalUrl: '',
     });
     // Reset file input
     if (fileInputRef.current) {
@@ -191,6 +231,12 @@ export default function CategoriesPage() {
       formDataToSend.append('name', formData.name);
       formDataToSend.append('description', formData.description);
       formDataToSend.append('status', formData.status);
+      
+      // SEO fields
+      if (formData.seoTitle) formDataToSend.append('seoTitle', formData.seoTitle);
+      if (formData.seoDescription) formDataToSend.append('seoDescription', formData.seoDescription);
+      if (formData.slug) formDataToSend.append('slug', formData.slug);
+      if (formData.canonicalUrl) formDataToSend.append('canonicalUrl', formData.canonicalUrl);
       
       if (formData.photo) {
         formDataToSend.append('photo', formData.photo);
@@ -527,6 +573,71 @@ export default function CategoriesPage() {
                     ✓ New photo: {formData.photo.name.length > 25 ? formData.photo.name.substring(0, 25) + '...' : formData.photo.name}
                   </p>
                 )}
+
+                {/* SEO Section */}
+                <div className="border-t pt-3 mt-3">
+                  <h3 className="text-xs font-bold text-gray-800 mb-2">SEO Settings (Optional)</h3>
+                  <div className="space-y-2">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">
+                        SEO Title
+                      </label>
+                      <input
+                        type="text"
+                        name="seoTitle"
+                        value={formData.seoTitle}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
+                        placeholder="Auto-generated from category name"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">
+                        Slug
+                      </label>
+                      <input
+                        type="text"
+                        name="slug"
+                        value={formData.slug}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
+                        placeholder="Auto-generated from category name"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">
+                        SEO Description
+                      </label>
+                      <textarea
+                        name="seoDescription"
+                        value={formData.seoDescription}
+                        onChange={handleInputChange}
+                        rows={2}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
+                        placeholder="Auto-generated from description"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">
+                        Canonical URL
+                      </label>
+                      <input
+                        type="text"
+                        name="canonicalUrl"
+                        value={formData.canonicalUrl}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
+                        placeholder="https://convoytravels.pk/vehicle-types/..."
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Leave empty to auto-generate from slug
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
                 <div className="flex justify-end space-x-2 pt-2">
                   <button

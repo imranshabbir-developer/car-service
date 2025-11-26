@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { API_BASE_URL, API_IMAGE_BASE_URL } from "@/config/api";
 import BlogDetailClient from "./BlogDetailClient";
+import { extractSeoData } from '@/utils/dynamicSeo';
 
 // Force dynamic rendering for API fetch
 export const dynamic = 'force-dynamic';
@@ -44,10 +45,18 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  const metaTitle = blog.metaTitle || blog.title;
-  const metaDescription = blog.metaDescription || blog.description || 
+  // Extract SEO data from backend
+  const seoData = extractSeoData(blog);
+  
+  // Use backend SEO fields with fallbacks
+  const metaTitle = seoData.seoTitle || blog.metaTitle || blog.title;
+  const metaDescription = seoData.seoDescription || blog.metaDescription || blog.description || 
     blog.content?.replace(/<[^>]*>/g, '').substring(0, 160) || 
     `${blog.title} - Read more about ${blog.category?.name || 'travel'} on Convoy Travels blog.`;
+  
+  // Use canonical URL from backend if available, otherwise use backend slug
+  const canonicalSlug = blog.slug || params.slug;
+  const canonicalUrl = seoData.canonicalUrl || `https://convoytravels.pk/blog/${canonicalSlug}`;
   
   const imageUrl = blog.featuredImage 
     ? `${API_IMAGE_BASE_URL}${blog.featuredImage}`
@@ -55,7 +64,7 @@ export async function generateMetadata({ params }) {
   
   const publishedTime = blog.createdAt || new Date().toISOString();
   const modifiedTime = blog.updatedAt || publishedTime;
-  const url = `https://convoytravels.pk/blog/${blog.slug}`;
+  const url = canonicalUrl;
 
   return {
     title: `${metaTitle} - Convoy Travels Blog`,

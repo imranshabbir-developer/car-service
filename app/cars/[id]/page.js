@@ -10,6 +10,8 @@ import SimilarListings from '@/components/SimilarListings';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { generateSlug, isObjectId } from '@/utils/slug';
+import Seo from '@/components/Seo';
+import { extractSeoData } from '@/utils/dynamicSeo';
 
 // Generate SVG placeholder (works offline, no external dependency)
 const generatePlaceholderImage = (text = 'Vehicle Image') => {
@@ -154,10 +156,16 @@ export default function CarDetailPage() {
           const allCarsData = await allCarsResponse.json();
           
           if (allCarsData.success && allCarsData.data && allCarsData.data.cars) {
-            const matchingCar = allCarsData.data.cars.find(car => {
-              const carSlug = generateSlug(car.name);
-              return carSlug === paramValue;
-            });
+            // First try to find by backend slug field
+            let matchingCar = allCarsData.data.cars.find(car => car.slug === paramValue);
+            
+            // Fallback: find by generated slug from name
+            if (!matchingCar) {
+              matchingCar = allCarsData.data.cars.find(car => {
+                const carSlug = car.slug || generateSlug(car.name);
+                return carSlug.toLowerCase() === paramValue.toLowerCase();
+              });
+            }
             
             if (matchingCar) {
               carIdToFetch = matchingCar._id;
@@ -192,11 +200,16 @@ export default function CarDetailPage() {
 
         if (isMounted) {
           const transformedCar = transformApiCar(apiCar);
+          // Store SEO data from API (including slug from backend)
+          transformedCar.seoData = {
+            ...extractSeoData(apiCar),
+            slug: apiCar.slug, // Include backend slug
+          };
           setCar(transformedCar);
           
-          // Update URL to use slug if it's currently using ID (for SEO and clean URLs)
-          if (isId && typeof window !== 'undefined') {
-            const carSlug = generateSlug(transformedCar.name);
+          // Update URL to use backend slug if it's currently using ID (for SEO and clean URLs)
+          if (isId && typeof window !== 'undefined' && apiCar.slug) {
+            const carSlug = apiCar.slug; // Use backend slug, not generated
             const newUrl = `/cars/${carSlug}`;
             if (window.location.pathname !== newUrl) {
               window.history.replaceState({}, '', newUrl);
@@ -491,8 +504,30 @@ export default function CarDetailPage() {
     }
   };
 
+  // Extract SEO data
+  const seoData = car?.seoData || {};
+  const seoTitle = seoData.seoTitle || `${car?.name || 'Car'} - Rent in Lahore | Convoy Travels`;
+  const seoDescription = seoData.seoDescription || `Rent ${car?.name || 'this car'} in Lahore with Convoy Travels. ${car?.rentPerDay ? `Starting at Rs ${car.rentPerDay} per day.` : 'Affordable car rental service.'}`;
+  
+  // Use backend canonical URL if available, otherwise use backend slug
+  let canonicalUrl = seoData.canonicalUrl;
+  if (!canonicalUrl && car?.seoData?.slug) {
+    canonicalUrl = `https://convoytravels.pk/cars/${car.seoData.slug}`;
+  } else if (!canonicalUrl && car?.id) {
+    // Fallback: use ID if slug not available
+    canonicalUrl = `https://convoytravels.pk/cars/${car.id}`;
+  } else if (!canonicalUrl) {
+    canonicalUrl = 'https://convoytravels.pk/cars';
+  }
+
   return (
-    <main className="min-h-screen bg-gray-50" style={{ fontFamily: 'Roboto, sans-serif' }}>
+    <>
+      <Seo 
+        title={seoTitle}
+        description={seoDescription}
+        canonical={canonicalUrl}
+      />
+      <main className="min-h-screen bg-gray-50" style={{ fontFamily: 'Roboto, sans-serif' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-8 md:py-12">
         {/* Top Header Section */}
         <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-8 gap-6">
@@ -1045,6 +1080,7 @@ export default function CarDetailPage() {
         </div>
       )}
     </main>
+    </>
   );
 }
 

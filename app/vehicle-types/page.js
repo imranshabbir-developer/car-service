@@ -2,6 +2,8 @@ import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import VehicleTypesContent from './VehicleTypesContent';
 import { buildPageMetadata } from '@/utils/seo';
+import { buildDynamicMetadata, extractSeoData } from '@/utils/dynamicSeo';
+import { API_BASE_URL } from '@/config/api';
 
 const DEFAULT_META = {
   title: 'Vehicle Categories | Chauffeur & Self-Drive Cars in Lahore',
@@ -93,6 +95,41 @@ export async function generateMetadata({ searchParams }) {
         index: false,
         follow: false,
       },
+    });
+  }
+
+  // Try to fetch category SEO data from backend if category filter is present
+  let categorySeoData = null;
+  if (resolvedSearchParams.category) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/categories?status=Active`, {
+        next: { revalidate: 3600 }, // Cache for 1 hour
+      });
+      const data = await response.json();
+      
+      if (data.success && data.data?.categories) {
+        const matchingCategory = data.data.categories.find(
+          (cat) => cat.name === resolvedSearchParams.category || cat.slug === resolvedSearchParams.category
+        );
+        
+        if (matchingCategory) {
+          categorySeoData = extractSeoData(matchingCategory);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching category SEO data:', error);
+      // Fall back to default metadata
+    }
+  }
+
+  // Use backend SEO data if available, otherwise use generated defaults
+  if (categorySeoData && (categorySeoData.seoTitle || categorySeoData.canonicalUrl)) {
+    return buildDynamicMetadata({
+      ...categorySeoData,
+      fallbackTitle: buildDynamicTitle(resolvedSearchParams),
+      fallbackDescription: buildDynamicDescription(resolvedSearchParams),
+      fallbackPath: path,
+      keywords: DEFAULT_META.keywords,
     });
   }
 

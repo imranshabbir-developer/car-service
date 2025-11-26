@@ -45,6 +45,11 @@ export default function CarsPage() {
     isFeatured: false,
     carPhotos: [],
     existingGallery: [], // For editing - existing images from server
+    // SEO fields
+    seoTitle: '',
+    seoDescription: '',
+    slug: '',
+    canonicalUrl: '',
   });
   const [imagePreviews, setImagePreviews] = useState([]);
 
@@ -159,6 +164,20 @@ export default function CarsPage() {
     setFilteredCars(filtered);
   }, [searchTerm, featuredFilter, cars]);
 
+  // Auto-generate slug from name
+  useEffect(() => {
+    if (formData.name && !editingCar && !formData.slug) {
+      const slug = formData.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+      setFormData((prev) => ({
+        ...prev,
+        slug,
+      }));
+    }
+  }, [formData.name, editingCar]);
+
   // Handle form input change
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -248,6 +267,11 @@ export default function CarsPage() {
       serialNo: '',
       carPhotos: [],
       existingGallery: [],
+      // SEO fields
+      seoTitle: '',
+      seoDescription: '',
+      slug: '',
+      canonicalUrl: '',
     });
     setImagePreviews([]);
     setShowModal(true);
@@ -292,6 +316,11 @@ export default function CarsPage() {
           isFeatured: car.isFeatured || false,
           carPhotos: [],
           existingGallery: gallery,
+          // SEO fields
+          seoTitle: car.seoTitle || '',
+          seoDescription: car.seoDescription || '',
+          slug: car.slug || '',
+          canonicalUrl: car.canonicalUrl || '',
         });
         setShowModal(true);
       } else {
@@ -322,6 +351,11 @@ export default function CarsPage() {
       serialNo: '',
       carPhotos: [],
       existingGallery: [],
+      // SEO fields
+      seoTitle: '',
+      seoDescription: '',
+      slug: '',
+      canonicalUrl: '',
     });
     setImagePreviews([]);
     if (fileInputRef.current) {
@@ -351,6 +385,12 @@ export default function CarsPage() {
       : '1';
     formDataToSend.append('serialNo', serialNoValue);
     formDataToSend.append('isFeatured', formData.isFeatured);
+    
+    // SEO fields
+    if (formData.seoTitle) formDataToSend.append('seoTitle', formData.seoTitle);
+    if (formData.seoDescription) formDataToSend.append('seoDescription', formData.seoDescription);
+    if (formData.slug) formDataToSend.append('slug', formData.slug);
+    if (formData.canonicalUrl) formDataToSend.append('canonicalUrl', formData.canonicalUrl);
     
     // Append multiple image files
     formData.carPhotos.forEach((file) => {
@@ -853,6 +893,71 @@ export default function CarsPage() {
                           Mark as Featured
                         </span>
                       </label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* SEO Section */}
+                <div className="border-t pt-4 mt-4">
+                  <h3 className="text-sm font-bold text-gray-800 mb-3">SEO Settings (Optional)</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">
+                        SEO Title
+                      </label>
+                      <input
+                        type="text"
+                        name="seoTitle"
+                        value={formData.seoTitle}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
+                        placeholder="Auto-generated from car name"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">
+                        Slug
+                      </label>
+                      <input
+                        type="text"
+                        name="slug"
+                        value={formData.slug}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
+                        placeholder="Auto-generated from car name"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">
+                        SEO Description
+                      </label>
+                      <textarea
+                        name="seoDescription"
+                        value={formData.seoDescription}
+                        onChange={handleInputChange}
+                        rows={3}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
+                        placeholder="Auto-generated description"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">
+                        Canonical URL
+                      </label>
+                      <input
+                        type="text"
+                        name="canonicalUrl"
+                        value={formData.canonicalUrl}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
+                        placeholder="https://convoytravels.pk/cars/..."
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Leave empty to auto-generate from slug
+                      </p>
                     </div>
                   </div>
                 </div>
