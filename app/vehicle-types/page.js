@@ -34,14 +34,14 @@ const buildPathWithQuery = (searchParams) => {
     return '/vehicle-types';
   }
 
-  const query = new URLSearchParams();
-  Object.entries(searchParams).forEach(([key, value]) => {
-    if (typeof value === 'string' && value.length > 0) {
-      query.append(key, value);
-    }
-  });
+  const segments = Object.entries(searchParams)
+    .filter(([_, value]) => typeof value === 'string' && value.length > 0)
+    .map(
+      ([key, value]) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+    );
 
-  const queryString = query.toString();
+  const queryString = segments.join('&');
   return queryString ? `/vehicle-types?${queryString}` : '/vehicle-types';
 };
 
