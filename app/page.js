@@ -17,9 +17,9 @@ import MobileContactBar from "@/components/MobileContactBar";
 import { buildPageMetadata } from "@/utils/seo";
 
 export const metadata = buildPageMetadata({
-  title: "Convoy Travels | Rent a Car in Lahore with or without Driver",
+  title: "Rent a Car in Lahore With & Without Driver | 2025 Best Prices",
   description:
-    "Hire economy, business, and luxury cars in Lahore with Convoy Travels. Flexible chauffeur options, transparent pricing, and 24/7 booking support across Pakistan.",
+    "Rent a Car in Lahore With Driver & Without Driver with Convoy Travels, offering transparent pricing & rates. Best rent a car service for all your travel needs in Lahore.",
   path: "/",
   keywords: [
     "rent a car Lahore",
