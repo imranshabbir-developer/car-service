@@ -10,6 +10,7 @@ import FAQSection from "@/components/FAQSection";
 import LocationMap from "@/components/LocationMap";
 import MobileContactBar from "@/components/MobileContactBar";
 import DynamicSpecialSections from "@/components/DynamicSpecialSections";
+import StructuredData from "@/components/StructuredData";
 import { buildPageMetadata } from "@/utils/seo";
 
 export const metadata = buildPageMetadata({
@@ -29,7 +30,9 @@ export const metadata = buildPageMetadata({
 
 export default function Home() {
   return (
-    <main className="relative pb-16 md:pb-0">
+    <>
+      <StructuredData />
+      <main className="relative pb-16 md:pb-0">
       <HeroSection />
       <TrustedClients />
       <PerfectDriver />
@@ -43,6 +46,7 @@ export default function Home() {
       <LocationMap />
       <MobileContactBar />
     </main>
+    </>
   );
 }
 
