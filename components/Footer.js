@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   FaMapMarkerAlt,
   FaClock,
@@ -99,16 +100,18 @@ export default function Footer() {
           </h3>
           <ul className="space-y-3 sm:space-y-4 text-gray-300 font-semibold">
             {vehicleCategories.map((item, index) => (
-              <li
-                key={index}
-                className="flex items-center justify-center sm:justify-start space-x-2 cursor-pointer group hover:text-white transition-all"
-              >
-                <span className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-                  <FaArrowRight size={12} />
-                </span>
-                <span className="group-hover:translate-x-2 transition-transform duration-300">
-                  {item}
-                </span>
+              <li key={index}>
+                <Link
+                  href={`/vehicle-types?category=${encodeURIComponent(item)}`}
+                  className="flex items-center justify-center sm:justify-start space-x-2 cursor-pointer group hover:text-white transition-all"
+                >
+                  <span className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                    <FaArrowRight size={12} />
+                  </span>
+                  <span className="group-hover:translate-x-2 transition-transform duration-300">
+                    {item}
+                  </span>
+                </Link>
               </li>
             ))}
           </ul>
@@ -147,7 +150,7 @@ export default function Footer() {
                 <FaMapMarkerAlt className="mt-1" />
               </div>
               <a
-                href="https://www.google.com/maps/place/Convoy+Travels+%26+Rent+A+Car+.+Rent+a+car+in+lahore/@31.4396234,74.2654729,15z"
+                href="https://maps.app.goo.gl/2oshtw2vPXqoYyUX8"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-1 sm:mt-0 hover:text-white transition-all"
