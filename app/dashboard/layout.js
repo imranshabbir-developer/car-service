@@ -21,6 +21,7 @@ import {
   FaCalendarAlt,
   FaChevronRight,
   FaUser,
+  FaLayerGroup,
 } from 'react-icons/fa';
 import { API_BASE_URL } from '@/config/api';
 import { logger } from '@/utils/logger';
@@ -174,6 +175,7 @@ export default function DashboardLayout({ children }) {
     { icon: FaClipboardList, label: 'Bookings', path: '/dashboard/bookings', badge: null },
     { icon: FaQuestionCircle, label: 'Questions', path: '/dashboard/questions', badge: null },
     { icon: FaBlog, label: 'Main Blogs', path: '/dashboard/main-blogs', badge: null },
+    { icon: FaLayerGroup, label: 'Special Sections', path: '/dashboard/special-sections', badge: null },
   ];
 
   const isActive = (path) => {

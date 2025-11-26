@@ -11,6 +11,7 @@ export default function ReviewsSection() {
   const swiperRef = useRef(null);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
+  const [expandedReviews, setExpandedReviews] = useState({});
 
   const reviews = [
     {
@@ -31,17 +32,52 @@ export default function ReviewsSection() {
       name: "Shabana Bin Fazal",
       time: "1 month ago",
       stars: 5,
-      text: "Convoy Travels is hands down the best car rental service in Lahore! From the very first call, their team was professional and friendly.",
+      text: "Convoy Travels is hands down the best car rental service in Lahore! From the very first call, their team was professional and friendly. The car was in perfect condition and the pricing was very reasonable. I highly recommend them for anyone looking for reliable car rental services.",
       img: "https://lh3.googleusercontent.com/a-/ALV-UjXNLK94kQ2059EIGx26Jq228oIcTtUh0bfyRd7KIJ0fwa4JSD4=w40-h40-c-rp-mo-ba2-br100",
     },
     {
-      name: "Shabana Bin Fazal",
-      time: "1 month ago",
+      name: "Muhammad Ali",
+      time: "2 months ago",
       stars: 5,
-      text: "Convoy Travels is hands down the best car rental service in Lahore! From the very first call, their team was professional and friendly.",
+      text: "Outstanding service! I booked a luxury vehicle for a business trip and was impressed by the quality and cleanliness of the car. The customer support team was responsive and helped me with all my queries. Will definitely use their services again.",
+      img: "https://lh3.googleusercontent.com/a-/ALV-UjWUi07pGpQElI2OQCwm2gQKarPyyygGJLn5KeVQ4HEst-sq1hSCFg=w40-h40-c-rp-mo-ba3-br100",
+    },
+    {
+      name: "Fatima Khan",
+      time: "2 months ago",
+      stars: 5,
+      text: "Perfect experience from start to finish! The online booking was easy, and when I arrived to pick up the car, everything was ready. The vehicle was spotless and well-maintained. Great value for money and excellent customer service.",
+      img: "https://lh3.googleusercontent.com/a/ACg8ocKKpvdT8TnFMYlpRQShDJ1oi2arNyLk9xo_cMG9j-IBxE3x4w=w40-h40-c-rp-mo-br100",
+    },
+    {
+      name: "Ahmed Hassan",
+      time: "3 months ago",
+      stars: 5,
+      text: "Convoy Travels made our family vacation so much easier! We rented a van for our trip to Northern Pakistan and it was perfect. The car was comfortable, reliable, and the staff was very accommodating with our schedule changes. Highly recommended!",
       img: "https://lh3.googleusercontent.com/a-/ALV-UjXNLK94kQ2059EIGx26Jq228oIcTtUh0bfyRd7KIJ0fwa4JSD4=w40-h40-c-rp-mo-ba2-br100",
     },
+    {
+      name: "Sara Malik",
+      time: "3 months ago",
+      stars: 4,
+      text: "Good service overall. The car was clean and in good condition. The booking process was straightforward, though I wish there were more vehicle options available. The staff was helpful and professional throughout.",
+      img: "https://lh3.googleusercontent.com/a-/ALV-UjWUi07pGpQElI2OQCwm2gQKarPyyygGJLn5KeVQ4HEst-sq1hSCFg=w40-h40-c-rp-mo-ba3-br100",
+    },
+    {
+      name: "Usman Sheikh",
+      time: "1 month ago",
+      stars: 5,
+      text: "Excellent car rental service! I've used Convoy Travels multiple times now and they never disappoint. The cars are always well-maintained, the prices are competitive, and the customer service is top-notch. They've become my go-to car rental company in Lahore.",
+      img: "https://lh3.googleusercontent.com/a/ACg8ocKKpvdT8TnFMYlpRQShDJ1oi2arNyLk9xo_cMG9j-IBxE3x4w=w40-h40-c-rp-mo-br100",
+    },
   ];
+
+  const toggleReview = (index) => {
+    setExpandedReviews((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
 
   return (
     <section className="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 md:px-12 lg:px-20 bg-gradient-to-b from-gray-50 to-white" style={{ fontFamily: 'Roboto, sans-serif' }}>
@@ -89,32 +125,32 @@ export default function ReviewsSection() {
           </div>
 
           {/* Reviews Carousel Section */}
-          <div className="w-full lg:w-2/3 relative">
-            {/* Custom Navigation Buttons - Outside Carousel */}
+          <div className="w-full lg:w-2/3 relative px-8 sm:px-12 md:px-16 lg:px-0">
+            {/* Custom Navigation Buttons - Improved for Mobile and Desktop */}
             <button
               onClick={() => swiperRef.current?.slidePrev()}
               disabled={isBeginning}
-              className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-12 z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full shadow-lg border-2 flex items-center justify-center transition-all duration-300 group ${
+              className={`absolute left-0 sm:-left-2 md:-left-4 lg:-left-12 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full shadow-xl flex items-center justify-center transition-all duration-300 ${
                 isBeginning
-                  ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
-                  : 'btn-gradient-outline text-[#1a2b5c] hover:scale-110 hover:shadow-xl relative z-10'
+                  ? 'bg-gray-200 border-2 border-gray-300 text-gray-400 cursor-not-allowed opacity-60'
+                  : 'bg-white border-2 border-[#1a2b5c] text-[#1a2b5c] hover:bg-[#1a2b5c] hover:text-white hover:scale-110 hover:shadow-2xl active:scale-95'
               }`}
               aria-label="Previous review"
             >
-              <FaChevronLeft className="text-lg lg:text-xl" />
+              <FaChevronLeft className="text-base sm:text-lg md:text-xl" />
             </button>
             
             <button
               onClick={() => swiperRef.current?.slideNext()}
               disabled={isEnd}
-              className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-12 z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full shadow-lg border-2 flex items-center justify-center transition-all duration-300 group ${
+              className={`absolute right-0 sm:-right-2 md:-right-4 lg:-right-12 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full shadow-xl flex items-center justify-center transition-all duration-300 ${
                 isEnd
-                  ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
-                  : 'btn-gradient-outline text-[#1a2b5c] hover:scale-110 hover:shadow-xl relative z-10'
+                  ? 'bg-gray-200 border-2 border-gray-300 text-gray-400 cursor-not-allowed opacity-60'
+                  : 'bg-white border-2 border-[#1a2b5c] text-[#1a2b5c] hover:bg-[#1a2b5c] hover:text-white hover:scale-110 hover:shadow-2xl active:scale-95'
               }`}
               aria-label="Next review"
             >
-              <FaChevronRight className="text-lg lg:text-xl" />
+              <FaChevronRight className="text-base sm:text-lg md:text-xl" />
             </button>
 
             <Swiper
@@ -157,7 +193,9 @@ export default function ReviewsSection() {
             >
               {reviews.map((review, index) => (
                 <SwiperSlide key={index} className="h-auto">
-                  <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-5 sm:p-6 h-[320px] flex flex-col border border-gray-100 group">
+                  <div className={`bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-5 sm:p-6 flex flex-col border border-gray-100 group ${
+                    expandedReviews[index] ? 'min-h-[320px]' : 'h-[320px]'
+                  }`}>
                     {/* Review Header */}
                     <div className="flex items-start gap-3 mb-4">
                       <div className="relative flex-shrink-0">
@@ -206,19 +244,44 @@ export default function ReviewsSection() {
 
                     {/* Review Text */}
                     <div className="flex-1 mb-4 overflow-hidden">
-                      <p className="text-gray-700 text-sm sm:text-base leading-relaxed line-clamp-4">
+                      <p className={`text-gray-700 text-sm sm:text-base leading-relaxed ${
+                        expandedReviews[index] ? '' : 'line-clamp-4'
+                      }`}>
                         {review.text}
                       </p>
                     </div>
 
-                    {/* Read More Link */}
-                    <a
-                      href="#"
-                      className="text-[#1a2b5c] text-xs sm:text-sm font-medium hover:underline inline-flex items-center gap-1 self-start transition-colors"
-                    >
-                      Read more
-                      <span className="text-[#1a2b5c]">→</span>
-                    </a>
+                    {/* Read More/Read Less Button */}
+                    {review.text.length > 100 && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleReview(index);
+                        }}
+                        className="group relative inline-flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold text-[#1a2b5c] bg-gradient-to-r from-blue-50 to-indigo-50 border border-[#1a2b5c]/20 rounded-lg hover:from-[#1a2b5c] hover:to-[#0d1b2a] hover:text-white hover:border-[#1a2b5c] transition-all duration-300 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#1a2b5c] focus:ring-offset-2 self-start"
+                      >
+                        <span>{expandedReviews[index] ? 'Read less' : 'Read more'}</span>
+                        <span className={`inline-flex items-center justify-center w-4 h-4 transition-all duration-300 ${
+                          expandedReviews[index] 
+                            ? 'rotate-90 translate-x-0' 
+                            : 'group-hover:translate-x-0.5'
+                        }`}>
+                          <svg 
+                            className="w-4 h-4" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                          >
+                            <path 
+                              strokeLinecap="round" 
+                              strokeLinejoin="round" 
+                              strokeWidth={2} 
+                              d="M9 5l7 7-7 7" 
+                            />
+                          </svg>
+                        </span>
+                      </button>
+                    )}
                   </div>
                 </SwiperSlide>
               ))}

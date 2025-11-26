@@ -2,11 +2,6 @@ import HeroSection from "@/components/HeroSection";
 import TrustedClients from "@/components/TrustedClients";
 import PerfectDriver from "@/components/PerfectDriver";
 import FeaturedCarsSection from "@/components/FeaturedCarsSection";
-import RentCarInfoSection from "@/components/RentCarInfoSection";
-import AffordableRentCarSection from "@/components/AffordableRentCarSection";
-import OnlineCarBooking from "@/components/OnlineCarBooking";
-import AffordableCarRental from "@/components/AffordableCarRental";
-import AffordableCarRentalWithDriver from "@/components/AffordableCarRentalWithDriver";
 import PopularBrands from "@/components/PopularBrands";
 // import BlogSection from "@/components/BlogSection";
 import ReviewsSection from "@/components/ReviewsSection";
@@ -14,6 +9,7 @@ import CompactHero from "@/components/CompactHero";
 import FAQSection from "@/components/FAQSection";
 import LocationMap from "@/components/LocationMap";
 import MobileContactBar from "@/components/MobileContactBar";
+import DynamicSpecialSections from "@/components/DynamicSpecialSections";
 import { buildPageMetadata } from "@/utils/seo";
 
 export const metadata = buildPageMetadata({
@@ -38,11 +34,7 @@ export default function Home() {
       <TrustedClients />
       <PerfectDriver />
       <FeaturedCarsSection />
-      <RentCarInfoSection /> 
-      <AffordableRentCarSection />
-      <OnlineCarBooking />
-      <AffordableCarRental />
-      <AffordableCarRentalWithDriver />
+      <DynamicSpecialSections />
       <PopularBrands />
       {/* <BlogSection /> */}
       <ReviewsSection />
