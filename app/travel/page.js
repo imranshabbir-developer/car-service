@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FaFacebookF, FaTwitter, FaLinkedinIn, FaChevronLeft, FaChevronRight, FaTimes } from 'react-icons/fa';
+import { FaFacebookF, FaInstagram, FaChevronLeft, FaChevronRight, FaTimes } from 'react-icons/fa';
 
 export default function TravelPage() {
   const [mounted, setMounted] = useState(false);
@@ -143,7 +143,7 @@ export default function TravelPage() {
           {/* Social Media Icons */}
           <div className="flex items-center gap-4">
             <a
-              href="https://www.facebook.com/sharer.php?u=https://convoytravels.pk/travel/"
+              href="https://www.facebook.com/ConvoyTravelsAndRentACar/"
               target="_blank"
               rel="noopener noreferrer"
               className="w-12 h-12 sm:w-14 sm:h-14 bg-[#1877f2] text-white rounded-lg flex items-center justify-center hover:bg-[#166fe5] transition-colors duration-300"
@@ -152,22 +152,13 @@ export default function TravelPage() {
               <FaFacebookF className="w-5 h-5 sm:w-6 sm:h-6" />
             </a>
             <a
-              href="https://x.com/intent/post?text=%20https%3A%2F%2Fconvoytravels.pk%2Ftravel%2F"
+              href="https://www.instagram.com/convoytravels4343/"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-12 h-12 sm:w-14 sm:h-14 bg-[#1da1f2] text-white rounded-lg flex items-center justify-center hover:bg-[#1a91da] transition-colors duration-300"
-              aria-label="Twitter"
+              className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-[#f09433] via-[#e6683c] to-[#dc2743] text-white rounded-lg flex items-center justify-center hover:opacity-90 transition-opacity duration-300"
+              aria-label="Instagram"
             >
-              <FaTwitter className="w-5 h-5 sm:w-6 sm:h-6" />
-            </a>
-            <a
-              href="https://www.linkedin.com/feed/?linkOrigin=LI_BADGE&shareActive=true&shareUrl=https%3A%2F%2Fconvoytravels.pk%2Ftravel%2F"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-12 h-12 sm:w-14 sm:h-14 bg-[#0077b5] text-white rounded-lg flex items-center justify-center hover:bg-[#006399] transition-colors duration-300"
-              aria-label="LinkedIn"
-            >
-              <FaLinkedinIn className="w-5 h-5 sm:w-6 sm:h-6" />
+              <FaInstagram className="w-5 h-5 sm:w-6 sm:h-6" />
             </a>
           </div>
         </div>

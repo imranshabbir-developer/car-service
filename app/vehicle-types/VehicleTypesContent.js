@@ -33,14 +33,15 @@ const getBlogExcerpt = (htmlContent = "", limit = 170) => {
     : stripped;
 };
 
-export default function VehicleTypesContent() {
-  const searchParams = useSearchParams();
-  const category = searchParams.get("category") || null;
-  const allCars = searchParams.get("allCars") === "true";
-  const brand = searchParams.get("brand") || null;
-  const pickupDateParam = searchParams.get("pickupDate") || null;
-  const dropoffDateParam = searchParams.get("dropoffDate") || null;
-  const searchParam = searchParams.get("search") || null;
+export default function VehicleTypesContent({ searchParams: propSearchParams }) {
+  const urlSearchParams = useSearchParams();
+  // Use prop searchParams if provided (from dynamic route), otherwise use URL searchParams
+  const category = propSearchParams?.category || urlSearchParams.get("category") || null;
+  const allCars = propSearchParams?.allCars === "true" || urlSearchParams.get("allCars") === "true";
+  const brand = propSearchParams?.brand || urlSearchParams.get("brand") || null;
+  const pickupDateParam = propSearchParams?.pickupDate || urlSearchParams.get("pickupDate") || null;
+  const dropoffDateParam = propSearchParams?.dropoffDate || urlSearchParams.get("dropoffDate") || null;
+  const searchParam = propSearchParams?.search || urlSearchParams.get("search") || null;
 
   const [searchQuery, setSearchQuery] = useState("");
   const [viewType, setViewType] = useState("grid"); // 'grid' or 'list'

@@ -196,7 +196,9 @@ export default function AboutPage() {
               <div className="flex items-center gap-3 sm:gap-4">
                 {/* Facebook Icon */}
                 <a
-                  href="#"
+                  href="https://www.facebook.com/ConvoyTravelsAndRentACar/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors duration-300"
                   aria-label="Facebook"
                 >
@@ -205,7 +207,9 @@ export default function AboutPage() {
                 
                 {/* Instagram Icon */}
                 <a
-                  href="#"
+                  href="https://www.instagram.com/convoytravels4343/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors duration-300"
                   aria-label="Instagram"
                 >

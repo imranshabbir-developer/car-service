@@ -7,6 +7,7 @@ import VehicleCard from '@/components/VehicleCard';
 import VehicleCardList from '@/components/VehicleCardList';
 import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
 import { FaArrowLeft, FaSpinner, FaSearch, FaTh, FaList, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import Seo from '@/components/Seo';
 
 export default function BrandDetailPage() {
   const params = useParams();
@@ -152,8 +153,25 @@ export default function BrandDetailPage() {
     }
   };
 
+  // Generate SEO data
+  const seoTitle = actualBrandName 
+    ? `${actualBrandName} Vehicles in Lahore | Convoy Travels`
+    : 'Brand Vehicles | Convoy Travels';
+  const seoDescription = actualBrandName
+    ? `Browse ${actualBrandName} vehicles available for rent in Lahore. Affordable ${actualBrandName} car rental with or without driver.`
+    : 'Browse vehicles by brand in Lahore. Affordable car rental services.';
+  const canonicalUrl = actualBrandName
+    ? `https://convoytravels.pk/brands/${encodeURIComponent(actualBrandName.toLowerCase().replace(/\s+/g, '-'))}`
+    : 'https://convoytravels.pk/brands';
+
   return (
-    <main className="min-h-screen bg-gray-50" style={{ fontFamily: 'Roboto, sans-serif' }}>
+    <>
+      <Seo 
+        title={seoTitle}
+        description={seoDescription}
+        canonical={canonicalUrl}
+      />
+      <main className="min-h-screen bg-gray-50" style={{ fontFamily: 'Roboto, sans-serif' }}>
       {/* Header Section */}
       <div className="bg-[#1a2b5c] text-white py-12 md:py-16 px-6 md:px-20">
         <div className="max-w-7xl mx-auto">
@@ -335,6 +353,7 @@ export default function BrandDetailPage() {
         )}
       </div>
     </main>
+    </>
   );
 }
 

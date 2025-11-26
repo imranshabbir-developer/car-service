@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
 import { FaArrowLeft, FaCalendarAlt, FaSpinner, FaFacebookF, FaTwitter, FaLinkedinIn } from 'react-icons/fa';
 import { generateSlug, isObjectId } from '@/utils/slug';
+import Seo from '@/components/Seo';
+import { extractSeoData } from '@/utils/dynamicSeo';
 
 export default function MainBlogDetailPage() {
   const params = useParams();
@@ -32,7 +34,10 @@ export default function MainBlogDetailPage() {
         const data = await response.json();
 
         if (data.success && data.data && data.data.blog) {
-          setBlog(data.data.blog);
+          const blogData = data.data.blog;
+          // Store SEO data
+          blogData.seoData = extractSeoData(blogData);
+          setBlog(blogData);
         } else {
           setError('Blog not found');
         }
@@ -91,8 +96,20 @@ export default function MainBlogDetailPage() {
     ? `${API_IMAGE_BASE_URL}${blog.image}`
     : '/placeholder-blog.jpg';
 
+  // Extract SEO data
+  const seoData = blog?.seoData || {};
+  const seoTitle = seoData.seoTitle || `${blog?.blogTitle || 'Blog'} | Convoy Travels`;
+  const seoDescription = seoData.seoDescription || blog?.description || 'Read our latest blog posts about car rental in Lahore.';
+  const canonicalUrl = seoData.canonicalUrl || (blog?.slug ? `https://convoytravels.pk/main-blog/${blog.slug}` : 'https://convoytravels.pk/main-blogs');
+
   return (
-    <main className="min-h-screen bg-gray-50" style={{ fontFamily: 'Roboto, sans-serif' }}>
+    <>
+      <Seo 
+        title={seoTitle}
+        description={seoDescription}
+        canonical={canonicalUrl}
+      />
+      <main className="min-h-screen bg-gray-50" style={{ fontFamily: 'Roboto, sans-serif' }}>
       {/* Hero Section */}
       <div className="relative w-full h-64 sm:h-80 md:h-96 bg-gradient-to-r from-[#1a2b5c] to-[#132045]">
         {imageUrl && (
@@ -184,6 +201,7 @@ export default function MainBlogDetailPage() {
         </article>
       </div>
     </main>
+    </>
   );
 }
 

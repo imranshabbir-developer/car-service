@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
 import { FaSpinner, FaSearch } from 'react-icons/fa';
+import Seo from '@/components/Seo';
 
 export default function MainBlogsPage() {
   const [blogs, setBlogs] = useState([]);

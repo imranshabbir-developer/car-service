@@ -1,37 +1,63 @@
-import { buildPageMetadata } from "@/utils/seo";
+import { buildDynamicMetadata, extractSeoData } from "@/utils/dynamicSeo";
+import { API_BASE_URL } from "@/config/api";
 import { isObjectId } from "@/utils/slug";
 
-const formatBlogTitle = (slug) => {
-  if (!slug) return "Convoy Travels Blog";
-  if (isObjectId(slug)) {
-    return "Convoy Travels Blog";
+// Fetch main blog data for metadata
+async function getMainBlogForMetadata(param) {
+  try {
+    if (!param) return null;
+
+    // If it's an ObjectId, fetch directly
+    if (isObjectId(param)) {
+      const response = await fetch(`${API_BASE_URL}/main-blogs/${param}`, {
+        next: { revalidate: 300 },
+      });
+      if (!response.ok) return null;
+      const data = await response.json();
+      return data?.data?.blog || null;
+    }
+
+    // If it's a slug, fetch by slug
+    const response = await fetch(`${API_BASE_URL}/main-blogs/slug/${param}`, {
+      next: { revalidate: 300 },
+    });
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data?.data?.blog || null;
+  } catch (error) {
+    console.error('Error fetching main blog for metadata:', error);
+    return null;
   }
-
-  const cleaned = slug.replace(/-/g, " ").replace(/\s+/g, " ").trim();
-
-  if (!cleaned) {
-    return "Convoy Travels Blog";
-  }
-
-  return cleaned
-    .split(" ")
-    .map((chunk) => chunk.charAt(0).toUpperCase() + chunk.slice(1))
-    .join(" ");
-};
+}
 
 export async function generateMetadata({ params }) {
-  const rawSlug = params.slug;
-  const decodedSlug = decodeURIComponent(rawSlug || "");
-  const blogTitle = formatBlogTitle(decodedSlug);
-  const canonicalPath = rawSlug ? `/main-blog/${rawSlug}` : "/main-blogs";
+  const resolvedParams = await params;
+  const paramValue = resolvedParams?.slug || "";
+  
+  // Fetch blog data from backend
+  const blog = await getMainBlogForMetadata(paramValue);
+  
+  if (!blog) {
+    return {
+      title: 'Blog Post Not Found | Convoy Travels',
+      description: 'The blog post you are looking for could not be found.',
+    };
+  }
 
-  return buildPageMetadata({
-    title: `${blogTitle} | Convoy Travels Blog`,
-    description:
-      "Read curated travel inspiration, rental advice, and Convoy Travels service updates to plan reliable journeys across Pakistan.",
-    path: canonicalPath,
+  // Extract SEO data from backend
+  const seoData = extractSeoData(blog);
+  
+  // Use backend slug for canonical, fallback to param
+  const canonicalSlug = blog.slug || paramValue;
+  const canonicalPath = `/main-blog/${canonicalSlug}`;
+  
+  return buildDynamicMetadata({
+    ...seoData,
+    fallbackTitle: `${blog.blogTitle || 'Blog Post'} | Convoy Travels Blog`,
+    fallbackDescription: blog.description || "Read curated travel inspiration, rental advice, and Convoy Travels service updates to plan reliable journeys across Pakistan.",
+    fallbackPath: canonicalPath,
     keywords: [
-      blogTitle,
+      blog.blogTitle || 'blog',
       "convoy travels blog",
       "travel tips pakistan",
       "rent a car stories",
