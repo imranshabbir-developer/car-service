@@ -3,44 +3,62 @@
 import { useState, useEffect } from 'react';
 import DynamicSpecialSection from './DynamicSpecialSection';
 import { API_BASE_URL } from '@/config/api';
+import { logger } from '@/utils/logger';
 
 export default function DynamicSpecialSections() {
   const [sections, setSections] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchSections = async () => {
       try {
         const url = `${API_BASE_URL}/special-sections?active=true`;
         const response = await fetch(url);
         
         if (!response.ok) {
-          console.error(`Failed to fetch special sections: ${response.status} ${response.statusText}`);
-          console.error('API URL:', url);
-          setLoading(false);
+          logger.error(`Failed to fetch special sections: ${response.status} ${response.statusText}`);
+          logger.error('API URL:', url);
+          if (isMounted) {
+            setLoading(false);
+          }
           return;
         }
         
         const data = await response.json();
         
-        if (data.success && data.data && data.data.sections) {
-          // Sort by order
-          const sortedSections = data.data.sections.sort((a, b) => 
+        if (isMounted && data?.success && data?.data?.sections && Array.isArray(data.data.sections)) {
+          // Filter out invalid sections and sort by order
+          const validSections = data.data.sections.filter(
+            section => section && section._id && section.isActive !== false
+          );
+          const sortedSections = validSections.sort((a, b) => 
             (a.order || 0) - (b.order || 0)
           );
           setSections(sortedSections);
-        } else {
-          console.warn('Special sections response structure unexpected:', data);
+        } else if (isMounted) {
+          logger.warn('Special sections response structure unexpected:', data);
+          setSections([]);
         }
       } catch (error) {
-        console.error('Error fetching special sections:', error);
-        console.error('API URL:', `${API_BASE_URL}/special-sections?active=true`);
+        logger.error('Error fetching special sections:', error);
+        if (isMounted) {
+          setSections([]);
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchSections();
+
+    // Cleanup function to prevent state updates if component unmounts
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   if (loading) {
