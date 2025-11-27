@@ -19,6 +19,8 @@ const DEFAULT_VEHICLE_TYPES = [
   "Vans & Buses",
 ];
 
+const POPULAR_MAKES = ["Suzuki", "Toyota", "Honda", "Vans & Buses"];
+
 export default function Footer() {
 
   const [vehicleCategories, setVehicleCategories] = useState(
@@ -123,10 +125,10 @@ export default function Footer() {
             Popular Makes
           </h3>
           <ul className="space-y-3 sm:space-y-4 text-gray-300 font-semibold">
-            {["Suzuki", "Toyota", "Honda", "Vans & Buses"].map(
-              (item, index) => (
-                <li
-                  key={index}
+            {POPULAR_MAKES.map((item, index) => (
+              <li key={index}>
+                <Link
+                  href={`/brands/${encodeURIComponent(item)}`}
                   className="flex items-center justify-center sm:justify-start space-x-2 cursor-pointer group hover:text-white transition-all"
                 >
                   <span className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
@@ -135,9 +137,9 @@ export default function Footer() {
                   <span className="group-hover:translate-x-2 transition-transform duration-300">
                     {item}
                   </span>
-                </li>
-              )
-            )}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 

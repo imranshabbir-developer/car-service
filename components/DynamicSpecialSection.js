@@ -1,69 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export default function DynamicSpecialSection({ section }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Inject SEO meta tags dynamically
-  useEffect(() => {
-    if (!section || !section.isActive) return;
+  // NOTE: Removed SEO meta tag injection from special sections
+  // Special sections are content blocks on the home page, not standalone pages
+  // The home page has its own metadata defined in app/page.js which should not be overridden
+  // If section-specific SEO is needed, create dedicated routes for each section instead
 
-    // Store original values
-    const originalTitle = document.title;
-    let metaDescription = null;
-    let canonicalLink = null;
-
-    // Update title if seoTitle exists
-    if (section.seoTitle) {
-      document.title = section.seoTitle;
-    }
-
-    // Update or create meta description
-    if (section.seoDescription) {
-      metaDescription = document.querySelector('meta[name="description"]');
-      if (metaDescription) {
-        metaDescription.setAttribute('content', section.seoDescription);
-      } else {
-        const meta = document.createElement('meta');
-        meta.name = 'description';
-        meta.content = section.seoDescription;
-        document.head.appendChild(meta);
-      }
-    }
-
-    // Update or create canonical link
-    if (section.canonicalUrl) {
-      canonicalLink = document.querySelector('link[rel="canonical"]');
-      if (canonicalLink) {
-        canonicalLink.setAttribute('href', section.canonicalUrl);
-      } else {
-        const link = document.createElement('link');
-        link.rel = 'canonical';
-        link.href = section.canonicalUrl;
-        document.head.appendChild(link);
-      }
-    }
-
-    // Cleanup function
-    return () => {
-      // Restore original title (only if this was the last section)
-      if (section.seoTitle) {
-        document.title = originalTitle;
-      }
-    };
-  }, [section]);
-
-  if (!section || !section.isActive) {
+  if (!section || !section.isActive || !section.title) {
     return null;
   }
 
-  const shortText = section.content.length > 550 
-    ? section.content.slice(0, 550) + '...' 
-    : section.content;
+  const content = section.content || '';
+  const shortText = content.length > 550 
+    ? content.slice(0, 550) + '...' 
+    : content;
 
-  const needsReadMore = section.content.length > 550;
-  const displayText = isExpanded ? section.content : shortText;
+  const needsReadMore = content.length > 550;
+  const displayText = isExpanded ? content : shortText;
 
   // Determine background color class
   const getBackgroundClass = () => {
@@ -87,14 +44,16 @@ export default function DynamicSpecialSection({ section }) {
           {isImageLeft && (
             <div className="relative flex justify-center">
               <div className="absolute -left-4 top-4 bg-[#1a2b5c] w-full h-full rounded-lg hidden md:block"></div>
-              <img
-                src={section.image}
-                alt={section.title}
-                className="relative rounded-lg w-full max-h-48 md:max-h-56 lg:max-h-64 object-cover shadow-lg"
-                onError={(e) => {
-                  e.target.src = '/placeholder.jpg';
-                }}
-              />
+              {section.image && (
+                <img
+                  src={section.image}
+                  alt={section.title || 'Section image'}
+                  className="relative rounded-lg w-full max-h-48 md:max-h-56 lg:max-h-64 object-cover shadow-lg"
+                  onError={(e) => {
+                    e.target.src = '/placeholder.jpg';
+                  }}
+                />
+              )}
             </div>
           )}
 
@@ -122,14 +81,16 @@ export default function DynamicSpecialSection({ section }) {
           {!isImageLeft && (
             <div className="relative flex justify-center">
               <div className="absolute -right-4 top-4 bg-[#1a2b5c] w-full h-full rounded-lg hidden md:block"></div>
-              <img
-                src={section.image}
-                alt={section.title}
-                className="relative rounded-lg w-full max-h-48 md:max-h-56 lg:max-h-64 object-cover shadow-lg"
-                onError={(e) => {
-                  e.target.src = '/placeholder.jpg';
-                }}
-              />
+              {section.image && (
+                <img
+                  src={section.image}
+                  alt={section.title || 'Section image'}
+                  className="relative rounded-lg w-full max-h-48 md:max-h-56 lg:max-h-64 object-cover shadow-lg"
+                  onError={(e) => {
+                    e.target.src = '/placeholder.jpg';
+                  }}
+                />
+              )}
             </div>
           )}
         </div>
