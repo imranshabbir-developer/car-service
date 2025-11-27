@@ -11,7 +11,16 @@ export default function DynamicSpecialSections() {
   useEffect(() => {
     const fetchSections = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/special-sections?active=true`);
+        const url = `${API_BASE_URL}/special-sections?active=true`;
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+          console.error(`Failed to fetch special sections: ${response.status} ${response.statusText}`);
+          console.error('API URL:', url);
+          setLoading(false);
+          return;
+        }
+        
         const data = await response.json();
         
         if (data.success && data.data && data.data.sections) {
@@ -20,9 +29,12 @@ export default function DynamicSpecialSections() {
             (a.order || 0) - (b.order || 0)
           );
           setSections(sortedSections);
+        } else {
+          console.warn('Special sections response structure unexpected:', data);
         }
       } catch (error) {
         console.error('Error fetching special sections:', error);
+        console.error('API URL:', `${API_BASE_URL}/special-sections?active=true`);
       } finally {
         setLoading(false);
       }
