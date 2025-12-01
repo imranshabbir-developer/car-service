@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -14,29 +14,8 @@ export default function HeroSection() {
   const [selectedBrand, setSelectedBrand] = useState('');
   const [brands, setBrands] = useState([]);
   const [loadingBrands, setLoadingBrands] = useState(true);
-  const [mounted, setMounted] = useState(false);
   const [carsData, setCarsData] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
-  
-  const [displayedText1, setDisplayedText1] = useState('');
-  const [displayedText2, setDisplayedText2] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const fullText1 = "Rent a Car in Lahore -";
-  const fullText2 = "Available With or Without a Driver";
-  const typingSpeed = 100;
-  const erasingSpeed = 50;
-  const pauseTime = 2000; // 2 seconds pause after typing complete
-
-  const timeoutRef = useRef(null);
-  const currentIndexRef = useRef(0);
-  const isErasingRef = useRef(false);
-  const displayedText1Ref = useRef('');
-  const displayedText2Ref = useRef('');
-
-  // Set mounted to true after component mounts (client-side only)
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Fetch brands and cars data from API
   useEffect(() => {
@@ -164,70 +143,6 @@ export default function HeroSection() {
     }
   };
 
-  // Typing animation effect - only runs on client after mount
-  useEffect(() => {
-    if (!mounted) return;
-
-    const typeText1 = () => {
-      if (currentIndexRef.current < fullText1.length) {
-        displayedText1Ref.current = fullText1.slice(0, currentIndexRef.current + 1);
-        setDisplayedText1(displayedText1Ref.current);
-        currentIndexRef.current++;
-        timeoutRef.current = setTimeout(typeText1, typingSpeed);
-      } else {
-        // Start typing second text after first is complete
-        currentIndexRef.current = 0;
-        timeoutRef.current = setTimeout(() => {
-          typeText2();
-        }, 300);
-      }
-    };
-
-    const typeText2 = () => {
-      if (currentIndexRef.current < fullText2.length) {
-        displayedText2Ref.current = fullText2.slice(0, currentIndexRef.current + 1);
-        setDisplayedText2(displayedText2Ref.current);
-        currentIndexRef.current++;
-        timeoutRef.current = setTimeout(typeText2, typingSpeed);
-      } else {
-        // Both texts are complete, wait 2 seconds then start erasing
-        setIsTyping(false);
-        timeoutRef.current = setTimeout(() => {
-          isErasingRef.current = true;
-          eraseText();
-        }, pauseTime);
-      }
-    };
-
-    const eraseText = () => {
-      // Erase second text first
-      if (displayedText2Ref.current.length > 0) {
-        displayedText2Ref.current = displayedText2Ref.current.slice(0, -1);
-        setDisplayedText2(displayedText2Ref.current);
-        timeoutRef.current = setTimeout(eraseText, erasingSpeed);
-      } else if (displayedText1Ref.current.length > 0) {
-        // Erase first text
-        displayedText1Ref.current = displayedText1Ref.current.slice(0, -1);
-        setDisplayedText1(displayedText1Ref.current);
-        timeoutRef.current = setTimeout(eraseText, erasingSpeed);
-      } else {
-        // Both texts erased, restart typing
-        isErasingRef.current = false;
-        setIsTyping(true);
-        currentIndexRef.current = 0;
-        timeoutRef.current = setTimeout(() => {
-          typeText1();
-        }, 300);
-      }
-    };
-
-    setIsTyping(true);
-    typeText1();
-
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, [mounted]);
 
   return (
     <div
@@ -241,16 +156,9 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/35 z-10"></div>
 
       <div className="relative z-10 text-center text-white py-12 md:py-20 px-6 md:px-20 pb-12 md:pb-20">
-        <h1 className="text-4xl md:text-6xl font-bold mb-4 min-h-[3rem] md:min-h-[4rem]">
-          {mounted ? displayedText1 : fullText1}
-          {mounted && isTyping && <span className="animate-pulse">|</span>}
+        <h1 className="text-4xl md:text-6xl font-bold mb-6">
+          Rent a Car in Lahore - Available With or Without a Driver
         </h1>
-        <h2 className="text-4xl sm:text-2xl md:text-6xl font-bold mb-6 min-h-[3rem] md:min-h-[4rem]">
-          {mounted ? displayedText2 : fullText2}
-          {mounted && isTyping && displayedText1 === fullText1 && (
-            <span className="animate-pulse">|</span>
-          )}
-        </h2>
         <p className="text-md md:text-lg font-semibold mb-0">
           &quot;Without Driver Services available for bookings of 7 days or more&quot;
         </p>
