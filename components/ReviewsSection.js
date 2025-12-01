@@ -15,60 +15,95 @@ export default function ReviewsSection() {
 
   const reviews = [
     {
+      name: "Amin Nizar",
+      time: "4 weeks ago",
+      stars: 5,
+      text: "I recently used Convoy Travels - Rent a Car Service during my family trip to Lahore, and had an excellent experience. The vehicle was clean, comfortable, and well-maintained. Our driver, Gulzar Ahmed, was very cooperative, polite, and professional throughout the journey. He made our travel smooth and stress-free. Highly recommended for anyone looking for reliable and family-friendly car rental services in Lahore!",
+      img: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+    },
+    {
+      name: "Syeda Huda Amir",
+      time: "9 weeks ago",
+      stars: 5,
+      text: "I had a great experience renting a car with a driver from Convoy Travels in Lahore. The service was top notch and the driver was professional. The car was clean and in great condition. Booking was easy and rates were competitive. Highly recommended",
+      img: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+    },
+    {
+      name: "Muhammad Sher Ali",
+      time: "12 weeks ago",
+      stars: 5,
+      text: "Great service! Car arrived on time, neat and clean. Driver was very cooperative and rates were reasonable. Highly satisfied with Convoy Travels.",
+      img: "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+    },
+    {
+      name: "Shumi Femi",
+      time: "14 weeks ago",
+      stars: 5,
+      text: "Service bohot zabardast thi. Car time par mili, bilkul clean our perfect condition mein. Needed to rent a car in Lahore on short notice and convoy travels made the whole process super easy",
+      img: "https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+    },
+    {
+      name: "Imran Rehmat",
+      time: "20 weeks ago",
+      stars: 5,
+      text: "Best service's in lahore rent a car in lahore with driver. I have great experience with them. I will recommend to my friends and family. They are very friendly and helpful. I will definitely use their services again. Thanks Convoy Travels for your great service.",
+      img: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+    },
+    {
       name: "Anum Ahmad",
       time: "1 month ago",
       stars: 4,
       text: "I rented a car from Convoy Travels without driver and had an excellent experience. The booking process was smooth and staff was helpful.",
-      img: "https://lh3.googleusercontent.com/a/ACg8ocKKpvdT8TnFMYlpRQShDJ1oi2arNyLk9xo_cMG9j-IBxE3x4w=w40-h40-c-rp-mo-br100",
+      img: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
     },
     {
       name: "Azum Iqbal",
       time: "1 month ago",
       stars: 5,
       text: "We had a family gathering, so we went with the best car rental with driver from Convoy Travels. The driver was professional and the vehicle was clean.",
-      img: "https://lh3.googleusercontent.com/a-/ALV-UjWUi07pGpQElI2OQCwm2gQKarPyyygGJLn5KeVQ4HEst-sq1hSCFg=w40-h40-c-rp-mo-ba3-br100",
+      img: "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
     },
     {
       name: "Shabana Bin Fazal",
       time: "1 month ago",
       stars: 5,
       text: "Convoy Travels is hands down the best car rental service in Lahore! From the very first call, their team was professional and friendly. The car was in perfect condition and the pricing was very reasonable. I highly recommend them for anyone looking for reliable car rental services.",
-      img: "https://lh3.googleusercontent.com/a-/ALV-UjXNLK94kQ2059EIGx26Jq228oIcTtUh0bfyRd7KIJ0fwa4JSD4=w40-h40-c-rp-mo-ba2-br100",
+      img: "https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
     },
     {
       name: "Muhammad Ali",
       time: "2 months ago",
       stars: 5,
       text: "Outstanding service! I booked a luxury vehicle for a business trip and was impressed by the quality and cleanliness of the car. The customer support team was responsive and helped me with all my queries. Will definitely use their services again.",
-      img: "https://lh3.googleusercontent.com/a-/ALV-UjWUi07pGpQElI2OQCwm2gQKarPyyygGJLn5KeVQ4HEst-sq1hSCFg=w40-h40-c-rp-mo-ba3-br100",
+      img: "https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
     },
     {
       name: "Fatima Khan",
       time: "2 months ago",
       stars: 5,
       text: "Perfect experience from start to finish! The online booking was easy, and when I arrived to pick up the car, everything was ready. The vehicle was spotless and well-maintained. Great value for money and excellent customer service.",
-      img: "https://lh3.googleusercontent.com/a/ACg8ocKKpvdT8TnFMYlpRQShDJ1oi2arNyLk9xo_cMG9j-IBxE3x4w=w40-h40-c-rp-mo-br100",
+      img: "https://images.pexels.com/photos/1845534/pexels-photo-1845534.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
     },
     {
       name: "Ahmed Hassan",
       time: "3 months ago",
       stars: 5,
       text: "Convoy Travels made our family vacation so much easier! We rented a van for our trip to Northern Pakistan and it was perfect. The car was comfortable, reliable, and the staff was very accommodating with our schedule changes. Highly recommended!",
-      img: "https://lh3.googleusercontent.com/a-/ALV-UjXNLK94kQ2059EIGx26Jq228oIcTtUh0bfyRd7KIJ0fwa4JSD4=w40-h40-c-rp-mo-ba2-br100",
+      img: "https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
     },
     {
       name: "Sara Malik",
       time: "3 months ago",
       stars: 4,
       text: "Good service overall. The car was clean and in good condition. The booking process was straightforward, though I wish there were more vehicle options available. The staff was helpful and professional throughout.",
-      img: "https://lh3.googleusercontent.com/a-/ALV-UjWUi07pGpQElI2OQCwm2gQKarPyyygGJLn5KeVQ4HEst-sq1hSCFg=w40-h40-c-rp-mo-ba3-br100",
+      img: "https://images.pexels.com/photos/1082962/pexels-photo-1082962.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
     },
     {
       name: "Usman Sheikh",
       time: "1 month ago",
       stars: 5,
       text: "Excellent car rental service! I've used Convoy Travels multiple times now and they never disappoint. The cars are always well-maintained, the prices are competitive, and the customer service is top-notch. They've become my go-to car rental company in Lahore.",
-      img: "https://lh3.googleusercontent.com/a/ACg8ocKKpvdT8TnFMYlpRQShDJ1oi2arNyLk9xo_cMG9j-IBxE3x4w=w40-h40-c-rp-mo-br100",
+      img: "https://images.pexels.com/photos/1680172/pexels-photo-1680172.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
     },
   ];
 
@@ -203,6 +238,9 @@ export default function ReviewsSection() {
                           src={review.img}
                           alt={review.name}
                           className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover ring-2 ring-gray-100 group-hover:ring-[#1a2b5c] transition-all duration-300"
+                          onError={(e) => {
+                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(review.name)}&background=1a2b5c&color=fff&size=128`;
+                          }}
                         />
                       </div>
                       <div className="flex-1 min-w-0">

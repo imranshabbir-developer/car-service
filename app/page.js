@@ -10,6 +10,7 @@ import FAQSection from "@/components/FAQSection";
 import LocationMap from "@/components/LocationMap";
 import MobileContactBar from "@/components/MobileContactBar";
 import DynamicSpecialSections from "@/components/DynamicSpecialSections";
+import MainBlogsSection from "@/components/MainBlogsSection";
 import StructuredData from "@/components/StructuredData";
 import { buildPageMetadata } from "@/utils/seo";
 
@@ -43,6 +44,7 @@ export default function Home() {
       <ReviewsSection />
       <CompactHero />
       <FAQSection />
+      <MainBlogsSection />
       <LocationMap />
       <MobileContactBar />
     </main>
