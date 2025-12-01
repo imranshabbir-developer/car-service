@@ -11,8 +11,10 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaThumbsUp,
+  FaTrash,
 } from 'react-icons/fa';
 import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
+import { logger } from '@/utils/logger';
 
 const PLACEHOLDER_IMAGE =
   'https://via.placeholder.com/200x140?text=Vehicle+Image';
@@ -87,6 +89,7 @@ export default function BookingsPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [notification, setNotification] = useState(null);
   const [updatingStatusKey, setUpdatingStatusKey] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
   const showNotification = (message, type = 'success') => {
     setNotification({ message, type });
@@ -222,6 +225,49 @@ export default function BookingsPage() {
       );
     } finally {
       setUpdatingStatusKey(null);
+    }
+  };
+
+  const handleDelete = async (bookingId) => {
+    if (!bookingId) return;
+
+    if (
+      !confirm(
+        'Are you sure you want to delete this booking? This action cannot be undone.'
+      )
+    ) {
+      return;
+    }
+
+    setDeletingId(bookingId);
+
+    try {
+      const token =
+        typeof window !== 'undefined' ? localStorage.getItem('token') : '';
+
+      const response = await fetch(`${API_BASE_URL}/bookings/${bookingId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token || ''}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Failed to delete booking.');
+      }
+
+      setBookings((prev) => prev.filter((booking) => booking._id !== bookingId));
+      showNotification('Booking deleted successfully.');
+    } catch (error) {
+      logger.error('Error deleting booking:', error);
+      showNotification(
+        error.message || 'Unable to delete booking. Please try again.',
+        'error'
+      );
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -476,6 +522,18 @@ export default function BookingsPage() {
                               </button>
                             );
                           })}
+                          <button
+                            disabled={deletingId === booking._id}
+                            onClick={() => handleDelete(booking._id)}
+                            className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {deletingId === booking._id ? (
+                              <FaSpinner className="animate-spin text-sm" />
+                            ) : (
+                              <FaTrash className="text-sm" />
+                            )}
+                            Delete
+                          </button>
                         </div>
                       </td>
                     </tr>

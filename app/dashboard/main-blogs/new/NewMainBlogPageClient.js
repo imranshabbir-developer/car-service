@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import nextDynamic from 'next/dynamic';
 import {
@@ -10,31 +10,43 @@ import {
   FaExclamationCircle,
   FaTimes,
   FaSave,
+  FaImage,
 } from 'react-icons/fa';
-import { API_BASE_URL } from '@/config/api';
+import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
 import { logger } from '@/utils/logger';
 
 // Dynamically import ReactQuill to avoid SSR issues
 const ReactQuill = nextDynamic(() => import('react-quill-new'), { ssr: false });
 import 'react-quill-new/dist/quill.snow.css';
 
-export default function NewBlogPageClient() {
+// Auto-generate slug from title
+const generateSlugFromTitle = (title) => {
+  if (!title) return '';
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+};
+
+export default function NewMainBlogPageClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const editId = searchParams.get('edit');
   
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('');
-  const [content, setContent] = useState('');
-  const [published, setPublished] = useState(true);
-  const [categories, setCategories] = useState([]);
+  const [blogTitle, setBlogTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [isPublished, setIsPublished] = useState(false);
+  const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
   const [notification, setNotification] = useState(null);
   const [quillMounted, setQuillMounted] = useState(false);
+  const fileInputRef = useRef(null);
+  
   // SEO fields
-  const [metaTitle, setMetaTitle] = useState('');
-  const [metaDescription, setMetaDescription] = useState('');
+  const [seoTitle, setSeoTitle] = useState('');
+  const [seoDescription, setSeoDescription] = useState('');
   const [slug, setSlug] = useState('');
   const [canonicalUrl, setCanonicalUrl] = useState('');
 
@@ -45,65 +57,11 @@ export default function NewBlogPageClient() {
 
   // Auto-generate slug from title
   useEffect(() => {
-    if (title && !editId && !slug) {
-      const generatedSlug = title
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '');
+    if (blogTitle && !editId && !slug) {
+      const generatedSlug = generateSlugFromTitle(blogTitle);
       setSlug(generatedSlug);
     }
-  }, [title, editId]);
-
-  // Fetch categories
-  useEffect(() => {
-    const fetchCategories = async () => {
-      if (typeof window === 'undefined') return;
-      
-      try {
-        // Create AbortController for timeout (30 seconds)
-        const controller = new AbortController();
-        let timeoutId = setTimeout(() => {
-          controller.abort();
-        }, 30000); // 30 second timeout
-        
-        try {
-          const response = await fetch(`${API_BASE_URL}/categories`, {
-            signal: controller.signal,
-          });
-          
-          // Clear timeout if request succeeds
-          clearTimeout(timeoutId);
-          
-          if (!response.ok) {
-            logger.error('Categories API error:', response.status);
-            return;
-          }
-          
-          const data = await response.json();
-          
-          if (data.success && data.data && data.data.categories) {
-            setCategories(data.data.categories);
-          } else {
-            logger.warn('Categories response structure unexpected:', data);
-            setCategories([]);
-          }
-        } catch (fetchError) {
-          // Clear timeout on error
-          clearTimeout(timeoutId);
-          throw fetchError;
-        }
-      } catch (error) {
-        if (error.name === 'AbortError') {
-          logger.error('Categories fetch timeout. Server may be down.');
-        } else {
-          logger.error('Error fetching categories:', error);
-        }
-        setCategories([]);
-      }
-    };
-
-    fetchCategories();
-  }, []);
+  }, [blogTitle, editId, slug]);
 
   // Fetch blog data if editing
   useEffect(() => {
@@ -111,28 +69,42 @@ export default function NewBlogPageClient() {
       const fetchBlog = async () => {
         try {
           setFetching(true);
-          const response = await fetch(`${API_BASE_URL}/blogs/${editId}`);
+          const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
+          const response = await fetch(`${API_BASE_URL}/main-blogs/${editId}`, {
+            headers: {
+              Authorization: `Bearer ${token || ''}`,
+            },
+          });
           const data = await response.json();
           
-          if (data.success && data.data.blog) {
+          if (data.success && data.data && data.data.blog) {
             const blog = data.data.blog;
-            setTitle(blog.title || '');
-            setCategory(blog.category?._id || blog.category || '');
-            setContent(blog.content || '');
-            setPublished(blog.published || false);
+            setBlogTitle(blog.blogTitle || '');
+            setDescription(blog.description || '');
+            setIsPublished(blog.isPublished || false);
+            // Normalize image URL for preview
+            if (blog.image) {
+              const imagePath = blog.image.startsWith('/') ? blog.image : `/${blog.image}`;
+              const baseUrl = API_IMAGE_BASE_URL.endsWith('/') 
+                ? API_IMAGE_BASE_URL.slice(0, -1) 
+                : API_IMAGE_BASE_URL;
+              setImagePreview(`${baseUrl}${imagePath}`);
+            } else {
+              setImagePreview(null);
+            }
             // SEO fields
-            setMetaTitle(blog.metaTitle || '');
-            setMetaDescription(blog.metaDescription || '');
+            setSeoTitle(blog.seoTitle || '');
+            setSeoDescription(blog.seoDescription || '');
             setSlug(blog.slug || '');
             setCanonicalUrl(blog.canonicalUrl || '');
           } else {
             showNotification('Failed to fetch blog details', 'error');
-            router.push('/dashboard/blogs');
+            router.push('/dashboard/main-blogs');
           }
         } catch (error) {
           logger.error('Error fetching blog:', error);
           showNotification('Error fetching blog details', 'error');
-          router.push('/dashboard/blogs');
+          router.push('/dashboard/main-blogs');
         } finally {
           setFetching(false);
         }
@@ -147,52 +119,62 @@ export default function NewBlogPageClient() {
     setTimeout(() => setNotification(null), 3000);
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!title.trim()) {
+    if (!blogTitle.trim()) {
       showNotification('Please enter a blog title', 'error');
       return;
     }
     
-    if (!category) {
-      showNotification('Please select a category', 'error');
-      return;
-    }
-    
-    if (!content.trim() || content === '<p><br></p>') {
-      showNotification('Please enter blog content', 'error');
+    if (!description.trim() || description === '<p><br></p>') {
+      showNotification('Please enter blog description', 'error');
       return;
     }
 
     try {
       setLoading(true);
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
+      const formDataToSend = new FormData();
       
-      const submitData = {
-        title: title.trim(),
-        category,
-        content,
-        published,
-        // SEO fields
-        metaTitle: metaTitle.trim() || undefined,
-        metaDescription: metaDescription.trim() || undefined,
-        slug: slug.trim() || undefined,
-        canonicalUrl: canonicalUrl.trim() || undefined,
-      };
+      formDataToSend.append('blogTitle', blogTitle.trim());
+      formDataToSend.append('description', description);
+      formDataToSend.append('isPublished', isPublished);
+      
+      // SEO fields
+      if (seoTitle) formDataToSend.append('seoTitle', seoTitle.trim());
+      if (seoDescription) formDataToSend.append('seoDescription', seoDescription.trim());
+      if (slug) formDataToSend.append('slug', slug.trim());
+      if (canonicalUrl) formDataToSend.append('canonicalUrl', canonicalUrl.trim());
+      
+      if (image) {
+        formDataToSend.append('image', image);
+      }
 
       const url = editId
-        ? `${API_BASE_URL}/blogs/${editId}`
-        : `${API_BASE_URL}/blogs`;
+        ? `${API_BASE_URL}/main-blogs/${editId}`
+        : `${API_BASE_URL}/main-blogs`;
       
       const method = editId ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
+          Authorization: `Bearer ${token || ''}`,
         },
-        body: JSON.stringify(submitData),
+        body: formDataToSend,
       });
 
       const data = await response.json();
@@ -203,7 +185,7 @@ export default function NewBlogPageClient() {
           'success'
         );
         setTimeout(() => {
-          router.push('/dashboard/blogs');
+          router.push('/dashboard/main-blogs');
         }, 1500);
       } else {
         showNotification(data.message || 'Failed to save blog', 'error');
@@ -277,15 +259,15 @@ export default function NewBlogPageClient() {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">
             <button
-              onClick={() => router.push('/dashboard/blogs')}
+              onClick={() => router.push('/dashboard/main-blogs')}
               className="flex items-center space-x-2 text-gray-600 hover:text-[#1a2b5c] transition-colors"
             >
               <FaArrowLeft className="w-5 h-5" />
-              <span className="hidden sm:inline">Back to Blogs</span>
+              <span className="hidden sm:inline">Back to Main Blogs</span>
             </button>
             <div className="h-6 w-px bg-gray-300 hidden sm:block"></div>
             <h1 className="text-2xl sm:text-3xl font-bold text-[#1a2b5c]">
-              {editId ? 'Edit Blog' : 'Create New Blog'}
+              {editId ? 'Edit Main Blog' : 'Create New Main Blog'}
             </h1>
           </div>
         </div>
@@ -299,8 +281,8 @@ export default function NewBlogPageClient() {
             </label>
             <input
               type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={blogTitle}
+              onChange={(e) => setBlogTitle(e.target.value)}
               placeholder="Enter blog title..."
               required
               className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent transition-all"
@@ -308,41 +290,20 @@ export default function NewBlogPageClient() {
             />
           </div>
 
-          {/* Category Dropdown */}
+          {/* React Quill Editor for Description */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Category *
-            </label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              required
-              className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent bg-white transition-all appearance-none cursor-pointer"
-              style={{ fontFamily: 'Roboto, sans-serif' }}
-            >
-              <option value="">Select Category</option>
-              {categories.map((cat) => (
-                <option key={cat._id} value={cat._id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* React Quill Editor */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Blog Content *
+              Description *
             </label>
             {quillMounted && (
               <div className="bg-white border border-gray-300 rounded-lg overflow-hidden">
                 <ReactQuill
                   theme="snow"
-                  value={content}
-                  onChange={setContent}
+                  value={description}
+                  onChange={setDescription}
                   modules={quillModules}
                   formats={quillFormats}
-                  placeholder="Start writing your blog content..."
+                  placeholder="Start writing your blog description..."
                   className="blog-editor"
                   style={{
                     minHeight: '400px',
@@ -358,6 +319,30 @@ export default function NewBlogPageClient() {
             )}
           </div>
 
+          {/* Image Upload */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Image
+            </label>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent transition-all"
+              style={{ fontFamily: 'Roboto, sans-serif' }}
+            />
+            {imagePreview && (
+              <div className="mt-4">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="w-32 h-32 object-cover rounded-lg border border-gray-300"
+                />
+              </div>
+            )}
+          </div>
+
           {/* Published Toggle */}
           <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
             <div>
@@ -365,19 +350,19 @@ export default function NewBlogPageClient() {
                 Published
               </label>
               <p className="text-xs text-gray-500">
-                {published ? 'This blog will be visible to all users' : 'This blog will be saved as draft'}
+                {isPublished ? 'This blog will be visible to all users' : 'This blog will be saved as draft'}
               </p>
             </div>
             <button
               type="button"
-              onClick={() => setPublished(!published)}
+              onClick={() => setIsPublished(!isPublished)}
               className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#1a2b5c] focus:ring-offset-2 ${
-                published ? 'bg-[#1a2b5c]' : 'bg-gray-300'
+                isPublished ? 'bg-[#1a2b5c]' : 'bg-gray-300'
               }`}
             >
               <span
                 className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
-                  published ? 'translate-x-7' : 'translate-x-1'
+                  isPublished ? 'translate-x-7' : 'translate-x-1'
                 }`}
               />
             </button>
@@ -393,8 +378,8 @@ export default function NewBlogPageClient() {
                 </label>
                 <input
                   type="text"
-                  value={metaTitle}
-                  onChange={(e) => setMetaTitle(e.target.value)}
+                  value={seoTitle}
+                  onChange={(e) => setSeoTitle(e.target.value)}
                   placeholder="Auto-generated from blog title"
                   className="w-full px-4 py-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent"
                 />
@@ -418,10 +403,10 @@ export default function NewBlogPageClient() {
                   SEO Description (Meta Description)
                 </label>
                 <textarea
-                  value={metaDescription}
-                  onChange={(e) => setMetaDescription(e.target.value)}
+                  value={seoDescription}
+                  onChange={(e) => setSeoDescription(e.target.value)}
                   rows={3}
-                  placeholder="Auto-generated from content"
+                  placeholder="Auto-generated from description"
                   className="w-full px-4 py-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent"
                 />
               </div>
@@ -434,7 +419,7 @@ export default function NewBlogPageClient() {
                   type="text"
                   value={canonicalUrl}
                   onChange={(e) => setCanonicalUrl(e.target.value)}
-                  placeholder="https://convoytravels.pk/blog/..."
+                  placeholder="https://convoytravels.pk/main-blog/..."
                   className="w-full px-4 py-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent"
                 />
                 <p className="text-xs text-gray-500 mt-1">
@@ -448,7 +433,7 @@ export default function NewBlogPageClient() {
           <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-4 border-t border-gray-200">
             <button
               type="button"
-              onClick={() => router.push('/dashboard/blogs')}
+              onClick={() => router.push('/dashboard/main-blogs')}
               className="px-6 py-3 text-sm font-medium btn-gradient-outline text-gray-700 rounded-lg relative z-10"
             >
               Cancel
@@ -546,4 +531,3 @@ export default function NewBlogPageClient() {
     </div>
   );
 }
-

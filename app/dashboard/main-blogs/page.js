@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   FaPlus,
   FaSearch,
@@ -9,7 +10,6 @@ import {
   FaSpinner,
   FaCheckCircle,
   FaExclamationCircle,
-  FaTimes,
   FaImage,
   FaEye,
   FaEyeSlash,
@@ -17,38 +17,14 @@ import {
 import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
 import { logger } from '@/utils/logger';
 
-// Auto-generate slug from title
-const generateSlugFromTitle = (title) => {
-  if (!title) return '';
-  return title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
-};
-
 export default function MainBlogsPage() {
+  const router = useRouter();
   const [blogs, setBlogs] = useState([]);
   const [filteredBlogs, setFilteredBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [notification, setNotification] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [editingBlog, setEditingBlog] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
-  const fileInputRef = useRef(null);
-  
-  const [formData, setFormData] = useState({
-    blogTitle: '',
-    description: '',
-    isPublished: false,
-    image: null,
-    // SEO fields
-    seoTitle: '',
-    seoDescription: '',
-    slug: '',
-    canonicalUrl: '',
-  });
-  const [imagePreview, setImagePreview] = useState(null);
 
   const showNotification = (message, type = 'success') => {
     setNotification({ message, type });
@@ -99,137 +75,12 @@ export default function MainBlogsPage() {
     setFilteredBlogs(filtered);
   }, [searchTerm, blogs]);
 
-  // Auto-generate slug from blog title
-  useEffect(() => {
-    if (formData.blogTitle && !editingBlog && !formData.slug) {
-      const slug = generateSlugFromTitle(formData.blogTitle);
-      setFormData((prev) => ({
-        ...prev,
-        slug,
-      }));
-    }
-  }, [formData.blogTitle, editingBlog]);
-
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+  const handleCreate = () => {
+    router.push('/dashboard/main-blogs/new');
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData((prev) => ({ ...prev, image: file }));
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const resetForm = () => {
-    setFormData({
-      blogTitle: '',
-      description: '',
-      isPublished: false,
-      image: null,
-      // SEO fields
-      seoTitle: '',
-      seoDescription: '',
-      slug: '',
-      canonicalUrl: '',
-    });
-    setImagePreview(null);
-    setEditingBlog(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
-  const handleOpenModal = (blog = null) => {
-    if (blog) {
-      setEditingBlog(blog);
-      setFormData({
-        blogTitle: blog.blogTitle || '',
-        description: blog.description || '',
-        isPublished: blog.isPublished || false,
-        image: null,
-        // SEO fields
-        seoTitle: blog.seoTitle || '',
-        seoDescription: blog.seoDescription || '',
-        slug: blog.slug || '',
-        canonicalUrl: blog.canonicalUrl || '',
-      });
-      setImagePreview(blog.image ? `${API_IMAGE_BASE_URL}${blog.image}` : null);
-    } else {
-      resetForm();
-    }
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    resetForm();
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!formData.blogTitle.trim() || !formData.description.trim()) {
-      showNotification('Please fill in all required fields', 'error');
-      return;
-    }
-
-    try {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
-      const formDataToSend = new FormData();
-      
-      formDataToSend.append('blogTitle', formData.blogTitle);
-      formDataToSend.append('description', formData.description);
-      formDataToSend.append('isPublished', formData.isPublished);
-      
-      // SEO fields
-      if (formData.seoTitle) formDataToSend.append('seoTitle', formData.seoTitle);
-      if (formData.seoDescription) formDataToSend.append('seoDescription', formData.seoDescription);
-      if (formData.slug) formDataToSend.append('slug', formData.slug);
-      if (formData.canonicalUrl) formDataToSend.append('canonicalUrl', formData.canonicalUrl);
-      
-      if (formData.image) {
-        formDataToSend.append('image', formData.image);
-      }
-
-      const url = editingBlog
-        ? `${API_BASE_URL}/main-blogs/${editingBlog._id}`
-        : `${API_BASE_URL}/main-blogs`;
-      
-      const method = editingBlog ? 'PUT' : 'POST';
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          Authorization: `Bearer ${token || ''}`,
-        },
-        body: formDataToSend,
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        showNotification(
-          editingBlog ? 'Blog updated successfully' : 'Blog created successfully'
-        );
-        handleCloseModal();
-        fetchBlogs();
-      } else {
-        showNotification(data.message || 'Operation failed', 'error');
-      }
-    } catch (error) {
-      showNotification('Error saving blog', 'error');
-      logger.error('Error:', error);
-    }
+  const handleEdit = (blog) => {
+    router.push(`/dashboard/main-blogs/new?edit=${blog._id}`);
   };
 
   const handleDelete = async (id) => {
@@ -306,7 +157,7 @@ export default function MainBlogsPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <h1 className="text-2xl sm:text-3xl font-bold text-[#1a2b5c]">Main Blogs</h1>
         <button
-          onClick={() => handleOpenModal()}
+          onClick={handleCreate}
           className="btn-gradient-primary text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 relative z-10"
         >
           <FaPlus /> Add Blog
@@ -381,14 +232,28 @@ export default function MainBlogsPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredBlogs.map((blog) => (
+                {filteredBlogs.map((blog) => {
+                  // Normalize image URL - handle paths that may or may not start with /
+                  let imageUrl = null;
+                  if (blog.image) {
+                    const imagePath = blog.image.startsWith('/') ? blog.image : `/${blog.image}`;
+                    const baseUrl = API_IMAGE_BASE_URL.endsWith('/') 
+                      ? API_IMAGE_BASE_URL.slice(0, -1) 
+                      : API_IMAGE_BASE_URL;
+                    imageUrl = `${baseUrl}${imagePath}`;
+                  }
+                  
+                  return (
                   <tr key={blog._id} className="hover:bg-gray-50">
                     <td className="px-4 py-3 whitespace-nowrap">
-                      {blog.image ? (
+                      {imageUrl ? (
                         <img
-                          src={`${API_IMAGE_BASE_URL}${blog.image}`}
-                          alt={blog.blogTitle}
+                          src={imageUrl}
+                          alt={blog.blogTitle || 'Blog image'}
                           className="w-16 h-16 object-cover rounded"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                          }}
                         />
                       ) : (
                         <div className="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
@@ -425,7 +290,7 @@ export default function MainBlogsPage() {
                     <td className="px-4 py-3 whitespace-nowrap text-sm font-medium">
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => handleOpenModal(blog)}
+                          onClick={() => handleEdit(blog)}
                           className="text-blue-600 hover:text-blue-900"
                         >
                           <FaEdit />
@@ -444,176 +309,10 @@ export default function MainBlogsPage() {
                       </div>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
-          </div>
-        </div>
-      )}
-
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-[#1a2b5c]">
-                  {editingBlog ? 'Edit Blog' : 'Add New Blog'}
-                </h2>
-                <button
-                  onClick={handleCloseModal}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <FaTimes />
-                </button>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Blog Title *
-                  </label>
-                  <input
-                    type="text"
-                    name="blogTitle"
-                    value={formData.blogTitle}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Description *
-                  </label>
-                  <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    required
-                    rows={5}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Image
-                  </label>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
-                  />
-                  {imagePreview && (
-                    <div className="mt-2">
-                      <img
-                        src={imagePreview}
-                        alt="Preview"
-                        className="w-32 h-32 object-cover rounded"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    name="isPublished"
-                    checked={formData.isPublished}
-                    onChange={handleInputChange}
-                    className="mr-2"
-                  />
-                  <label className="text-sm font-medium text-gray-700">
-                    Publish
-                  </label>
-                </div>
-
-                {/* SEO Section */}
-                <div className="border-t pt-4 mt-4">
-                  <h3 className="text-sm font-bold text-gray-800 mb-3">SEO Settings (Optional)</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">
-                        SEO Title
-                      </label>
-                      <input
-                        type="text"
-                        name="seoTitle"
-                        value={formData.seoTitle}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
-                        placeholder="Auto-generated from blog title"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">
-                        Slug
-                      </label>
-                      <input
-                        type="text"
-                        name="slug"
-                        value={formData.slug}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
-                        placeholder="Auto-generated from blog title"
-                      />
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">
-                        SEO Description
-                      </label>
-                      <textarea
-                        name="seoDescription"
-                        value={formData.seoDescription}
-                        onChange={handleInputChange}
-                        rows={2}
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
-                        placeholder="Auto-generated from description"
-                      />
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <label className="block text-xs font-semibold text-gray-700 mb-1">
-                        Canonical URL
-                      </label>
-                      <input
-                        type="text"
-                        name="canonicalUrl"
-                        value={formData.canonicalUrl}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c]"
-                        placeholder="https://convoytravels.pk/main-blog/..."
-                      />
-                      <p className="text-xs text-gray-500 mt-1">
-                        Leave empty to auto-generate from slug
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex justify-end gap-3 pt-4">
-                  <button
-                    type="button"
-                    onClick={handleCloseModal}
-                    className="px-4 py-2 btn-gradient-outline text-gray-700 rounded-lg font-semibold relative z-10"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 btn-gradient-primary text-white rounded-lg font-semibold relative z-10"
-                  >
-                    {editingBlog ? 'Update' : 'Create'}
-                  </button>
-                </div>
-              </form>
-            </div>
           </div>
         </div>
       )}
