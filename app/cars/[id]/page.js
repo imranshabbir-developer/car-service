@@ -279,21 +279,21 @@ export default function CarDetailPage() {
       totalDays = diffDays > 0 ? diffDays : 1;
     }
     
-    // Base rate per day
+    // Base car price per day
     const baseRatePerDay = car.priceNumber || 0;
     
-    // Extra charge per day based on selection
-    let extraChargePerDay = 0;
-    if (formData.selfDriver) {
-      extraChargePerDay += car.selfDriverPrice || 500;
-    }
-    if (formData.outOfStation) {
-      // Always add 1000 rupees when out of station is selected
-      extraChargePerDay += 1000;
-    }
+    // Calculate each component separately and multiply by days
+    // Base car price × days
+    const baseTotal = baseRatePerDay * totalDays;
     
-    // Calculate total: (base rate + extra charge) * number of days
-    const total = (baseRatePerDay + extraChargePerDay) * totalDays;
+    // Self without driver: Rs 500 per day × days (if selected)
+    const selfDriverTotal = formData.selfDriver ? (car.selfDriverPrice || 500) * totalDays : 0;
+    
+    // Out of station: Rs 1000 per day × days (if selected)
+    const outOfStationTotal = formData.outOfStation ? 1000 * totalDays : 0;
+    
+    // Total = sum of all components
+    const total = baseTotal + selfDriverTotal + outOfStationTotal;
     return total;
   }, [formData.selfDriver, formData.outOfStation, formData.pickupDate, formData.dropoffDate, car]);
   
