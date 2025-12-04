@@ -281,6 +281,9 @@ export default function Navbar() {
           <NavLinkHover href="/travel" className="nav-travel">
             Travel
           </NavLinkHover>
+          <NavLinkHover href="/blogs" className="nav-blogs">
+            Blogs
+          </NavLinkHover>
           <NavLinkHover href="/contact" className="nav-contact">
             Contact Us
           </NavLinkHover>
@@ -410,6 +413,13 @@ export default function Navbar() {
             onClick={() => setMenuOpen(false)}
           >
             Travel
+          </Link>
+          <Link
+            href="/blogs"
+            className="px-4 py-3 rounded-lg hover:bg-gray-100 hover:text-[#0d1b2a] transition-all duration-200 text-gray-700 hover:translate-x-1"
+            onClick={() => setMenuOpen(false)}
+          >
+            Blogs
           </Link>
           <Link
             href="/contact"

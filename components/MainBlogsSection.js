@@ -17,9 +17,14 @@ export default function MainBlogsSection() {
         const data = await response.json();
         
         if (data.success && data.data && data.data.blogs) {
-          // Get only published blogs and limit to 3 for home page
+          // Get only published blogs, sort by date (most recent first), and limit to 3 for home page
           const publishedBlogs = data.data.blogs
             .filter(blog => blog.isPublished)
+            .sort((a, b) => {
+              const dateA = new Date(a.createdAt || a.updatedAt || 0);
+              const dateB = new Date(b.createdAt || b.updatedAt || 0);
+              return dateB - dateA; // Most recent first
+            })
             .slice(0, 3);
           setBlogs(publishedBlogs);
         }

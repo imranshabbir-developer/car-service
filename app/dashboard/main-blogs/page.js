@@ -25,6 +25,8 @@ export default function MainBlogsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [notification, setNotification] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const blogsPerPage = 10;
 
   const showNotification = (message, type = 'success') => {
     setNotification({ message, type });
@@ -73,6 +75,7 @@ export default function MainBlogsPage() {
       );
     }
     setFilteredBlogs(filtered);
+    setCurrentPage(1); // Reset to first page when search changes
   }, [searchTerm, blogs]);
 
   const handleCreate = () => {
@@ -149,6 +152,28 @@ export default function MainBlogsPage() {
       month: 'short',
       day: 'numeric',
     });
+  };
+
+  // Strip HTML tags and get plain text for description
+  const stripHtmlTags = (html) => {
+    if (!html || typeof html !== 'string') return '';
+    if (typeof document === 'undefined') {
+      // Fallback for SSR: simple regex to remove HTML tags
+      return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+    }
+    const tmp = document.createElement('DIV');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+  };
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredBlogs.length / blogsPerPage);
+  const startIndex = (currentPage - 1) * blogsPerPage;
+  const endIndex = startIndex + blogsPerPage;
+  const currentBlogs = filteredBlogs.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -232,7 +257,7 @@ export default function MainBlogsPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredBlogs.map((blog) => {
+                {currentBlogs.map((blog) => {
                   // Normalize image URL - handle paths that may or may not start with /
                   let imageUrl = null;
                   if (blog.image) {
@@ -268,7 +293,7 @@ export default function MainBlogsPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="text-sm text-gray-500 max-w-md truncate">
-                        {blog.description}
+                        {stripHtmlTags(blog.description)}
                       </div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
@@ -314,6 +339,70 @@ export default function MainBlogsPage() {
               </tbody>
             </table>
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center gap-2 mt-6 mb-4">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  currentPage === 1
+                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    : 'bg-[#1a2b5c] text-white hover:bg-[#132045]'
+                }`}
+              >
+                Previous
+              </button>
+              
+              <div className="flex gap-2">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                  // Show first page, last page, current page, and pages around current
+                  if (
+                    page === 1 ||
+                    page === totalPages ||
+                    (page >= currentPage - 1 && page <= currentPage + 1)
+                  ) {
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => handlePageChange(page)}
+                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                          currentPage === page
+                            ? 'bg-[#1a2b5c] text-white'
+                            : 'bg-white text-[#1a2b5c] border border-gray-300 hover:bg-gray-50'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  } else if (
+                    page === currentPage - 2 ||
+                    page === currentPage + 2
+                  ) {
+                    return (
+                      <span key={page} className="px-2 text-gray-400">
+                        ...
+                      </span>
+                    );
+                  }
+                  return null;
+                })}
+              </div>
+              
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  currentPage === totalPages
+                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    : 'bg-[#1a2b5c] text-white hover:bg-[#132045]'
+                }`}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
