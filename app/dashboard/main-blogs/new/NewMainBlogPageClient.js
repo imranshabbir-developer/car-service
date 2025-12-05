@@ -332,6 +332,9 @@ export default function NewMainBlogPageClient() {
               className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a2b5c] focus:border-transparent transition-all"
               style={{ fontFamily: 'Roboto, sans-serif' }}
             />
+            <p className="text-xs text-gray-500 mt-2">
+              Accepted formats: JPG, JPEG, PNG, GIF, WebP, SVG, ICO. Maximum file size: 5MB
+            </p>
             {imagePreview && (
               <div className="mt-4">
                 <img
