@@ -375,15 +375,6 @@ export default function CarDetailPage() {
       return;
     }
 
-    if (!formData.selfDriver && !formData.outOfStation) {
-      setBookingFeedback({
-        type: 'error',
-        message: 'Please select at least one option (Self Without Driver or Out of Station).',
-      });
-      setActiveTab('booking');
-      return;
-    }
-
     if (!formData.name || !formData.email || !formData.phone || !formData.address) {
       setBookingFeedback({
         type: 'error',
@@ -393,7 +384,14 @@ export default function CarDetailPage() {
       return;
     }
 
-    const bookingOption = formData.outOfStation ? 'out_of_station' : 'self_without_driver';
+    // Determine booking option - both options are optional
+    // If neither is selected, use 'standard' (base price only, no extra charges)
+    let bookingOption = 'standard';
+    if (formData.outOfStation) {
+      bookingOption = 'out_of_station';
+    } else if (formData.selfDriver) {
+      bookingOption = 'self_without_driver';
+    }
 
     // Format dates with time for backend (ISO string format)
     const pickupDateISO = formData.pickupDate instanceof Date 
