@@ -52,6 +52,7 @@ export default function NewBlogPageClient() {
         .replace(/(^-|-$)/g, '');
       setSlug(generatedSlug);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title, editId]);
 
   // Fetch categories

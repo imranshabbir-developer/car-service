@@ -135,6 +135,7 @@ export default function CategoriesPage() {
         slug,
       }));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.name, editingCategory]);
 
   // Handle form input change
