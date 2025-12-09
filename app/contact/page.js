@@ -47,13 +47,38 @@ export default function ContactPage() {
       setIsSubmitting(true);
       setNotification(null);
 
-      const response = await fetch(`${API_BASE_URL}/contact-queries`, {
+      const apiUrl = `${API_BASE_URL}/contact-queries`;
+      
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
+
+      // Check if response is ok before parsing JSON
+      if (!response.ok) {
+        // Try to parse error response
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch {
+          // If JSON parsing fails, use status text
+          errorData = {
+            success: false,
+            message: `Server error: ${response.status} ${response.statusText}`,
+          };
+        }
+        
+        // Handle 404 specifically
+        if (response.status === 404) {
+          showNotification('Contact form endpoint not found. Please contact support directly.', 'error');
+        } else {
+          showNotification(errorData.message || `Failed to send message (${response.status}). Please try again.`, 'error');
+        }
+        return;
+      }
 
       const data = await response.json();
 
@@ -70,8 +95,12 @@ export default function ContactPage() {
         showNotification(data.message || 'Failed to send message. Please try again.', 'error');
       }
     } catch (error) {
-      console.error('Error submitting contact form:', error);
-      showNotification('Something went wrong. Please try again later.', 'error');
+      // Network errors or other fetch errors
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        showNotification('Unable to connect to server. Please check your internet connection and try again.', 'error');
+      } else {
+        showNotification('Something went wrong. Please try again later.', 'error');
+      }
     } finally {
       setIsSubmitting(false);
     }
