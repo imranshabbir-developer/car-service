@@ -22,6 +22,7 @@ import {
   FaChevronRight,
   FaUser,
   FaLayerGroup,
+  FaComments,
 } from 'react-icons/fa';
 import { API_BASE_URL } from '@/config/api';
 import { logger } from '@/utils/logger';
@@ -176,6 +177,7 @@ export default function DashboardLayout({ children }) {
     { icon: FaQuestionCircle, label: 'Questions', path: '/dashboard/questions', badge: null },
     { icon: FaBlog, label: 'Main Blogs', path: '/dashboard/main-blogs', badge: null },
     { icon: FaLayerGroup, label: 'Special Sections', path: '/dashboard/special-sections', badge: null },
+    { icon: FaComments, label: 'Contact-Queries', path: '/dashboard/contact-queries', badge: null },
   ];
 
   const isActive = (path) => {
