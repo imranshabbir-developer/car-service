@@ -176,6 +176,7 @@ export default function CarsPage() {
         slug,
       }));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.name, editingCar]);
 
   // Handle form input change

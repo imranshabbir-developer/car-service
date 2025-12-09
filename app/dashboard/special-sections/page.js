@@ -75,6 +75,7 @@ export default function SpecialSectionsPage() {
     if (typeof window !== 'undefined') {
       fetchSections();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Filter sections based on search term

@@ -117,7 +117,6 @@ export default function Navbar() {
 
       try {
         const url = `${API_BASE_URL}/categories`;
-        console.log("Fetching categories from:", url);
 
         const controller = new AbortController();
         let timeoutId = setTimeout(() => {
@@ -132,33 +131,22 @@ export default function Navbar() {
           clearTimeout(timeoutId);
 
           if (!response.ok) {
-            console.error(
-              "Categories API error:",
-              response.status,
-              response.statusText
-            );
+            // Silently fail - categories are not critical for page load
             return;
           }
 
           const data = await response.json();
-          console.log("Categories API response:", data);
 
           if (data.success && data.data && data.data.categories) {
-            console.log("Setting categories:", data.data.categories.length);
             setCategories(data.data.categories);
-          } else {
-            console.warn("Categories response structure unexpected:", data);
           }
         } catch (fetchError) {
           clearTimeout(timeoutId);
           throw fetchError;
         }
       } catch (error) {
-        if (error.name === "AbortError") {
-          console.error("Categories fetch timeout. Server may be down.");
-        } else {
-          console.error("Error fetching categories:", error);
-        }
+        // Silently handle errors - categories are not critical for page load
+        // Errors are logged server-side if needed
       }
     };
 
