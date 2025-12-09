@@ -1,6 +1,7 @@
 import { buildDynamicMetadata, extractSeoData } from "@/utils/dynamicSeo";
 import { API_BASE_URL } from "@/config/api";
 import { isObjectId } from "@/utils/slug";
+import { notFound } from "next/navigation";
 
 // Fetch main blog data for metadata
 async function getMainBlogForMetadata(param) {
@@ -12,7 +13,7 @@ async function getMainBlogForMetadata(param) {
       const response = await fetch(`${API_BASE_URL}/main-blogs/${param}`, {
         next: { revalidate: 300 },
       });
-      if (!response.ok) return null;
+      if (!response.ok || response.status === 404) return null;
       const data = await response.json();
       return data?.data?.blog || null;
     }
@@ -21,7 +22,7 @@ async function getMainBlogForMetadata(param) {
     const response = await fetch(`${API_BASE_URL}/main-blogs/slug/${param}`, {
       next: { revalidate: 300 },
     });
-    if (!response.ok) return null;
+    if (!response.ok || response.status === 404) return null;
     const data = await response.json();
     return data?.data?.blog || null;
   } catch (error) {
@@ -38,9 +39,14 @@ export async function generateMetadata({ params }) {
   const blog = await getMainBlogForMetadata(paramValue);
   
   if (!blog) {
+    // Return proper 404 metadata
     return {
       title: 'Blog Post Not Found | Convoy Travels',
       description: 'The blog post you are looking for could not be found.',
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
 
@@ -66,7 +72,17 @@ export async function generateMetadata({ params }) {
   });
 }
 
-export default function MainBlogDetailLayout({ children }) {
+export default async function MainBlogDetailLayout({ children, params }) {
+  const resolvedParams = await params;
+  const paramValue = resolvedParams?.slug || "";
+  
+  // Check if blog exists - if not, trigger proper 404
+  const blog = await getMainBlogForMetadata(paramValue);
+  
+  if (!blog) {
+    notFound();
+  }
+  
   return <>{children}</>;
 }
 
