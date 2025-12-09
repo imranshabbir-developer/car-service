@@ -32,6 +32,12 @@ export default function RootLayout({ children }) {
           name="google-site-verification"
           content="rnWeToOa_ED1J9NwEYe6omABuuJ4s2-dudf1JVJmM0M"
         />
+        {/* Favicon Links for Better Google Indexing */}
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico" />
       </head>
       <body suppressHydrationWarning>
         {/* Google Analytics */}
