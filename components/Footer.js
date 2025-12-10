@@ -101,21 +101,30 @@ export default function Footer() {
             Vehicle Types
           </h3>
           <ul className="space-y-3 sm:space-y-4 text-gray-300 font-semibold">
-            {vehicleCategories.map((item, index) => (
-              <li key={index}>
-                <Link
-                  href={`/vehicle-types?category=${encodeURIComponent(item)}`}
-                  className="flex items-center justify-center sm:justify-start space-x-2 cursor-pointer group hover:text-white transition-all"
-                >
-                  <span className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-                    <FaArrowRight size={12} />
-                  </span>
-                  <span className="group-hover:translate-x-2 transition-transform duration-300">
-                    {item}
-                  </span>
-                </Link>
-              </li>
-            ))}
+            {vehicleCategories.map((item, index) => {
+              // Convert category name to slug format (same logic as middleware)
+              const slug = item
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/(^-|-$)/g, '');
+              
+              return (
+                <li key={index}>
+                  <Link
+                    href={`/vehicle-types/${slug}`}
+                    className="flex items-center justify-center sm:justify-start space-x-2 cursor-pointer group hover:text-white transition-all"
+                  >
+                    <span className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                      <FaArrowRight size={12} />
+                    </span>
+                    <span className="group-hover:translate-x-2 transition-transform duration-300">
+                      {item}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
 
@@ -125,21 +134,36 @@ export default function Footer() {
             Popular Makes
           </h3>
           <ul className="space-y-3 sm:space-y-4 text-gray-300 font-semibold">
-            {POPULAR_MAKES.map((item, index) => (
-              <li key={index}>
-                <Link
-                  href={`/brands/${encodeURIComponent(item)}`}
-                  className="flex items-center justify-center sm:justify-start space-x-2 cursor-pointer group hover:text-white transition-all"
-                >
-                  <span className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-                    <FaArrowRight size={12} />
-                  </span>
-                  <span className="group-hover:translate-x-2 transition-transform duration-300">
-                    {item}
-                  </span>
-                </Link>
-              </li>
-            ))}
+            {POPULAR_MAKES.map((item, index) => {
+              // "Vans & Buses" is a vehicle category, not a brand, so link to vehicle-types
+              let href;
+              if (item === "Vans & Buses") {
+                const slug = item
+                  .toLowerCase()
+                  .trim()
+                  .replace(/[^a-z0-9]+/g, '-')
+                  .replace(/(^-|-$)/g, '');
+                href = `/vehicle-types/${slug}`;
+              } else {
+                href = `/brands/${encodeURIComponent(item)}`;
+              }
+              
+              return (
+                <li key={index}>
+                  <Link
+                    href={href}
+                    className="flex items-center justify-center sm:justify-start space-x-2 cursor-pointer group hover:text-white transition-all"
+                  >
+                    <span className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                      <FaArrowRight size={12} />
+                    </span>
+                    <span className="group-hover:translate-x-2 transition-transform duration-300">
+                      {item}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
 

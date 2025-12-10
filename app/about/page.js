@@ -103,11 +103,6 @@ export default function AboutPage() {
                 </span>
               </li>
             </ul>
-
-            {/* Discover More Button */}
-            <button className="bg-[#1e2d60] text-white px-6 sm:px-8 md:px-10 py-3 sm:py-3.5 md:py-4 rounded-lg sm:rounded-xl text-sm sm:text-base md:text-lg font-medium hover:bg-[#1a2650] transition-colors duration-300 w-full sm:w-auto self-start">
-              Discover More
-            </button>
           </div>
         </div>
       </div>
