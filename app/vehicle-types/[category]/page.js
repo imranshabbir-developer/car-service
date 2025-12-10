@@ -4,6 +4,16 @@ import VehicleTypesContent from '../VehicleTypesContent';
 import { buildDynamicMetadata, extractSeoData } from '@/utils/dynamicSeo';
 import { API_BASE_URL } from '@/config/api';
 
+// Helper function to normalize category name to slug (same logic as middleware)
+function normalizeToSlug(name) {
+  if (!name) return '';
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
 // Fetch category by slug
 async function getCategoryBySlug(slug) {
   try {
@@ -14,7 +24,13 @@ async function getCategoryBySlug(slug) {
     
     if (data.success && data.data?.categories) {
       return data.data.categories.find(
-        (cat) => cat.slug === slug || cat.name.toLowerCase().replace(/\s+/g, '-') === slug
+        (cat) => {
+          // First try exact slug match
+          if (cat.slug === slug) return true;
+          // Then try normalizing the category name to match the slug
+          const normalizedName = normalizeToSlug(cat.name);
+          return normalizedName === slug;
+        }
       );
     }
     return null;

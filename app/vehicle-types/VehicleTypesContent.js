@@ -175,7 +175,11 @@ export default function VehicleTypesContent({ searchParams: propSearchParams }) 
     // Filter by category if provided (and not allCars)
     if (category && !allCars) {
       filtered = filtered.filter(
-        (car) => car.category?.toLowerCase() === category.toLowerCase()
+        (car) => {
+          const carCategory = car.category?.toLowerCase().trim();
+          const filterCategory = category.toLowerCase().trim();
+          return carCategory === filterCategory;
+        }
       );
     }
 
