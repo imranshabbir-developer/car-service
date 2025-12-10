@@ -293,11 +293,12 @@ export default function CarsPage() {
           ? car.gallery 
           : (car.carPhoto ? [car.carPhoto] : []);
         
-        const existingGalleryUrls = gallery.map((imgPath) => ({
-          url: imgPath.startsWith('http') ? imgPath : `${API_IMAGE_BASE_URL}${imgPath}`,
-          isNew: false,
-          path: imgPath,
-        }));
+        const existingGalleryUrls = gallery.map((imgPath) => {
+          if (imgPath.startsWith('http')) return { url: imgPath, isNew: false, path: imgPath };
+          const photoPath = imgPath.startsWith('/') ? imgPath : `/${imgPath}`;
+          const baseUrl = API_IMAGE_BASE_URL.endsWith('/') ? API_IMAGE_BASE_URL.slice(0, -1) : API_IMAGE_BASE_URL;
+          return { url: `${baseUrl}${photoPath}`, isNew: false, path: imgPath };
+        });
         
         setImagePreviews(existingGalleryUrls);
         
@@ -571,7 +572,11 @@ export default function CarsPage() {
                         <td className="py-3 px-2">
                           {car.carPhoto ? (
                             <img
-                              src={`${API_IMAGE_BASE_URL}${car.carPhoto}`}
+                              src={(() => {
+                                const photoPath = car.carPhoto.startsWith('/') ? car.carPhoto : `/${car.carPhoto}`;
+                                const baseUrl = API_IMAGE_BASE_URL.endsWith('/') ? API_IMAGE_BASE_URL.slice(0, -1) : API_IMAGE_BASE_URL;
+                                return `${baseUrl}${photoPath}`;
+                              })()}
                               alt={car.name}
                               className="w-12 h-12 object-cover rounded-lg"
                             />
@@ -675,7 +680,11 @@ export default function CarsPage() {
                   <div className="flex justify-center mb-2">
                     <div className="w-20 h-20 border border-gray-300 rounded-lg overflow-hidden">
                       <img
-                        src={`${API_IMAGE_BASE_URL}${editingCar.carPhoto}`}
+                        src={(() => {
+                          const photoPath = editingCar.carPhoto.startsWith('/') ? editingCar.carPhoto : `/${editingCar.carPhoto}`;
+                          const baseUrl = API_IMAGE_BASE_URL.endsWith('/') ? API_IMAGE_BASE_URL.slice(0, -1) : API_IMAGE_BASE_URL;
+                          return `${baseUrl}${photoPath}`;
+                        })()}
                         alt={editingCar.name}
                         className="w-full h-full object-cover"
                       />

@@ -92,8 +92,7 @@ export default function MainBlogDetailPage() {
     );
   }
 
-  // Normalize image URL - handle paths that may or may not start with /
-  let imageUrl = '/placeholder-blog.jpg';
+  let imageUrl = "";
   if (blog.image) {
     const imagePath = blog.image.startsWith('/') ? blog.image : `/${blog.image}`;
     const baseUrl = API_IMAGE_BASE_URL.endsWith('/') 
@@ -150,17 +149,14 @@ export default function MainBlogDetailPage() {
         {imageUrl && (
           <div className="w-full bg-white">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-8">
-              <img
-                src={imageUrl}
-                alt={blog.blogTitle || 'Blog image'}
-                className="w-full h-auto object-cover rounded-lg"
-                loading="eager"
-                onError={(e) => {
-                  if (e.target.src !== '/placeholder-blog.jpg') {
-                    e.target.src = '/placeholder-blog.jpg';
-                  }
-                }}
-              />
+              {imageUrl && (
+                <img
+                  src={imageUrl}
+                  alt={blog.blogTitle || 'Blog image'}
+                  className="w-full h-auto object-cover rounded-lg"
+                  loading="eager"
+                />
+              )}
             </div>
           </div>
         )}

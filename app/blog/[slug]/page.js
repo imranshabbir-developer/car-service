@@ -29,14 +29,14 @@ async function getBlogBySlug(slug) {
     
     return null;
   } catch (error) {
-    console.error('Error fetching blog:', error);
     return null;
   }
 }
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }) {
-  const blog = await getBlogBySlug(params.slug);
+  const { slug } = await params;
+  const blog = await getBlogBySlug(slug);
 
   if (!blog) {
     return {
@@ -55,12 +55,15 @@ export async function generateMetadata({ params }) {
     `${blog.title} - Read more about ${blog.category?.name || 'travel'} on Convoy Travels blog.`;
   
   // Use canonical URL from backend if available, otherwise use backend slug
-  const canonicalSlug = blog.slug || params.slug;
+  const canonicalSlug = blog.slug || slug;
   const canonicalUrl = seoData.canonicalUrl || `https://convoytravels.pk/blog/${canonicalSlug}`;
   
-  const imageUrl = blog.featuredImage 
-    ? `${API_IMAGE_BASE_URL}${blog.featuredImage}`
-    : `${API_IMAGE_BASE_URL}/images/default-blog.jpg`;
+  let imageUrl = "";
+  if (blog.featuredImage) {
+    const imagePath = blog.featuredImage.startsWith('/') ? blog.featuredImage : `/${blog.featuredImage}`;
+    const baseUrl = API_IMAGE_BASE_URL.endsWith('/') ? API_IMAGE_BASE_URL.slice(0, -1) : API_IMAGE_BASE_URL;
+    imageUrl = `${baseUrl}${imagePath}`;
+  }
   
   const publishedTime = blog.createdAt || new Date().toISOString();
   const modifiedTime = blog.updatedAt || publishedTime;
@@ -121,7 +124,8 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function BlogDetailPage({ params }) {
-  const blog = await getBlogBySlug(params.slug);
+  const { slug } = await params;
+  const blog = await getBlogBySlug(slug);
 
   if (!blog) {
     notFound();

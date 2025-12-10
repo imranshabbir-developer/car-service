@@ -26,7 +26,6 @@ async function getMainBlogForMetadata(param) {
     const data = await response.json();
     return data?.data?.blog || null;
   } catch (error) {
-    console.error('Error fetching main blog for metadata:', error);
     return null;
   }
 }

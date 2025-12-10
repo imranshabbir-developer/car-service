@@ -45,7 +45,11 @@ export default function BrandDetailPage() {
             price: `Rs ${car.rentPerDay?.toLocaleString()}`,
             priceFull: `Rs ${car.rentPerDay?.toLocaleString()} /perday`,
             priceNumber: car.rentPerDay,
-            image: car.carPhoto ? `${API_IMAGE_BASE_URL}${car.carPhoto}` : "",
+            image: car.carPhoto ? (() => {
+              const photoPath = car.carPhoto.startsWith('/') ? car.carPhoto : `/${car.carPhoto}`;
+              const baseUrl = API_IMAGE_BASE_URL.endsWith('/') ? API_IMAGE_BASE_URL.slice(0, -1) : API_IMAGE_BASE_URL;
+              return `${baseUrl}${photoPath}`;
+            })() : "",
             location: car.location?.city || "Location not specified",
             category: car.category?.name || "",
             featured: car.status === "available" && car.isAvailable,

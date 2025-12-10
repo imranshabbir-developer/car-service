@@ -19,13 +19,13 @@ async function getCategoryBySlug(slug) {
     }
     return null;
   } catch (error) {
-    console.error('Error fetching category:', error);
     return null;
   }
 }
 
 export async function generateMetadata({ params }) {
-  const category = await getCategoryBySlug(params.category);
+  const { category: categorySlug } = await params;
+  const category = await getCategoryBySlug(categorySlug);
   
   if (!category) {
     return {
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }) {
   const seoData = extractSeoData(category);
   
   // Use backend slug for canonical URL (best practice)
-  const canonicalSlug = category.slug || params.category.toLowerCase().replace(/\s+/g, '-');
+  const canonicalSlug = category.slug || categorySlug.toLowerCase().replace(/\s+/g, '-');
   const canonicalPath = `/vehicle-types/${canonicalSlug}`;
   
   return buildDynamicMetadata({
@@ -54,7 +54,8 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function VehicleTypesCategoryPage({ params }) {
-  const category = await getCategoryBySlug(params.category);
+  const { category: categorySlug } = await params;
+  const category = await getCategoryBySlug(categorySlug);
   
   if (!category) {
     notFound();

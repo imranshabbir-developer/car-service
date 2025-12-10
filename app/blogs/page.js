@@ -133,8 +133,7 @@ export default function BlogsPage() {
               {/* Blog Cards Grid - 4 cards per row */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-12">
                 {currentBlogs.map((blog) => {
-                  // Normalize image URL - handle paths that may or may not start with /
-                  let imageUrl = '/placeholder-blog.jpg';
+                  let imageUrl = "";
                   if (blog.image) {
                     const imagePath = blog.image.startsWith('/') ? blog.image : `/${blog.image}`;
                     const baseUrl = API_IMAGE_BASE_URL.endsWith('/') 

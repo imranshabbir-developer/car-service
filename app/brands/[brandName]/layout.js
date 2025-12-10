@@ -7,7 +7,7 @@ const buildDescription = (brand) =>
   `Book ${brand} sedans, SUVs, and luxury cars in Lahore with Convoy Travels. Compare prices, seats, and chauffeur options, then reserve instantly.`;
 
 export async function generateMetadata({ params }) {
-  const rawBrand = params.brandName;
+  const { brandName: rawBrand } = await params;
   const decodedBrand = decodeURIComponent(rawBrand || "").replace(/-/g, " ").trim();
   const normalizedBrand =
     decodedBrand.length > 0

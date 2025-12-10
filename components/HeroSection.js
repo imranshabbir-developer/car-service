@@ -53,8 +53,6 @@ export default function HeroSection() {
           setBrands(filteredBrands);
         }
       } catch (error) {
-        console.error('Error fetching brands:', error);
-        console.error('API URL:', `${API_BASE_URL}/cars`);
         // Fallback to default brands if API fails
         setBrands(['Honda', 'Hyundai', 'Kia', 'Suzuki', 'Toyota']);
       } finally {
@@ -137,7 +135,6 @@ export default function HeroSection() {
 
       router.push(`/vehicle-types?${params.toString()}`);
     } catch (error) {
-      console.error('Error finding car:', error);
       alert('An error occurred while searching for cars');
       setIsSearching(false);
     }

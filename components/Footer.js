@@ -66,7 +66,7 @@ export default function Footer() {
           setVehicleCategories(filtered);
         }
       } catch (error) {
-        console.error("Error fetching footer categories:", error);
+        // Error handling
       }
     };
 

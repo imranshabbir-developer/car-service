@@ -49,9 +49,6 @@ export default function DynamicSpecialSection({ section }) {
                   src={section.image}
                   alt={section.title || 'Section image'}
                   className="relative rounded-lg w-full max-h-48 md:max-h-56 lg:max-h-64 object-cover shadow-lg"
-                  onError={(e) => {
-                    e.target.src = '/placeholder.jpg';
-                  }}
                 />
               )}
             </div>
@@ -86,9 +83,6 @@ export default function DynamicSpecialSection({ section }) {
                   src={section.image}
                   alt={section.title || 'Section image'}
                   className="relative rounded-lg w-full max-h-48 md:max-h-56 lg:max-h-64 object-cover shadow-lg"
-                  onError={(e) => {
-                    e.target.src = '/placeholder.jpg';
-                  }}
                 />
               )}
             </div>

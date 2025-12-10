@@ -39,7 +39,6 @@ async function getCarForMetadata(param) {
     
     return null;
   } catch (error) {
-    console.error('Error fetching car for metadata:', error);
     return null;
   }
 }

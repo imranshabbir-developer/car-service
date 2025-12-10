@@ -13,26 +13,16 @@ import { generateSlug, isObjectId } from '@/utils/slug';
 import Seo from '@/components/Seo';
 import { extractSeoData } from '@/utils/dynamicSeo';
 
-// Generate SVG placeholder (works offline, no external dependency)
-const generatePlaceholderImage = (text = 'Vehicle Image') => {
-  const svg = `<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg"><rect width="800" height="600" fill="#f3f4f6"/><text x="50%" y="50%" font-family="Arial, sans-serif" font-size="24" fill="#6b7280" text-anchor="middle" dominant-baseline="middle">${text}</text></svg>`;
-  return `data:image/svg+xml;base64,${btoa(svg)}`;
-};
-const PLACEHOLDER_IMAGE = generatePlaceholderImage('Vehicle Image');
-
 const buildImageUrl = (path) => {
   if (!path) {
-    return PLACEHOLDER_IMAGE;
+    return "";
   }
 
   if (/^https?:\/\//i.test(path)) {
     return path;
   }
 
-  // Normalize path - ensure it starts with /
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  
-  // Remove trailing slash from base URL if present
   const baseUrl = API_IMAGE_BASE_URL.endsWith('/') 
     ? API_IMAGE_BASE_URL.slice(0, -1) 
     : API_IMAGE_BASE_URL;
@@ -49,8 +39,7 @@ const transformApiCar = (apiCar) => {
     .map((img) => buildImageUrl(img))
     .filter(Boolean);
 
-  // Use first gallery image as primary if no carPhoto, otherwise use carPhoto
-  const mainImage = primaryImage || (gallery.length > 0 ? gallery[0] : PLACEHOLDER_IMAGE);
+  const mainImage = primaryImage || (gallery.length > 0 ? gallery[0] : "");
 
   const city = apiCar?.location?.city;
   const address = apiCar?.location?.address;
@@ -95,8 +84,8 @@ const mapFallbackCar = (fallbackCar) => {
       (fallbackCar.priceNumber
         ? `Rs ${fallbackCar.priceNumber.toLocaleString()}`
         : 'Price on request'),
-    images: images.length ? images : [PLACEHOLDER_IMAGE],
-    image: images.length ? images[0] : PLACEHOLDER_IMAGE,
+    images: images.length ? images : [],
+    image: images.length ? images[0] : "",
     availability: fallbackCar.availability || 'Weekdays',
     selfDriverPrice: fallbackCar.selfDriverPrice ?? 500,
     outOfStationPrice: 1000,
@@ -225,7 +214,6 @@ export default function CarDetailPage() {
           }
         }
       } catch (error) {
-        console.error('Error fetching car details:', error);
         if (isMounted) {
           setFetchError(error.message);
           if (isId) {
@@ -505,7 +493,6 @@ export default function CarDetailPage() {
       });
       setQuestionModalOpen(false);
     } catch (error) {
-      console.error('Error submitting question:', error);
       alert(error.message || 'Something went wrong while submitting your question.');
     }
   };
