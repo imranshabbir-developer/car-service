@@ -30,15 +30,7 @@ export function buildImageUrl(imagePath, fallback = null) {
     ? API_IMAGE_BASE_URL.slice(0, -1) 
     : API_IMAGE_BASE_URL;
 
-  // Combine base URL with normalized path
-  const fullUrl = `${baseUrl}${normalizedPath}`;
-  
-  // Log in development to help debug
-  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-    console.log('Building image URL:', { imagePath, baseUrl, fullUrl });
-  }
-  
-  return fullUrl;
+  return `${baseUrl}${normalizedPath}`;
 }
 
 /**

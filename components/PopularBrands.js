@@ -53,7 +53,6 @@ export default function PopularBrands() {
           setBrands(brandsArray);
         }
       } catch (error) {
-        console.error('Error fetching brands:', error);
         setBrands([]);
       } finally {
         setLoading(false);

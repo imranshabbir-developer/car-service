@@ -32,9 +32,7 @@ export default function AllCarsPage() {
         const data = await response.json();
 
         if (data.success && data.data && data.data.cars) {
-          // Transform API data to match card format
           const transformedCars = data.data.cars.map((car) => {
-            // Build image URL properly
             let imageUrl = "";
             if (car.carPhoto) {
               const photoPath = car.carPhoto.startsWith('/') ? car.carPhoto : `/${car.carPhoto}`;
@@ -42,16 +40,6 @@ export default function AllCarsPage() {
                 ? API_IMAGE_BASE_URL.slice(0, -1) 
                 : API_IMAGE_BASE_URL;
               imageUrl = `${baseUrl}${photoPath}`;
-              
-              // Debug logging
-              console.log('🔗 AllCarsPage - Building image URL:', {
-                carName: car.name,
-                carPhoto: car.carPhoto,
-                baseUrl,
-                imageUrl,
-              });
-            } else {
-              console.warn('⚠️ AllCarsPage - No carPhoto for:', car.name);
             }
             
             return {
@@ -76,7 +64,6 @@ export default function AllCarsPage() {
           setCars(transformedCars);
         }
       } catch (error) {
-        console.error("Error fetching cars:", error);
         setCars([]);
       } finally {
         setLoading(false);

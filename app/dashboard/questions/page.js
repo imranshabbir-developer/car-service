@@ -82,9 +82,11 @@ export default function QuestionsPage() {
       const normalised = data.data.questions.map((question) => ({
         ...question,
         car: question.car || null,
-        carImage: question.car?.carPhoto
-          ? `${API_IMAGE_BASE_URL}${question.car.carPhoto}`
-          : PLACEHOLDER_IMAGE,
+        carImage: question.car?.carPhoto ? (() => {
+          const photoPath = question.car.carPhoto.startsWith('/') ? question.car.carPhoto : `/${question.car.carPhoto}`;
+          const baseUrl = API_IMAGE_BASE_URL.endsWith('/') ? API_IMAGE_BASE_URL.slice(0, -1) : API_IMAGE_BASE_URL;
+          return `${baseUrl}${photoPath}`;
+        })() : "",
       }));
 
       setQuestions(normalised);

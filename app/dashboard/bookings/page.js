@@ -16,8 +16,6 @@ import {
 import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
 import { logger } from '@/utils/logger';
 
-const PLACEHOLDER_IMAGE =
-  'https://via.placeholder.com/200x140?text=Vehicle+Image';
 
 const STATUS_META = {
   pending: {
@@ -118,9 +116,11 @@ export default function BookingsPage() {
         ...booking,
         car: booking.car || {},
         pricing: booking.pricing || {},
-        carImage: booking.car?.carPhoto
-          ? `${API_IMAGE_BASE_URL}${booking.car.carPhoto}`
-          : PLACEHOLDER_IMAGE,
+        carImage: booking.car?.carPhoto ? (() => {
+          const photoPath = booking.car.carPhoto.startsWith('/') ? booking.car.carPhoto : `/${booking.car.carPhoto}`;
+          const baseUrl = API_IMAGE_BASE_URL.endsWith('/') ? API_IMAGE_BASE_URL.slice(0, -1) : API_IMAGE_BASE_URL;
+          return `${baseUrl}${photoPath}`;
+        })() : "",
       }));
 
       setBookings(normalised);

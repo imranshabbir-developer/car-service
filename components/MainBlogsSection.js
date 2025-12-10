@@ -29,7 +29,7 @@ export default function MainBlogsSection() {
           setBlogs(publishedBlogs);
         }
       } catch (error) {
-        console.error('Error fetching main blogs:', error);
+        // Error handling
       } finally {
         setLoading(false);
       }
@@ -83,8 +83,7 @@ export default function MainBlogsSection() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {blogs.map((blog) => {
-            // Normalize image URL - handle paths that may or may not start with /
-            let imageUrl = '/placeholder-blog.jpg';
+            let imageUrl = "";
             if (blog.image) {
               const imagePath = blog.image.startsWith('/') ? blog.image : `/${blog.image}`;
               const baseUrl = API_IMAGE_BASE_URL.endsWith('/') 
@@ -103,17 +102,14 @@ export default function MainBlogsSection() {
               >
                 {/* Image */}
                 <div className="relative w-full h-48 md:h-56 overflow-hidden bg-gray-100">
-                  <img
-                    src={imageUrl}
-                    alt={blog.blogTitle || 'Blog image'}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    loading="lazy"
-                    onError={(e) => {
-                      if (e.target.src !== '/placeholder-blog.jpg') {
-                        e.target.src = '/placeholder-blog.jpg';
-                      }
-                    }}
-                  />
+                  {imageUrl && (
+                    <img
+                      src={imageUrl}
+                      alt={blog.blogTitle || 'Blog image'}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                  )}
                 </div>
 
                 {/* Content */}

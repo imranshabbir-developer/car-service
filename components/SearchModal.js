@@ -66,7 +66,6 @@ export default function SearchModal({ open, onClose }) {
           setCategories([]);
         }
       } catch (err) {
-        console.error("Error fetching categories in SearchModal:", err);
         setCategoriesError("Failed to load categories");
         setCategories([]);
       } finally {
@@ -152,7 +151,6 @@ export default function SearchModal({ open, onClose }) {
       // Close modal
       onClose && onClose();
     } catch (error) {
-      console.error('Error during search:', error);
       alert('An error occurred during search');
       setIsSearching(false);
     }

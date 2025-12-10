@@ -407,7 +407,11 @@ export default function CategoriesPage() {
                       <td className="px-4 py-4">
                         {category.photo ? (
                           <img
-                            src={`${API_IMAGE_BASE_URL}${category.photo}`}
+                            src={(() => {
+                              const photoPath = category.photo.startsWith('/') ? category.photo : `/${category.photo}`;
+                              const baseUrl = API_IMAGE_BASE_URL.endsWith('/') ? API_IMAGE_BASE_URL.slice(0, -1) : API_IMAGE_BASE_URL;
+                              return `${baseUrl}${photoPath}`;
+                            })()}
                             alt={category.name}
                             className="w-16 h-16 object-cover rounded-lg"
                           />
@@ -495,7 +499,11 @@ export default function CategoriesPage() {
                   <div className="flex justify-center mb-3">
                     <div className="w-20 h-20 border border-gray-300 rounded-lg overflow-hidden">
                       <img
-                        src={`${API_IMAGE_BASE_URL}${editingCategory.photo}`}
+                        src={(() => {
+                          const photoPath = editingCategory.photo.startsWith('/') ? editingCategory.photo : `/${editingCategory.photo}`;
+                          const baseUrl = API_IMAGE_BASE_URL.endsWith('/') ? API_IMAGE_BASE_URL.slice(0, -1) : API_IMAGE_BASE_URL;
+                          return `${baseUrl}${photoPath}`;
+                        })()}
                         alt={editingCategory.name}
                         className="w-full h-full object-cover"
                       />

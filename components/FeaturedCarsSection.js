@@ -8,99 +8,19 @@ import { API_BASE_URL, API_IMAGE_BASE_URL } from "@/config/api";
 import { generateSlug } from "@/utils/slug";
 import "./featured-cars.css";
 
-// Generate SVG placeholder image (works offline, no external dependency)
-const generatePlaceholderImage = (text) => {
-  const svg = `
-    <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
-      <rect width="800" height="600" fill="#f3f4f6"/>
-      <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="24" fill="#6b7280" text-anchor="middle" dominant-baseline="middle">
-        ${text}
-      </text>
-    </svg>
-  `.trim();
-  return `data:image/svg+xml;base64,${btoa(svg)}`;
-};
-
-const FALLBACK_CARS = [
-  {
-    id: null,
-    name: "Suzuki Cultus",
-    price: "Rs 4,000",
-    priceFull: "Rs 4,000 /perday",
-    image: generatePlaceholderImage("Suzuki Cultus"),
-    location: "Lahore, Punjab, Pakistan",
-    seats: 4,
-    transmission: "Automatic",
-    fuelType: "Petrol",
-    featured: true,
-  },
-  {
-    id: null,
-    name: "Suzuki Wagon R",
-    price: "Rs 4,000",
-    priceFull: "Rs 4,000 /perday",
-    image: generatePlaceholderImage("Suzuki Wagon R"),
-    location: "Lahore, Punjab, Pakistan",
-    seats: 4,
-    transmission: "Automatic",
-    fuelType: "Petrol",
-    featured: true,
-  },
-  {
-    id: null,
-    name: "Toyota Corolla (GLI 1.3)",
-    price: "Rs 6,000",
-    priceFull: "Rs 6,000 /perday",
-    image: generatePlaceholderImage("Toyota Corolla"),
-    location: "Lahore, Punjab, Pakistan",
-    seats: 4,
-    transmission: "Automatic",
-    fuelType: "Petrol",
-    featured: true,
-  },
-  {
-    id: null,
-    name: "KIA Sportage",
-    price: "Rs 12,000",
-    priceFull: "Rs 12,000 /perday",
-    image: generatePlaceholderImage("KIA Sportage"),
-    location: "Lahore, Punjab, Pakistan",
-    seats: 4,
-    transmission: "Automatic",
-    fuelType: "Petrol",
-    featured: true,
-  },
-];
-
 const transformCar = (car) => {
   const priceNumber = Number(car.rentPerDay) || 0;
   const formattedPrice = priceNumber
     ? `Rs ${priceNumber.toLocaleString()}`
     : "Price on request";
 
-  // Build image URL properly
-  let imageUrl = FALLBACK_CARS[0].image;
+  let imageUrl = "";
   if (car.carPhoto) {
-    // Ensure carPhoto starts with / if it doesn't already
     const photoPath = car.carPhoto.startsWith('/') ? car.carPhoto : `/${car.carPhoto}`;
-    // Remove trailing slash from API_IMAGE_BASE_URL if present
     const baseUrl = API_IMAGE_BASE_URL.endsWith('/') 
       ? API_IMAGE_BASE_URL.slice(0, -1) 
       : API_IMAGE_BASE_URL;
     imageUrl = `${baseUrl}${photoPath}`;
-    
-    // Verify URL construction
-    if (typeof window !== 'undefined') {
-      console.log('🔗 Building image URL:', { 
-        carPhoto: car.carPhoto, 
-        baseUrl, 
-        imageUrl,
-        isFullUrl: imageUrl.startsWith('http'),
-        expectedFormat: 'https://api.convoytravels.pk/uploads/cars/...'
-      });
-    }
-  } else {
-    console.warn('⚠️ No carPhoto for car:', car.name || car._id);
   }
 
   return {
@@ -117,12 +37,12 @@ const transformCar = (car) => {
     fuelType: car.fuelType || "Petrol",
     featured: car.isFeatured === true,
     category: car.category?.name || "",
-    serialNo: car.serialNo || 1, // Include serialNo and category for sorting
+    serialNo: car.serialNo || 1,
   };
 };
 
 export default function FeaturedCarsSection() {
-  const [cars, setCars] = useState(FALLBACK_CARS);
+  const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -146,22 +66,8 @@ export default function FeaturedCarsSection() {
         const apiCars = data?.data?.cars || [];
 
         if (isMounted) {
-          // Log API response for debugging
-          console.log('API Response:', {
-            apiBaseUrl: API_BASE_URL,
-            imageBaseUrl: API_IMAGE_BASE_URL,
-            carsCount: apiCars.length,
-            sampleCar: apiCars[0] ? {
-              name: apiCars[0].name,
-              carPhoto: apiCars[0].carPhoto,
-            } : null,
-          });
-          
-          // Transform all featured cars (no filtering needed as API already filtered)
           let featuredCars = apiCars.map(transformCar);
           
-          // Sort by serialNo within each category
-          // Group by category first, then sort each group by serialNo
           const groupedByCategory = featuredCars.reduce((acc, car) => {
             const catKey = car.category?.toLowerCase() || 'uncategorized';
             if (!acc[catKey]) {
@@ -171,7 +77,6 @@ export default function FeaturedCarsSection() {
             return acc;
           }, {});
 
-          // Sort each category group by serialNo, then flatten
           featuredCars = Object.values(groupedByCategory)
             .map((categoryCars) => {
               return categoryCars.sort((a, b) => {
@@ -182,21 +87,11 @@ export default function FeaturedCarsSection() {
             })
             .flat();
           
-          // Only update if we have featured cars, otherwise keep fallback or show empty
-          if (featuredCars.length > 0) {
-            setCars(featuredCars);
-          } else {
-            // If no featured cars found from API, show fallback cars
-            setCars(FALLBACK_CARS);
-          }
+          setCars(featuredCars);
         }
       } catch (error) {
-        console.error("Error fetching featured cars:", error);
-        console.error("API URL:", `${API_BASE_URL}/cars?isFeatured=true&status=available`);
-        console.error("Error details:", error.message);
-        // Keep fallback cars on error
         if (isMounted) {
-          setCars(FALLBACK_CARS);
+          setCars([]);
         }
       } finally {
         if (isMounted) {
@@ -251,36 +146,6 @@ export default function FeaturedCarsSection() {
                     className="max-h-[220px] object-contain transition-transform duration-500 ease-out group-hover:scale-105"
                     loading="lazy"
                     decoding="async"
-                    onError={(e) => {
-                      const errorDetails = {
-                        attemptedUrl: car.image,
-                        carName: car.name,
-                        currentSrc: e.target.currentSrc,
-                        naturalWidth: e.target.naturalWidth,
-                        naturalHeight: e.target.naturalHeight,
-                        complete: e.target.complete,
-                      };
-                      console.error('❌ Featured car image failed to load:', errorDetails);
-                      
-                      // Only fallback if it's not already a placeholder
-                      if (e.target.src && !e.target.src.startsWith('data:image')) {
-                        console.log('🔄 Setting fallback image for:', car.name);
-                        // Prevent infinite loop
-                        e.target.onerror = null;
-                        e.target.src = FALLBACK_CARS[0].image;
-                      }
-                    }}
-                    onLoad={(e) => {
-                      console.log('✅ Featured car image loaded successfully:', {
-                        url: car.image,
-                        carName: car.name,
-                        naturalWidth: e.target.naturalWidth,
-                        naturalHeight: e.target.naturalHeight,
-                      });
-                    }}
-                    onLoadStart={() => {
-                      console.log('🔄 Starting to load image:', car.image, car.name);
-                    }}
                   />
                 </div>
                 <div className="p-6 sm:p-7">
@@ -322,19 +187,11 @@ export default function FeaturedCarsSection() {
               </div>
             );
 
-            if (car.id) {
-              const carSlug = car.slug || generateSlug(car.name) || car.id;
-              return (
-                <Link key={car.id} href={`/cars/${carSlug}`} className="block h-full">
-                  {cardContent}
-                </Link>
-              );
-            }
-
+            const carSlug = car.slug || generateSlug(car.name) || car.id;
             return (
-              <div key={`fallback-${index}`} className="h-full">
+              <Link key={car.id || index} href={`/cars/${carSlug}`} className="block h-full">
                 {cardContent}
-              </div>
+              </Link>
             );
           })}
         </div>

@@ -90,7 +90,11 @@ export default function VehicleTypesContent({ searchParams: propSearchParams }) 
             price: `Rs ${car.rentPerDay?.toLocaleString()}`,
             priceFull: `Rs ${car.rentPerDay?.toLocaleString()} /perday`,
             priceNumber: car.rentPerDay,
-            image: car.carPhoto ? `${API_IMAGE_BASE_URL}${car.carPhoto}` : "",
+            image: car.carPhoto ? (() => {
+              const photoPath = car.carPhoto.startsWith('/') ? car.carPhoto : `/${car.carPhoto}`;
+              const baseUrl = API_IMAGE_BASE_URL.endsWith('/') ? API_IMAGE_BASE_URL.slice(0, -1) : API_IMAGE_BASE_URL;
+              return `${baseUrl}${photoPath}`;
+            })() : "",
             location: car.location?.city || "Location not specified",
             category: car.category?.name || "",
             featured: car.status === "available" && car.isAvailable,
@@ -471,7 +475,11 @@ export default function VehicleTypesContent({ searchParams: propSearchParams }) 
                           {hasFeaturedImage && (
                             <div className="relative md:col-span-1 h-56 sm:h-64 md:h-full overflow-hidden">
                               <img
-                                src={`${API_IMAGE_BASE_URL}${blog.featuredImage}`}
+                                src={(() => {
+                                  const imagePath = blog.featuredImage?.startsWith('/') ? blog.featuredImage : `/${blog.featuredImage}`;
+                                  const baseUrl = API_IMAGE_BASE_URL.endsWith('/') ? API_IMAGE_BASE_URL.slice(0, -1) : API_IMAGE_BASE_URL;
+                                  return `${baseUrl}${imagePath}`;
+                                })()}
                                 alt={blog.title}
                                 className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
                               />

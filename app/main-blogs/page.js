@@ -24,7 +24,7 @@ export default function MainBlogsPage() {
           setFilteredBlogs(data.data.blogs);
         }
       } catch (error) {
-        console.error('Error fetching blogs:', error);
+        // Error handling
       } finally {
         setLoading(false);
       }
@@ -85,9 +85,12 @@ export default function MainBlogsPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
             {filteredBlogs.map((blog) => {
-              const imageUrl = blog.image 
-                ? `${API_IMAGE_BASE_URL}${blog.image}`
-                : '/placeholder-blog.jpg';
+              let imageUrl = "";
+              if (blog.image) {
+                const imagePath = blog.image.startsWith('/') ? blog.image : `/${blog.image}`;
+                const baseUrl = API_IMAGE_BASE_URL.endsWith('/') ? API_IMAGE_BASE_URL.slice(0, -1) : API_IMAGE_BASE_URL;
+                imageUrl = `${baseUrl}${imagePath}`;
+              }
               
               return (
                 <Link
@@ -95,14 +98,16 @@ export default function MainBlogsPage() {
                   href={`/main-blog/${blog.slug || blog._id}`}
                   className="bg-white text-left border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden group"
                 >
-                  <div className="relative overflow-hidden">
-                    <img
-                      src={imageUrl}
-                      alt={blog.blogTitle}
-                      className="w-full h-48 sm:h-56 object-cover rounded-t-lg group-hover:scale-105 transition-transform duration-300"
-                      loading="lazy"
-                    />
-                  </div>
+                  {imageUrl && (
+                    <div className="relative overflow-hidden">
+                      <img
+                        src={imageUrl}
+                        alt={blog.blogTitle}
+                        className="w-full h-48 sm:h-56 object-cover rounded-t-lg group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
                   <div className="p-4 sm:p-6">
                     <h3 className="text-[#1a2b5c] font-semibold text-base sm:text-lg mb-2 line-clamp-2 group-hover:text-[#132045] transition-colors">
                       {blog.blogTitle}

@@ -59,9 +59,12 @@ export default function BlogDetailClient({ blog: initialBlog }) {
     ? `${window.location.origin}/blog/${blog.slug}`
     : `https://convoytravels.pk/blog/${blog.slug}`;
 
-  const imageUrl = blog.featuredImage 
-    ? `${API_IMAGE_BASE_URL}${blog.featuredImage}`
-    : null;
+  let imageUrl = "";
+  if (blog.featuredImage) {
+    const imagePath = blog.featuredImage.startsWith('/') ? blog.featuredImage : `/${blog.featuredImage}`;
+    const baseUrl = API_IMAGE_BASE_URL.endsWith('/') ? API_IMAGE_BASE_URL.slice(0, -1) : API_IMAGE_BASE_URL;
+    imageUrl = `${baseUrl}${imagePath}`;
+  }
 
   return (
     <main className="min-h-screen bg-white" style={{ fontFamily: 'Roboto, sans-serif' }}>
@@ -205,9 +208,12 @@ export default function BlogDetailClient({ blog: initialBlog }) {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {relatedBlogs.map((relatedBlog) => {
-                const relatedImageUrl = relatedBlog.featuredImage 
-                  ? `${API_IMAGE_BASE_URL}${relatedBlog.featuredImage}`
-                  : null;
+                let relatedImageUrl = "";
+                if (relatedBlog.featuredImage) {
+                  const imagePath = relatedBlog.featuredImage.startsWith('/') ? relatedBlog.featuredImage : `/${relatedBlog.featuredImage}`;
+                  const baseUrl = API_IMAGE_BASE_URL.endsWith('/') ? API_IMAGE_BASE_URL.slice(0, -1) : API_IMAGE_BASE_URL;
+                  relatedImageUrl = `${baseUrl}${imagePath}`;
+                }
 
                 return (
                   <Link
