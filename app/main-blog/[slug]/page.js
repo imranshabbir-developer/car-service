@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
+import { API_BASE_URL } from '@/config/api';
 import { FaArrowLeft, FaCalendarAlt, FaSpinner, FaFacebookF, FaInstagram } from 'react-icons/fa';
 import { generateSlug, isObjectId } from '@/utils/slug';
 import Seo from '@/components/Seo';
 import { extractSeoData } from '@/utils/dynamicSeo';
+import { buildImageUrl } from '@/utils/imageUrl';
 
 export default function MainBlogDetailPage() {
   const params = useParams();
@@ -92,15 +93,8 @@ export default function MainBlogDetailPage() {
     );
   }
 
-  // Normalize image URL - handle paths that may or may not start with /
-  let imageUrl = '/placeholder-blog.jpg';
-  if (blog.image) {
-    const imagePath = blog.image.startsWith('/') ? blog.image : `/${blog.image}`;
-    const baseUrl = API_IMAGE_BASE_URL.endsWith('/') 
-      ? API_IMAGE_BASE_URL.slice(0, -1) 
-      : API_IMAGE_BASE_URL;
-    imageUrl = `${baseUrl}${imagePath}`;
-  }
+  // Use centralized image URL utility
+  const imageUrl = buildImageUrl(blog.image, '/placeholder-blog.jpg');
 
   // Extract SEO data
   const seoData = blog?.seoData || {};

@@ -13,7 +13,7 @@ import { API_IMAGE_BASE_URL } from '@/config/api';
  */
 export function buildImageUrl(imagePath, fallback = null) {
   // Return fallback if no path provided
-  if (!imagePath) {
+  if (!imagePath || typeof imagePath !== 'string') {
     return fallback || '';
   }
 
@@ -25,13 +25,15 @@ export function buildImageUrl(imagePath, fallback = null) {
   // Normalize path - ensure it starts with /
   const normalizedPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
   
-  // Remove trailing slash from base URL if present
+  // Get base URL - ensure no trailing slash
   const baseUrl = API_IMAGE_BASE_URL.endsWith('/') 
     ? API_IMAGE_BASE_URL.slice(0, -1) 
     : API_IMAGE_BASE_URL;
 
   // Combine base URL with normalized path
-  return `${baseUrl}${normalizedPath}`;
+  const fullUrl = `${baseUrl}${normalizedPath}`;
+  
+  return fullUrl;
 }
 
 /**

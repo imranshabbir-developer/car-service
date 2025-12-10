@@ -14,8 +14,9 @@ import {
   FaEye,
   FaEyeSlash,
 } from 'react-icons/fa';
-import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
+import { API_BASE_URL } from '@/config/api';
 import { logger } from '@/utils/logger';
+import { buildImageUrl } from '@/utils/imageUrl';
 
 export default function MainBlogsPage() {
   const router = useRouter();
@@ -258,28 +259,34 @@ export default function MainBlogsPage() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {currentBlogs.map((blog) => {
-                  // Normalize image URL - handle paths that may or may not start with /
-                  let imageUrl = null;
-                  if (blog.image) {
-                    const imagePath = blog.image.startsWith('/') ? blog.image : `/${blog.image}`;
-                    const baseUrl = API_IMAGE_BASE_URL.endsWith('/') 
-                      ? API_IMAGE_BASE_URL.slice(0, -1) 
-                      : API_IMAGE_BASE_URL;
-                    imageUrl = `${baseUrl}${imagePath}`;
-                  }
+                  // Use centralized image URL utility
+                  const imageUrl = buildImageUrl(blog.image);
                   
                   return (
                   <tr key={blog._id} className="hover:bg-gray-50">
                     <td className="px-4 py-3 whitespace-nowrap">
                       {imageUrl ? (
-                        <img
-                          src={imageUrl}
-                          alt={blog.blogTitle || 'Blog image'}
-                          className="w-16 h-16 object-cover rounded"
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                          }}
-                        />
+                        <>
+                          <img
+                            src={imageUrl}
+                            alt={blog.blogTitle || 'Blog image'}
+                            className="w-16 h-16 object-cover rounded"
+                            onError={(e) => {
+                              // Hide broken image and show placeholder
+                              if (e.target) {
+                                e.target.style.display = 'none';
+                                const placeholder = e.target.nextElementSibling;
+                                if (placeholder) placeholder.style.display = 'flex';
+                              }
+                            }}
+                          />
+                          <div 
+                            className="w-16 h-16 bg-gray-200 rounded flex items-center justify-center"
+                            style={{ display: 'none' }}
+                          >
+                            <FaImage className="text-gray-400" />
+                          </div>
+                        </>
                       ) : (
                         <div className="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
                           <FaImage className="text-gray-400" />

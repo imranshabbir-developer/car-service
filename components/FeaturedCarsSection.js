@@ -6,6 +6,7 @@ import Link from "next/link";
 import { FaUser, FaSnowflake, FaCogs, FaMapMarkerAlt } from "react-icons/fa";
 import { API_BASE_URL, API_IMAGE_BASE_URL } from "@/config/api";
 import { generateSlug } from "@/utils/slug";
+import { buildImageUrl } from "@/utils/imageUrl";
 import "./featured-cars.css";
 
 // Generate SVG placeholder image (works offline, no external dependency)
@@ -78,12 +79,16 @@ const transformCar = (car) => {
     ? `Rs ${priceNumber.toLocaleString()}`
     : "Price on request";
 
+  // Build image URL using helper function
+  const imageUrl = buildImageUrl(car.carPhoto) || FALLBACK_CARS[0].image;
+
   return {
     id: car._id,
     name: car.name || "Vehicle",
     price: formattedPrice,
     priceFull: `${formattedPrice} /perday`,
-    image: car.carPhoto ? `${API_IMAGE_BASE_URL}${car.carPhoto}` : FALLBACK_CARS[0].image,
+    image: imageUrl,
+    carPhoto: car.carPhoto || null, // Include original carPhoto for error handling
     location: car.location?.city
       ? `${car.location.city}${car.location.province ? `, ${car.location.province}` : ""}${car.location.country ? `, ${car.location.country}` : ""}`
       : "Location not specified",
@@ -206,13 +211,26 @@ export default function FeaturedCarsSection() {
       <div className="bg-white py-12 px-6 md:px-20 max-w-7xl mx-auto" style={{ fontFamily: 'Roboto, sans-serif' }}>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
           {cars.map((car, index) => {
+            // Safety check: ensure car object exists
+            if (!car) return null;
+            
+            const imageUrl = car.image || FALLBACK_CARS[0].image;
+            const carName = car.name || 'Unknown Vehicle';
+            
             const cardContent = (
               <div className="featured-car-card border border-gray-200 shadow-lg rounded-xl overflow-hidden bg-white group h-full">
-                <div className="featured-car-image-container w-full h-[280px] sm:h-[260px] lg:h-[280px] flex items-center justify-center">
+                <div className="featured-car-image-container w-full h-[280px] sm:h-[260px] lg:h-[280px] flex items-center justify-center bg-gray-50">
                   <img
-                    src={car.image}
-                    alt={car.name}
-                    className="max-h-[220px] object-contain transition-transform duration-500 ease-out group-hover:scale-105"
+                    src={imageUrl}
+                    alt={carName}
+                    className="max-h-[220px] w-full object-contain transition-transform duration-500 ease-out group-hover:scale-105"
+                    loading="lazy"
+                    onError={(e) => {
+                      // Simple fallback - no logging to avoid console spam
+                      if (e.target && !e.target.src.includes('data:image/svg+xml')) {
+                        e.target.src = FALLBACK_CARS[0].image;
+                      }
+                    }}
                   />
                 </div>
                 <div className="p-6 sm:p-7">
@@ -224,7 +242,7 @@ export default function FeaturedCarsSection() {
                     )}
                   </div>
                   <h3 className="text-xl font-bold text-[#0d1b2a] mb-2 leading-tight">
-                    {car.name}
+                    {carName}
                   </h3>
                   <p className="text-[#1a2b5c] font-semibold text-lg mb-4">{car.priceFull || car.price}</p>
                   <div className="text-gray-600 text-sm flex items-center gap-2 mb-4">
@@ -255,7 +273,7 @@ export default function FeaturedCarsSection() {
             );
 
             if (car.id) {
-              const carSlug = car.slug || generateSlug(car.name) || car.id;
+              const carSlug = car.slug || generateSlug(carName) || car.id;
               return (
                 <Link key={car.id} href={`/cars/${carSlug}`} className="block h-full">
                   {cardContent}

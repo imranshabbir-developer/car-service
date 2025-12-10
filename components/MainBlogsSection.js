@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
+import { API_BASE_URL } from '@/config/api';
 import { FaSpinner, FaArrowRight } from 'react-icons/fa';
+import { buildImageUrl } from '@/utils/imageUrl';
 
 export default function MainBlogsSection() {
   const [blogs, setBlogs] = useState([]);
@@ -83,15 +84,8 @@ export default function MainBlogsSection() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {blogs.map((blog) => {
-            // Normalize image URL - handle paths that may or may not start with /
-            let imageUrl = '/placeholder-blog.jpg';
-            if (blog.image) {
-              const imagePath = blog.image.startsWith('/') ? blog.image : `/${blog.image}`;
-              const baseUrl = API_IMAGE_BASE_URL.endsWith('/') 
-                ? API_IMAGE_BASE_URL.slice(0, -1) 
-                : API_IMAGE_BASE_URL;
-              imageUrl = `${baseUrl}${imagePath}`;
-            }
+            // Use centralized image URL utility
+            const imageUrl = buildImageUrl(blog.image, '/placeholder-blog.jpg');
             
             const excerpt = getExcerpt(blog.description);
             const blogSlug = blog.slug || blog._id;

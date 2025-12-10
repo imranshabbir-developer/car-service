@@ -13,8 +13,9 @@ import {
   FaCar,
   FaImage,
 } from 'react-icons/fa';
-import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
+import { API_BASE_URL } from '@/config/api';
 import { logger } from '@/utils/logger';
+import { buildImageUrl } from '@/utils/imageUrl';;
 
 export default function CarsPage() {
   const [cars, setCars] = useState([]);
@@ -67,8 +68,11 @@ export default function CarsPage() {
       const data = await response.json();
       
       if (data.success) {
-        setCars(data.data.cars);
-        setFilteredCars(data.data.cars);
+        const carsData = data.data.cars || [];
+        
+        
+        setCars(carsData);
+        setFilteredCars(carsData);
       } else {
         showNotification('Failed to fetch cars', 'error');
       }
@@ -294,7 +298,7 @@ export default function CarsPage() {
           : (car.carPhoto ? [car.carPhoto] : []);
         
         const existingGalleryUrls = gallery.map((imgPath) => ({
-          url: imgPath.startsWith('http') ? imgPath : `${API_IMAGE_BASE_URL}${imgPath}`,
+          url: buildImageUrl(imgPath) || imgPath,
           isNew: false,
           path: imgPath,
         }));
@@ -569,17 +573,42 @@ export default function CarsPage() {
                     filteredCars.map((car) => (
                       <tr key={car._id} className="border-b border-gray-100 hover:bg-gray-50">
                         <td className="py-3 px-2">
-                          {car.carPhoto ? (
-                            <img
-                              src={`${API_IMAGE_BASE_URL}${car.carPhoto}`}
-                              alt={car.name}
-                              className="w-12 h-12 object-cover rounded-lg"
-                            />
-                          ) : (
-                            <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
-                              <FaCar className="w-6 h-6 text-gray-400" />
-                            </div>
-                          )}
+                          {(() => {
+                            const imageUrl = buildImageUrl(car.carPhoto);
+                            const carName = car.name || 'Unknown';
+                            
+                            if (!imageUrl) {
+                              return (
+                                <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                                  <FaCar className="w-6 h-6 text-gray-400" />
+                                </div>
+                              );
+                            }
+                            
+                            return (
+                              <>
+                                <img
+                                  src={imageUrl}
+                                  alt={carName}
+                                  className="w-12 h-12 object-cover rounded-lg"
+                                  onError={(e) => {
+                                    // Silent fallback - no logging
+                                    if (e.target) {
+                                      e.target.style.display = 'none';
+                                      const placeholder = e.target.nextElementSibling;
+                                      if (placeholder) placeholder.style.display = 'flex';
+                                    }
+                                  }}
+                                />
+                                <div 
+                                  className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center"
+                                  style={{ display: 'none' }}
+                                >
+                                  <FaCar className="w-6 h-6 text-gray-400" />
+                                </div>
+                              </>
+                            );
+                          })()}
                         </td>
                         <td className="py-3 px-2 text-gray-900 font-medium">{car.name}</td>
                         <td className="py-3 px-2 text-gray-600">{car.brand || '-'}</td>
@@ -671,17 +700,25 @@ export default function CarsPage() {
 
               <form onSubmit={handleSubmit} className="space-y-2">
                 {/* Current Photo Preview */}
-                {editingCar && editingCar.carPhoto && !formData.carPhoto && (
-                  <div className="flex justify-center mb-2">
-                    <div className="w-20 h-20 border border-gray-300 rounded-lg overflow-hidden">
-                      <img
-                        src={`${API_IMAGE_BASE_URL}${editingCar.carPhoto}`}
-                        alt={editingCar.name}
-                        className="w-full h-full object-cover"
-                      />
+                {editingCar && editingCar.carPhoto && !formData.carPhoto && (() => {
+                  const imageUrl = buildImageUrl(editingCar.carPhoto);
+                  if (!imageUrl) return null;
+                  
+                  return (
+                    <div className="flex justify-center mb-2">
+                      <div className="w-20 h-20 border border-gray-300 rounded-lg overflow-hidden bg-gray-100">
+                        <img
+                          src={imageUrl}
+                          alt={editingCar.name || 'Car image'}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            if (e.target) e.target.style.display = 'none';
+                          }}
+                        />
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
 
                 {/* Two Column Layout */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
