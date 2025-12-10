@@ -35,12 +35,17 @@ const getIsProduction = () => {
 
 const isProduction = getIsProduction();
 
-const API_BASE_URL = isProduction 
-  ? 'https://api.convoytravels.pk/api/v1'
-  : 'http://localhost:5000/api/v1';
+// Allow override via environment variables (useful for different deployment scenarios)
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL 
+  ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1`
+  : (isProduction 
+    ? 'https://api.convoytravels.pk/api/v1'
+    : 'http://localhost:5000/api/v1');
 
-const API_IMAGE_BASE_URL = isProduction
-  ? 'https://api.convoytravels.pk'
-  : 'http://localhost:5000';
+const API_IMAGE_BASE_URL = process.env.NEXT_PUBLIC_API_IMAGE_BASE_URL
+  ? process.env.NEXT_PUBLIC_API_IMAGE_BASE_URL
+  : (isProduction
+    ? 'https://api.convoytravels.pk'
+    : 'http://localhost:5000');
 
 export { API_BASE_URL, API_IMAGE_BASE_URL };
