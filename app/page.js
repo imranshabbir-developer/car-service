@@ -15,9 +15,9 @@ import StructuredData from "@/components/StructuredData";
 import { buildPageMetadata } from "@/utils/seo";
 
 export const metadata = buildPageMetadata({
-  title: "Rent a Car in Lahore With & Without Driver | 2025 Best Prices",
+  title: "Rent a Car in Lahore With & Without Driver | 2026 Best Prices",
   description:
-    "Rent a Car in Lahore With Driver & Without Driver with Convoy Travels, offering transparent pricing & rates. Best rent a car service for all your travel needs in Lahore.",
+    "Rent a Car in Lahore With Driver & Without Driver with Convoy Travels, offering transparent pricing & rates. Best rent a car service in Lahore for all your travel needs online.",
   path: "/",
   keywords: [
     "rent a car Lahore",
