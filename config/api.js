@@ -1,4 +1,4 @@
-// API Configuration
+// API Configuration using environment variables
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL 
   ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1`
   : (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
