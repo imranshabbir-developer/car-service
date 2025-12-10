@@ -88,7 +88,19 @@ const transformCar = (car) => {
       ? API_IMAGE_BASE_URL.slice(0, -1) 
       : API_IMAGE_BASE_URL;
     imageUrl = `${baseUrl}${photoPath}`;
-    console.log('Building image URL:', { carPhoto: car.carPhoto, baseUrl, imageUrl });
+    
+    // Verify URL construction
+    if (typeof window !== 'undefined') {
+      console.log('🔗 Building image URL:', { 
+        carPhoto: car.carPhoto, 
+        baseUrl, 
+        imageUrl,
+        isFullUrl: imageUrl.startsWith('http'),
+        expectedFormat: 'https://api.convoytravels.pk/uploads/cars/...'
+      });
+    }
+  } else {
+    console.warn('⚠️ No carPhoto for car:', car.name || car._id);
   }
 
   return {
@@ -232,20 +244,42 @@ export default function FeaturedCarsSection() {
           {cars.map((car, index) => {
             const cardContent = (
               <div className="featured-car-card border border-gray-200 shadow-lg rounded-xl overflow-hidden bg-white group h-full">
-                <div className="featured-car-image-container w-full h-[280px] sm:h-[260px] lg:h-[280px] flex items-center justify-center">
+                <div className="featured-car-image-container w-full h-[280px] sm:h-[260px] lg:h-[280px] flex items-center justify-center bg-gray-50">
                   <img
                     src={car.image}
                     alt={car.name}
                     className="max-h-[220px] object-contain transition-transform duration-500 ease-out group-hover:scale-105"
+                    loading="lazy"
+                    decoding="async"
                     onError={(e) => {
-                      console.error('Featured car image failed to load:', car.image, 'Car:', car.name);
-                      // Fallback to placeholder
-                      if (e.target.src && !e.target.src.includes('data:image/svg')) {
+                      const errorDetails = {
+                        attemptedUrl: car.image,
+                        carName: car.name,
+                        currentSrc: e.target.currentSrc,
+                        naturalWidth: e.target.naturalWidth,
+                        naturalHeight: e.target.naturalHeight,
+                        complete: e.target.complete,
+                      };
+                      console.error('❌ Featured car image failed to load:', errorDetails);
+                      
+                      // Only fallback if it's not already a placeholder
+                      if (e.target.src && !e.target.src.startsWith('data:image')) {
+                        console.log('🔄 Setting fallback image for:', car.name);
+                        // Prevent infinite loop
+                        e.target.onerror = null;
                         e.target.src = FALLBACK_CARS[0].image;
                       }
                     }}
-                    onLoad={() => {
-                      console.log('Featured car image loaded successfully:', car.image);
+                    onLoad={(e) => {
+                      console.log('✅ Featured car image loaded successfully:', {
+                        url: car.image,
+                        carName: car.name,
+                        naturalWidth: e.target.naturalWidth,
+                        naturalHeight: e.target.naturalHeight,
+                      });
+                    }}
+                    onLoadStart={() => {
+                      console.log('🔄 Starting to load image:', car.image, car.name);
                     }}
                   />
                 </div>

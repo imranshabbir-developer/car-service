@@ -15,17 +15,33 @@ export default function VehicleCard({ car }) {
     <Link href={`/cars/${carSlug}`} className="block">
       <div className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 group w-full cursor-pointer">
         {/* Image Section */}
-        <div className="relative w-full h-72 sm:h-80 lg:h-72 overflow-hidden">
+        <div className="relative w-full h-72 sm:h-80 lg:h-72 overflow-hidden bg-gray-50">
         <img
           src={car.image}
           alt={car.name}
           className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+          loading="lazy"
+          decoding="async"
           onError={(e) => {
             // Fallback to placeholder if image fails to load
-            if (e.target.src !== PLACEHOLDER_IMAGE) {
-              console.error('Image failed to load:', car.image);
+            if (e.target.src && !e.target.src.startsWith('data:image')) {
+              console.error('❌ VehicleCard image failed to load:', {
+                attemptedUrl: car.image,
+                carName: car.name,
+                currentSrc: e.target.currentSrc,
+              });
+              // Prevent infinite loop
+              e.target.onerror = null;
               e.target.src = PLACEHOLDER_IMAGE;
             }
+          }}
+          onLoad={(e) => {
+            console.log('✅ VehicleCard image loaded:', {
+              url: car.image,
+              carName: car.name,
+              naturalWidth: e.target.naturalWidth,
+              naturalHeight: e.target.naturalHeight,
+            });
           }}
           />
           {car.featured && (
