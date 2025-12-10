@@ -4,9 +4,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { FaUser, FaSnowflake, FaCogs, FaMapMarkerAlt } from "react-icons/fa";
-import { API_BASE_URL, API_IMAGE_BASE_URL } from "@/config/api";
+import { API_BASE_URL } from "@/config/api";
 import { generateSlug } from "@/utils/slug";
 import "./featured-cars.css";
+
+const IMAGE_BASE = "https://api.convoytravels.pk";
 
 export default function FeaturedCarsSection() {
   const [cars, setCars] = useState([]);
@@ -33,17 +35,15 @@ export default function FeaturedCarsSection() {
     return () => (isMounted = false);
   }, []);
 
-  // build correct image URL
   const getUrl = (photo) => {
     if (!photo) return "";
-    const base = API_IMAGE_BASE_URL.replace(/\/$/, "");
-    const path = photo.startsWith("/") ? photo : `/${photo}`;
-    return `${base}${path}`;
+    const clean = photo.startsWith("/") ? photo : `/${photo}`;
+    return `${IMAGE_BASE}${clean}`;
   };
 
   return (
     <section className="w-full">
-      
+
       {/* Header */}
       <div className="bg-[#1a2b5c] text-white text-center py-10 px-6">
         <p className="text-lg md:text-xl mb-4">
@@ -51,7 +51,7 @@ export default function FeaturedCarsSection() {
         </p>
       </div>
 
-      {/* Title */}
+      {/* Section Title */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center py-16 px-6 md:px-20 max-w-7xl mx-auto">
         <div>
           <p className="text-gray-500 text-sm md:text-base flex items-center gap-2 mb-1">
@@ -74,30 +74,36 @@ export default function FeaturedCarsSection() {
       {/* Cars Grid */}
       <div className="bg-white py-12 px-6 md:px-20 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+
           {cars.map((car) => {
             const img = getUrl(car.carPhoto);
-            const carSlug = car.slug || generateSlug(car.name) || car._id;
+            const slug = car.slug || generateSlug(car.name) || car._id;
 
             return (
-              <Link key={car._id} href={`/cars/${carSlug}`} className="block h-full">
+              <Link key={car._id} href={`/cars/${slug}`} className="block h-full">
                 <div className="featured-car-card border border-gray-200 shadow-lg rounded-xl overflow-hidden bg-white group h-full">
 
-                  {/* Image */}
+                  {/* Car Image */}
                   <div className="featured-car-image-container w-full h-[280px] bg-gray-50 flex items-center justify-center">
                     {img ? (
                       <img
                         src={img}
                         alt={car.name}
-                        className="max-h-[220px] object-contain group-hover:scale-105 transition"
-                        onError={(e) => (e.target.src = "")}
+                        className="max-h-[220px] object-contain transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "";
+                        }}
                       />
                     ) : (
                       <span className="text-gray-400 text-sm">No Image</span>
                     )}
                   </div>
 
-                  {/* Content */}
+                  {/* Car Details */}
                   <div className="p-6">
+
                     {car.isFeatured && (
                       <span className="inline-block bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-md mb-3">
                         Featured
@@ -126,12 +132,13 @@ export default function FeaturedCarsSection() {
                     <div className="btn-gradient-primary text-white py-3 rounded-lg font-semibold text-center cursor-pointer">
                       Book Now
                     </div>
-                  </div>
 
+                  </div>
                 </div>
               </Link>
             );
           })}
+
         </div>
       </div>
     </section>
