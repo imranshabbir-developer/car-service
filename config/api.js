@@ -1,7 +1,7 @@
 // API Configuration
 // Automatically detect environment and use appropriate URLs
 // Check both server-side (NODE_ENV) and client-side (window.location)
-
+// api adjusted 
 /**
  * Determine if we're running in production
  * - Client-side: Checks window.location.hostname
