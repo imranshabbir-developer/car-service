@@ -29,7 +29,15 @@ const buildImageUrl = (path) => {
     return path;
   }
 
-  return `${API_IMAGE_BASE_URL}${path}`;
+  // Normalize path - ensure it starts with /
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  
+  // Remove trailing slash from base URL if present
+  const baseUrl = API_IMAGE_BASE_URL.endsWith('/') 
+    ? API_IMAGE_BASE_URL.slice(0, -1) 
+    : API_IMAGE_BASE_URL;
+
+  return `${baseUrl}${normalizedPath}`;
 };
 
 const transformApiCar = (apiCar) => {

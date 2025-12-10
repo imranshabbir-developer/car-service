@@ -2,6 +2,13 @@ import Link from "next/link";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { generateSlug } from "@/utils/slug";
 
+// Generate SVG placeholder image
+const generatePlaceholderImage = (text = 'Vehicle Image') => {
+  const svg = `<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg"><rect width="800" height="600" fill="#f3f4f6"/><text x="50%" y="50%" font-family="Arial, sans-serif" font-size="24" fill="#6b7280" text-anchor="middle" dominant-baseline="middle">${text}</text></svg>`;
+  return `data:image/svg+xml;base64,${btoa(svg)}`;
+};
+const PLACEHOLDER_IMAGE = generatePlaceholderImage('Vehicle Image');
+
 export default function VehicleCard({ car }) {
   const carSlug = car.slug || generateSlug(car.name) || car.id;
   return (
@@ -13,6 +20,13 @@ export default function VehicleCard({ car }) {
           src={car.image}
           alt={car.name}
           className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+          onError={(e) => {
+            // Fallback to placeholder if image fails to load
+            if (e.target.src !== PLACEHOLDER_IMAGE) {
+              console.error('Image failed to load:', car.image);
+              e.target.src = PLACEHOLDER_IMAGE;
+            }
+          }}
           />
           {car.featured && (
             <div className="absolute top-3 left-3 bg-red-600 text-white px-3 py-1.5 text-xs font-bold rounded-md shadow-lg">
