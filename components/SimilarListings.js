@@ -1,9 +1,73 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { generateSlug } from '@/utils/slug';
+import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
 
-export default function SimilarListings({ cars = [] }) {
-  if (!cars || cars.length === 0) return null;
+export default function SimilarListings({ currentCar, limit = 3 }) {
+  const [cars, setCars] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!currentCar) {
+      setCars([]);
+      setLoading(false);
+      return;
+    }
+
+    const fetchSimilarCars = async () => {
+      try {
+        setLoading(true);
+        // Fetch all available cars (category filter would need category ID, so we'll filter client-side)
+        const response = await fetch(`${API_BASE_URL}/cars?status=available`);
+        const data = await response.json();
+
+        if (data.success && data.data && data.data.cars) {
+          // Transform and filter out current car, optionally filter by same category
+          const transformedCars = data.data.cars
+            .filter(c => {
+              // Exclude current car
+              if (c._id === currentCar.id) return false;
+              // If category is available, prefer same category cars
+              if (currentCar.category && c.category?.name) {
+                return c.category.name === currentCar.category;
+              }
+              return true;
+            })
+            .slice(0, limit)
+            .map((car) => {
+              let imageUrl = "";
+              if (car.carPhoto) {
+                const photoPath = car.carPhoto.startsWith('/') ? car.carPhoto : `/${car.carPhoto}`;
+                const baseUrl = API_IMAGE_BASE_URL.endsWith('/') ? API_IMAGE_BASE_URL.slice(0, -1) : API_IMAGE_BASE_URL;
+                imageUrl = `${baseUrl}${photoPath}`;
+              }
+
+              return {
+                id: car._id,
+                name: car.name,
+                price: `Rs ${car.rentPerDay?.toLocaleString()}`,
+                image: imageUrl,
+                location: car.location?.city || "Location not specified",
+                slug: car.slug,
+              };
+            });
+
+          setCars(transformedCars);
+        }
+      } catch (error) {
+        setCars([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSimilarCars();
+  }, [currentCar, limit]);
+
+  if (loading || !cars || cars.length === 0) return null;
 
   return (
     <section className="py-12 md:py-16 px-4 sm:px-6 md:px-12 bg-white">

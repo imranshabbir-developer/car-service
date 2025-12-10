@@ -2,7 +2,6 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { getCarById } from '@/data/cars';
 import { API_BASE_URL, API_IMAGE_BASE_URL } from '@/config/api';
 import { FaMapMarkerAlt, FaCalendarAlt, FaEnvelope, FaPhone, FaHome, FaArrowLeft, FaTimes, FaUser } from 'react-icons/fa';
 import Link from 'next/link';
@@ -65,32 +64,10 @@ const transformApiCar = (apiCar) => {
     model: apiCar?.model,
     year: apiCar?.year,
     status: apiCar?.status,
+    category: apiCar?.category?.name || "",
   };
 };
 
-const mapFallbackCar = (fallbackCar) => {
-  if (!fallbackCar) return null;
-
-  const images =
-    fallbackCar.images && fallbackCar.images.length
-      ? fallbackCar.images
-      : [fallbackCar.image, fallbackCar.image].filter(Boolean);
-
-  return {
-    ...fallbackCar,
-    price:
-      fallbackCar.price ||
-      fallbackCar.priceFull ||
-      (fallbackCar.priceNumber
-        ? `Rs ${fallbackCar.priceNumber.toLocaleString()}`
-        : 'Price on request'),
-    images: images.length ? images : [],
-    image: images.length ? images[0] : "",
-    availability: fallbackCar.availability || 'Weekdays',
-    selfDriverPrice: fallbackCar.selfDriverPrice ?? 500,
-    outOfStationPrice: 1000,
-  };
-};
 
 export default function CarDetailPage() {
   const params = useParams();
@@ -106,8 +83,6 @@ export default function CarDetailPage() {
     // If it's a slug, we'll find the car ID in the fetch effect
     return null;
   }, [paramValue, isId]);
-  
-  const fallbackCar = isId ? mapFallbackCar(getCarById(actualCarId)) : null;
   
   // All hooks must be called before any conditional returns
   const [activeTab, setActiveTab] = useState('booking');
@@ -131,7 +106,8 @@ export default function CarDetailPage() {
     subject: '',
     message: '',
   });
-  const [car, setCar] = useState(fallbackCar);
+  const [car, setCar] = useState(null);
+  const [similarCars, setSimilarCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -216,10 +192,7 @@ export default function CarDetailPage() {
       } catch (error) {
         if (isMounted) {
           setFetchError(error.message);
-          if (isId) {
-            const fallbackCar = mapFallbackCar(getCarById(actualCarId));
-            setCar(fallbackCar);
-          }
+          setCar(null);
         }
       } finally {
         if (isMounted) {
@@ -566,18 +539,21 @@ export default function CarDetailPage() {
           {/* Left Column: Images */}
           <div className="space-y-4">
             {/* Main Image */}
-            <div className="relative w-full h-[400px] sm:h-[500px] bg-white rounded-xl overflow-hidden shadow-lg">
-              <img
-                src={car.images?.[selectedImage] || car.image}
-                alt={car.name}
-                className="w-full h-full object-contain"
-              />
-            </div>
+            {(car.images?.[selectedImage] || car.image) && (
+              <div className="relative w-full h-[400px] sm:h-[500px] bg-white rounded-xl overflow-hidden shadow-lg">
+                <img
+                  src={car.images?.[selectedImage] || car.image}
+                  alt={car.name}
+                  className="w-full h-full object-contain"
+                  loading="eager"
+                />
+              </div>
+            )}
 
             {/* Thumbnail Images */}
             {car.images && car.images.length > 1 && (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                {car.images.map((img, index) => (
+                {car.images.filter(Boolean).map((img, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
@@ -589,6 +565,7 @@ export default function CarDetailPage() {
                       src={img}
                       alt={`${car.name} ${index + 1}`}
                       className="w-full h-full object-cover"
+                      loading="lazy"
                     />
                   </button>
                 ))}

@@ -158,8 +158,10 @@ export default function BlogsPage() {
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                           loading="lazy"
                           onError={(e) => {
-                            if (e.target.src !== '/placeholder-blog.jpg') {
-                              e.target.src = '/placeholder-blog.jpg';
+                            // Prevent infinite loop - only set once
+                            if (!e.target.dataset.errorHandled) {
+                              e.target.dataset.errorHandled = 'true';
+                              e.target.style.display = 'none';
                             }
                           }}
                         />
