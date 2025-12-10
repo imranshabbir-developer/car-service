@@ -37,7 +37,7 @@ const STATUS_META = {
 };
 
 const OPTION_LABELS = {
-  self_without_driver: 'Self Without Driver',
+  self_without_driver: 'With Driver',
   out_of_station: 'Out of Station',
 };
 

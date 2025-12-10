@@ -675,7 +675,7 @@ export default function CarDetailPage() {
                         onChange={handleInputChange}
                         className="w-4 h-4 text-[#1a2b5c] focus:ring-[#1a2b5c]"
                       />
-                      <span className="text-gray-700 font-medium">Self Without Driver</span>
+                      <span className="text-gray-700 font-medium">With Driver</span>
                     </div>
                     <span className="text-gray-600">Rs{car.selfDriverPrice || 500} / perday</span>
                   </label>

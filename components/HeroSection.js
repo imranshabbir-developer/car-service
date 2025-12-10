@@ -143,7 +143,7 @@ export default function HeroSection() {
 
   return (
     <div
-      className="relative bg-cover bg-no-repeat bg-center bg-gray-100 w-full min-h-[600px] md:min-h-[700px]"
+      className="relative bg-cover bg-no-repeat bg-center bg-gray-100 w-full min-h-[500px] md:min-h-[600px]"
       style={{
         backgroundImage: "url('/bg.png')",
         backgroundSize: 'cover',
@@ -152,7 +152,7 @@ export default function HeroSection() {
     >
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/35 z-10"></div>
 
-      <div className="relative z-10 text-center text-white pt-60 md:pt-40 pb-12 md:pb-20 px-6 md:px-20">
+      <div className="relative z-10 text-center text-white pt-8 md:pt-40 pb-0 px-6 md:px-20">
         <h1 className="text-4xl md:text-6xl font-bold mb-6">
           Rent a Car in Lahore <br />
           Available With or Without a Driver
