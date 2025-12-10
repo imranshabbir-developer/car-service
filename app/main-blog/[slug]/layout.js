@@ -8,23 +8,28 @@ async function getMainBlogForMetadata(param) {
   try {
     if (!param) return null;
 
-    // If it's an ObjectId, fetch directly
+    let url;
     if (isObjectId(param)) {
-      const response = await fetch(`${API_BASE_URL}/main-blogs/${param}`, {
-        next: { revalidate: 300 },
-      });
-      if (!response.ok || response.status === 404) return null;
-      const data = await response.json();
-      return data?.data?.blog || null;
+      url = `${API_BASE_URL}/main-blogs/${param}`;
+    } else {
+      url = `${API_BASE_URL}/main-blogs/slug/${param}`;
     }
 
-    // If it's a slug, fetch by slug
-    const response = await fetch(`${API_BASE_URL}/main-blogs/slug/${param}`, {
+    const response = await fetch(url, {
       next: { revalidate: 300 },
     });
+    
     if (!response.ok || response.status === 404) return null;
+    
     const data = await response.json();
-    return data?.data?.blog || null;
+    const blog = data?.data?.blog;
+
+    // Only return published blogs
+    if (!blog || blog.isPublished !== true) {
+      return null;
+    }
+
+    return blog;
   } catch (error) {
     return null;
   }
@@ -55,20 +60,79 @@ export async function generateMetadata({ params }) {
   // Use backend slug for canonical, fallback to param
   const canonicalSlug = blog.slug || paramValue;
   const canonicalPath = `/main-blog/${canonicalSlug}`;
+  const canonicalUrl = `https://convoytravels.pk${canonicalPath}`;
   
-  return buildDynamicMetadata({
-    ...seoData,
-    fallbackTitle: `${blog.blogTitle || 'Blog Post'} | Convoy Travels Blog`,
-    fallbackDescription: blog.description || "Read curated travel inspiration, rental advice, and Convoy Travels service updates to plan reliable journeys across Pakistan.",
-    fallbackPath: canonicalPath,
+  // Extract plain text from HTML for description
+  const plainTextDescription = blog.description 
+    ? blog.description.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim().substring(0, 160)
+    : "Read curated travel inspiration, rental advice, and Convoy Travels service updates to plan reliable journeys across Pakistan.";
+  
+  // Build image URL
+  let imageUrl = "";
+  if (blog.image) {
+    const imagePath = blog.image.startsWith('/') ? blog.image : `/${blog.image}`;
+    imageUrl = `https://api.convoytravels.pk${imagePath}`;
+  }
+  
+  const publishedTime = blog.createdAt || new Date().toISOString();
+  const modifiedTime = blog.updatedAt || blog.createdAt || publishedTime;
+  
+  const metaTitle = seoData.seoTitle || `${blog.blogTitle || 'Blog Post'} | Convoy Travels Blog`;
+  const metaDescription = seoData.seoDescription || plainTextDescription;
+  
+  return {
+    title: metaTitle,
+    description: metaDescription,
     keywords: [
       blog.blogTitle || 'blog',
       "convoy travels blog",
       "travel tips pakistan",
       "rent a car stories",
     ],
-    type: "article",
-  });
+    alternates: {
+      canonical: seoData.canonicalUrl || canonicalUrl,
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+      },
+    },
+    openGraph: {
+      title: metaTitle,
+      description: metaDescription,
+      url: canonicalUrl,
+      siteName: "Convoy Travels",
+      images: imageUrl ? [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: blog.blogTitle || 'Blog image',
+        },
+      ] : [],
+      locale: "en_US",
+      type: "article",
+      publishedTime: publishedTime,
+      modifiedTime: modifiedTime,
+      authors: ["Convoy Travels"],
+      section: "Travel & Car Rental",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: metaTitle,
+      description: metaDescription,
+      images: imageUrl ? [imageUrl] : [],
+    },
+    other: {
+      'article:published_time': publishedTime,
+      'article:modified_time': modifiedTime,
+      'article:author': 'Convoy Travels',
+      'article:section': 'Travel & Car Rental',
+    },
+  };
 }
 
 export default async function MainBlogDetailLayout({ children, params }) {
