@@ -4,11 +4,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { FaUser, FaSnowflake, FaCogs, FaMapMarkerAlt } from "react-icons/fa";
-import { API_BASE_URL } from "@/config/api";
+import { API_BASE_URL, API_IMAGE_BASE_URL } from "@/config/api";
 import { generateSlug } from "@/utils/slug";
 import "./featured-cars.css";
 
-const IMAGE_BASE = "https://api.convoytravels.pk";
+const FALLBACK_CAR_IMAGE =
+  "https://api.convoytravels.pk/uploads/cars/untitled-design-2024-02-02t202138-109-1763004865456-581939279.webp";
 
 export default function FeaturedCarsSection() {
   const [cars, setCars] = useState([]);
@@ -35,11 +36,7 @@ export default function FeaturedCarsSection() {
     return () => (isMounted = false);
   }, []);
 
-  const getUrl = (photo) => {
-    if (!photo) return "";
-    const clean = photo.startsWith("/") ? photo : `/${photo}`;
-    return `${IMAGE_BASE}${clean}`;
-  };
+
 
   return (
     <section className="w-full">
@@ -76,7 +73,11 @@ export default function FeaturedCarsSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
 
           {cars.map((car) => {
-            const img = getUrl(car.carPhoto);
+            const img = car?.carPhoto
+              ? `${API_IMAGE_BASE_URL.replace(/\/$/, "")}${
+                  car.carPhoto.startsWith("/") ? car.carPhoto : `/${car.carPhoto}`
+                }`
+              : FALLBACK_CAR_IMAGE;
             const slug = car.slug || generateSlug(car.name) || car._id;
 
             return (
@@ -85,20 +86,17 @@ export default function FeaturedCarsSection() {
 
                   {/* Car Image */}
                   <div className="featured-car-image-container w-full h-[280px] bg-gray-50 flex items-center justify-center">
-                    {img ? (
+                    
                       <img
                         src={img}
                         alt={car.name}
                         className="max-h-[220px] object-contain transition-transform duration-500 group-hover:scale-105"
                         loading="lazy"
                         onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = "";
+                        e.target.onerror = null;
+                        e.target.src = FALLBACK_CAR_IMAGE;      
                         }}
                       />
-                    ) : (
-                      <span className="text-gray-400 text-sm">No Image</span>
-                    )}
                   </div>
 
                   {/* Car Details */}
