@@ -239,7 +239,11 @@ export default function ReviewsSection() {
                           alt={review.name}
                           className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover ring-2 ring-gray-100 group-hover:ring-[#1a2b5c] transition-all duration-300"
                           onError={(e) => {
-                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(review.name)}&background=1a2b5c&color=fff&size=128`;
+                            // Prevent infinite loop - only set once
+                            if (!e.target.dataset.errorHandled) {
+                              e.target.dataset.errorHandled = 'true';
+                              e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(review.name)}&background=1a2b5c&color=fff&size=128`;
+                            }
                           }}
                         />
                       </div>
