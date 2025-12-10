@@ -42,6 +42,16 @@ export default function AllCarsPage() {
                 ? API_IMAGE_BASE_URL.slice(0, -1) 
                 : API_IMAGE_BASE_URL;
               imageUrl = `${baseUrl}${photoPath}`;
+              
+              // Debug logging
+              console.log('🔗 AllCarsPage - Building image URL:', {
+                carName: car.name,
+                carPhoto: car.carPhoto,
+                baseUrl,
+                imageUrl,
+              });
+            } else {
+              console.warn('⚠️ AllCarsPage - No carPhoto for:', car.name);
             }
             
             return {
