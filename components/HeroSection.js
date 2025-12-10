@@ -152,9 +152,10 @@ export default function HeroSection() {
     >
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/35 z-10"></div>
 
-      <div className="relative z-10 text-center text-white py-12 md:py-20 px-6 md:px-20 pb-12 md:pb-20">
+      <div className="relative z-10 text-center text-white pt-60 md:pt-40 pb-12 md:pb-20 px-6 md:px-20">
         <h1 className="text-4xl md:text-6xl font-bold mb-6">
-          Rent a Car in Lahore - Available With or Without a Driver
+          Rent a Car in Lahore <br />
+          Available With or Without a Driver
         </h1>
         <p className="text-md md:text-lg font-semibold mb-0">
           &quot;Without Driver Services available for bookings of 7 days or more&quot;
