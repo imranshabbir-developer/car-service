@@ -78,12 +78,25 @@ const transformCar = (car) => {
     ? `Rs ${priceNumber.toLocaleString()}`
     : "Price on request";
 
+  // Build image URL properly
+  let imageUrl = FALLBACK_CARS[0].image;
+  if (car.carPhoto) {
+    // Ensure carPhoto starts with / if it doesn't already
+    const photoPath = car.carPhoto.startsWith('/') ? car.carPhoto : `/${car.carPhoto}`;
+    // Remove trailing slash from API_IMAGE_BASE_URL if present
+    const baseUrl = API_IMAGE_BASE_URL.endsWith('/') 
+      ? API_IMAGE_BASE_URL.slice(0, -1) 
+      : API_IMAGE_BASE_URL;
+    imageUrl = `${baseUrl}${photoPath}`;
+    console.log('Building image URL:', { carPhoto: car.carPhoto, baseUrl, imageUrl });
+  }
+
   return {
     id: car._id,
     name: car.name || "Vehicle",
     price: formattedPrice,
     priceFull: `${formattedPrice} /perday`,
-    image: car.carPhoto ? `${API_IMAGE_BASE_URL}${car.carPhoto}` : FALLBACK_CARS[0].image,
+    image: imageUrl,
     location: car.location?.city
       ? `${car.location.city}${car.location.province ? `, ${car.location.province}` : ""}${car.location.country ? `, ${car.location.country}` : ""}`
       : "Location not specified",
@@ -121,6 +134,17 @@ export default function FeaturedCarsSection() {
         const apiCars = data?.data?.cars || [];
 
         if (isMounted) {
+          // Log API response for debugging
+          console.log('API Response:', {
+            apiBaseUrl: API_BASE_URL,
+            imageBaseUrl: API_IMAGE_BASE_URL,
+            carsCount: apiCars.length,
+            sampleCar: apiCars[0] ? {
+              name: apiCars[0].name,
+              carPhoto: apiCars[0].carPhoto,
+            } : null,
+          });
+          
           // Transform all featured cars (no filtering needed as API already filtered)
           let featuredCars = apiCars.map(transformCar);
           
@@ -213,6 +237,16 @@ export default function FeaturedCarsSection() {
                     src={car.image}
                     alt={car.name}
                     className="max-h-[220px] object-contain transition-transform duration-500 ease-out group-hover:scale-105"
+                    onError={(e) => {
+                      console.error('Featured car image failed to load:', car.image, 'Car:', car.name);
+                      // Fallback to placeholder
+                      if (e.target.src && !e.target.src.includes('data:image/svg')) {
+                        e.target.src = FALLBACK_CARS[0].image;
+                      }
+                    }}
+                    onLoad={() => {
+                      console.log('Featured car image loaded successfully:', car.image);
+                    }}
                   />
                 </div>
                 <div className="p-6 sm:p-7">
