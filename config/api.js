@@ -48,4 +48,18 @@ const API_IMAGE_BASE_URL = process.env.NEXT_PUBLIC_API_IMAGE_BASE_URL
     ? 'https://api.convoytravels.pk'
     : 'http://localhost:5000');
 
+// Debug logging (only in browser, not during SSR)
+if (typeof window !== 'undefined') {
+  console.log('API Configuration:', {
+    isProduction,
+    API_BASE_URL,
+    API_IMAGE_BASE_URL,
+    hostname: window.location.hostname,
+    env: {
+      NEXT_PUBLIC_ENV: process.env.NEXT_PUBLIC_ENV,
+      NODE_ENV: process.env.NODE_ENV,
+    }
+  });
+}
+
 export { API_BASE_URL, API_IMAGE_BASE_URL };
