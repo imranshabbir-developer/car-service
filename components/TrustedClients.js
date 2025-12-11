@@ -34,39 +34,39 @@ export default function TrustedClients() {
 
   const logos = [
     {
-      src: "/t1.webp",
+      src: "/t1.jpg",
       alt: "World Health Organization",
     },
     {
-      src: "/t2.webp",
+      src: "/t2.jpg",
       alt: "United Solar Group",
     },
     {
-      src: "/t3.webp",
+      src: "/t3.jpg",
       alt: "Khyber Petroleum",
     },
     {
-      src: "/t4.webp",
+      src: "/t4.jpg",
       alt: "Denim Factory",
     },
     {
-      src: "/t5.webp",
+      src: "/t5.jpg",
       alt: "PAK-TURK MAARIF",
     },
     {
-      src: "/t6.png",
+      src: "/t6.jpg",
       alt: "Gas Development Company",
     },
     {
-      src: "/t7.webp",
+      src: "/t7.jpg",
       alt: "Lords College of Pharmacy",
     },
     {
-      src: "/t8.webp",
+      src: "/t8.jpg",
       alt: "Eastern Group of Companies",
     },
     {
-      src: "/t9.webp",
+      src: "/t9.jpg",
       alt: "National Engineering Services Pakistan",
     },
   ];

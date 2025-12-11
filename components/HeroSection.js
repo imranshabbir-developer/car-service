@@ -147,9 +147,9 @@ export default function HeroSection() {
       style={{
         backgroundImage: "url('/bg.png')",
         backgroundSize: 'cover',
-        backgroundPosition: 'center center',
+        backgroundPosition: 'center 45%',
       }}
-    >
+    > 
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/35 z-10"></div>
 
       <div className="relative z-10 text-center text-white pt-8 md:pt-40 pb-0 px-6 md:px-20">
@@ -239,4 +239,5 @@ export default function HeroSection() {
     </div>
   );
 }
+
 
